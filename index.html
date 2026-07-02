@@ -1,0 +1,1095 @@
+<style>
+  /* ============================================================
+     Crystal Instruction — T-TESS / SLO Generator  (Phase 1 page)
+     Design tokens. Devs: everything is driven from these vars.
+     Confirm exact brand font + hexes against production.
+     ============================================================ */
+  :root{
+    --ci-magenta:#E5179E;
+    --ci-magenta-deep:#C1148A;
+    --ci-purple:#A23FD0;
+    --ci-grad:linear-gradient(135deg,#E5179E 0%,#A23FD0 100%);
+    --ci-grad-soft:linear-gradient(135deg,#FBE4F2 0%,#F1E4FA 100%);
+
+    --ink:#1B1B3A;          /* headings + active nav pill */
+    --ink-soft:#54546E;     /* body text (cool-biased grey) */
+    --ink-faint:#8A8AA0;    /* captions / muted */
+
+    --page:#E7F1F8;         /* app background (soft blue) */
+    --sidebar:#EDF4FA;
+    --card:#FFFFFF;
+    --line:#E3E8F0;         /* hairlines, cool-biased */
+    --pink-soft:#FCE4F2;
+    --teal:#17A2C4;
+
+    /* performance bands — diverging, kept off-brand-hue on purpose */
+    --band-wb:#E5674F;   /* Well Below Typical */
+    --band-b:#F0A24B;    /* Below Typical      */
+    --band-t:#F4C84B;    /* Typical            */
+    --band-a:#7FB77E;    /* Above Typical      */
+    --band-wa:#3E9D6E;   /* Well Above Typical */
+
+    --r-lg:20px; --r-md:14px; --r-sm:10px;
+    --shadow:0 1px 2px rgba(27,27,58,.04),0 8px 24px rgba(27,27,58,.06);
+    --shadow-lift:0 6px 18px rgba(162,63,208,.18);
+
+    --font-display:"SF Pro Rounded","Segoe UI Rounded",ui-rounded,"Baloo 2","Quicksand",system-ui,sans-serif;
+    --font-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  .ci-app,.ci-app *{margin:0;}
+  .ci-app{
+    font-family:var(--font-body);
+    color:var(--ink-soft);
+    background:var(--page);
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:240px 1fr;
+    -webkit-font-smoothing:antialiased;
+    font-size:15px;
+    line-height:1.5;
+  }
+  h1,h2,h3,h4,.display{font-family:var(--font-display);color:var(--ink);text-wrap:balance;}
+
+  /* ---------- Sidebar ---------- */
+  .ci-side{
+    background:var(--sidebar);
+    border-right:1px solid var(--line);
+    padding:22px 16px;
+    display:flex;flex-direction:column;gap:6px;
+    position:sticky;top:0;height:100vh;overflow-y:auto;
+  }
+  .ci-brand{display:flex;align-items:center;gap:10px;padding:2px 6px 20px;}
+  .ci-diamond{width:34px;height:34px;flex:none;}
+  .ci-brand-text{font-family:var(--font-display);font-weight:800;line-height:1;}
+  .ci-brand-text .c1{color:var(--ci-magenta);font-size:20px;display:block;}
+  .ci-brand-text .c2{color:var(--ink);font-size:14px;letter-spacing:.5px;display:block;}
+
+  .ci-nav{display:flex;flex-direction:column;gap:4px;}
+  .ci-nav a{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 14px;border-radius:999px;
+    color:var(--ink);font-weight:600;font-size:14px;text-decoration:none;
+    cursor:pointer;transition:background .15s,color .15s;
+  }
+  .ci-nav a svg{width:18px;height:18px;flex:none;stroke-width:2;}
+  .ci-nav a:hover{background:rgba(27,27,58,.06);}
+  .ci-nav a.active{background:var(--ink);color:#fff;box-shadow:var(--shadow);}
+  .ci-nav a.new{color:var(--ci-magenta-deep);}
+  .ci-nav a.new.active{background:var(--ci-grad);color:#fff;}
+  .ci-chip-new{margin-left:auto;font-size:9.5px;font-weight:800;letter-spacing:.6px;
+    background:#fff;color:var(--ci-magenta-deep);padding:2px 7px;border-radius:999px;}
+  .ci-nav a.active .ci-chip-new{background:rgba(255,255,255,.22);color:#fff;}
+
+  .ci-mascot{margin-top:auto;padding-top:16px;display:flex;justify-content:center;}
+  .ci-mascot div{width:46px;height:46px;border-radius:50%;background:#1B1B3A;
+    display:grid;place-items:center;font-size:22px;}
+
+  /* ---------- Top bar ---------- */
+  .ci-main{display:flex;flex-direction:column;min-width:0;}
+  .ci-top{
+    display:flex;align-items:center;gap:16px;
+    padding:16px 32px;border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.5);backdrop-filter:blur(4px);
+    position:sticky;top:0;z-index:5;
+  }
+  .ci-hamb{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+    background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--ink);}
+  .ci-crumb{font-size:13px;color:var(--ink-faint);font-weight:600;}
+  .ci-crumb b{color:var(--ink);}
+  .ci-user{margin-left:auto;display:flex;align-items:center;gap:12px;
+    background:#fff;border:1px solid var(--line);border-radius:14px;padding:8px 14px;}
+  .ci-avatar{width:34px;height:34px;border-radius:50%;background:var(--ci-grad);
+    color:#fff;display:grid;place-items:center;font-weight:800;font-family:var(--font-display);}
+  .ci-user .who small{display:block;color:var(--ink-faint);font-size:11px;}
+  .ci-user .who b{color:var(--ink);font-size:13px;}
+
+  .ci-save-status{margin-left:auto;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;
+    padding:6px 13px;border-radius:999px;white-space:nowrap;}
+  .ci-save-status:empty{display:none;}
+  .ci-save-status.saving{color:var(--ink-faint);background:#EEF1F6;}
+  .ci-save-status.saved{color:#2E7D5B;background:#E6F4EC;}
+
+  .ci-resume{display:flex;align-items:center;gap:14px;background:var(--ci-grad-soft);border:1px solid #F0D9EC;
+    border-radius:var(--r-md);padding:14px 16px 14px 18px;}
+  .ci-resume[hidden]{display:none;}
+  .ci-resume .ic{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--ci-magenta-deep);
+    display:grid;place-items:center;flex:none;box-shadow:var(--shadow);}
+  .ci-resume .txt{flex:1;color:var(--ink);font-size:13.5px;line-height:1.45;}
+  .ci-resume .btn{padding:10px 18px;font-size:13px;flex:none;}
+  .ci-resume-x{border:0;background:transparent;color:var(--ink-faint);cursor:pointer;flex:none;padding:6px;border-radius:8px;display:grid;place-items:center;}
+  .ci-resume-x:hover{background:rgba(27,27,58,.08);color:var(--ink);}
+  @media(max-width:720px){.ci-resume{flex-wrap:wrap;}.ci-resume .btn{order:3;}}
+
+  /* ---------- Page body ---------- */
+  .ci-page{padding:28px 32px 60px;display:flex;flex-direction:column;gap:22px;max-width:1180px;width:100%;}
+
+  .ci-pagehead{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .ci-pagehead h1{font-size:26px;font-weight:800;letter-spacing:-.2px;}
+  .ci-pagehead p{color:var(--ink-soft);font-size:14px;max-width:60ch;margin-top:4px;}
+  .ci-yeartag{margin-left:auto;background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:8px 16px;font-weight:700;color:var(--ink);font-size:13px;display:flex;gap:8px;align-items:center;}
+  .ci-yeartag i{width:8px;height:8px;border-radius:50%;background:var(--band-a);display:inline-block;}
+
+  /* ---------- Phase stepper ---------- */
+  .ci-stepper{display:flex;gap:0;background:#fff;border:1px solid var(--line);
+    border-radius:var(--r-lg);padding:14px 18px;box-shadow:var(--shadow);overflow-x:auto;}
+  .ci-step{display:flex;align-items:center;gap:12px;flex:1;min-width:200px;}
+  .ci-step .num{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;
+    font-family:var(--font-display);font-weight:800;font-size:15px;background:#EEF1F6;color:var(--ink-faint);}
+  .ci-step.done .num{background:var(--band-a);color:#fff;}
+  .ci-step.current .num{background:var(--ci-grad);color:#fff;box-shadow:var(--shadow-lift);}
+  .ci-step .lbl small{display:block;font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-faint);font-weight:700;}
+  .ci-step .lbl b{font-family:var(--font-display);color:var(--ink);font-size:14px;}
+  .ci-step.current .lbl b{color:var(--ci-magenta-deep);}
+  .ci-step .bar{flex:1;height:3px;border-radius:2px;background:var(--line);margin:0 10px;min-width:20px;}
+  .ci-step.done .bar{background:var(--band-a);}
+
+  /* ---------- Sub tab bar ---------- */
+  .ci-tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:6px;box-shadow:var(--shadow);width:max-content;max-width:100%;overflow-x:auto;}
+  .ci-tabs button{border:0;background:transparent;font-family:var(--font-body);
+    font-weight:700;font-size:13px;color:var(--ink-soft);padding:9px 18px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+  .ci-tabs button:hover{background:rgba(27,27,58,.05);}
+  .ci-tabs button.active{background:var(--ci-grad);color:#fff;box-shadow:var(--shadow-lift);}
+
+  /* ---------- Cards ---------- */
+  .ci-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:var(--shadow);padding:26px;}
+  .ci-card > header{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .ci-eyebrow{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ci-magenta-deep);}
+  .ci-card h2{font-size:19px;font-weight:800;}
+  .ci-card > .sub{color:var(--ink-soft);font-size:14px;margin-bottom:20px;}
+  .ci-sectionbadge{width:28px;height:28px;border-radius:9px;background:var(--pink-soft);
+    color:var(--ci-magenta-deep);font-family:var(--font-display);font-weight:800;display:grid;place-items:center;font-size:14px;flex:none;}
+
+  .ci-grid2{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;align-items:start;}
+  @media(max-width:960px){.ci-grid2{grid-template-columns:1fr;}}
+
+  /* selector: subject + grade */
+  .ci-selrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+  .ci-subject{display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid var(--line);
+    border-radius:999px;padding:8px 16px 8px 8px;font-weight:700;color:var(--ink);cursor:pointer;font-size:13px;}
+  .ci-subject .ic{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:13px;}
+  .ci-subject.sel{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,162,196,.15);}
+  .ci-subject.sel .ic{background:var(--teal);}
+  .ci-subject:not(.sel) .ic{background:#C9D2DE;}
+  .ci-pill-select{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);
+    border-radius:999px;padding:9px 16px;font-weight:700;color:var(--ink);font-size:13px;}
+
+  /* goal cards */
+  .ci-goals{display:flex;flex-direction:column;gap:12px;}
+  .ci-goal{display:flex;gap:14px;padding:16px 18px;border:1.5px solid var(--line);border-radius:var(--r-md);
+    cursor:pointer;background:#fff;transition:border-color .15s,background .15s,box-shadow .15s;align-items:flex-start;}
+  .ci-goal:hover{border-color:#D9B9D0;}
+  .ci-goal .radio{width:20px;height:20px;border-radius:50%;border:2px solid #C9D2DE;flex:none;margin-top:2px;display:grid;place-items:center;}
+  .ci-goal .radio::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--ci-magenta);transform:scale(0);transition:transform .15s;}
+  .ci-goal.sel{border-color:var(--ci-magenta);background:var(--pink-soft);box-shadow:0 0 0 3px rgba(229,23,158,.1);}
+  .ci-goal.sel .radio{border-color:var(--ci-magenta);}
+  .ci-goal.sel .radio::after{transform:scale(1);}
+  .ci-goal .txt b{display:block;color:var(--ink);font-family:var(--font-display);font-size:14px;margin-bottom:3px;}
+  .ci-goal .txt small{color:var(--ink-soft);font-size:12.5px;line-height:1.45;}
+  .ci-goal .std{display:inline-flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
+  .ci-goal .std span{font-size:10.5px;font-weight:700;background:#EEF1F6;color:var(--ink-soft);padding:2px 8px;border-radius:6px;letter-spacing:.3px;}
+
+  .ci-own{margin-top:4px;}
+  .ci-own textarea{width:100%;border:1.5px solid var(--line);border-radius:var(--r-md);padding:14px;
+    font-family:var(--font-body);font-size:13.5px;color:var(--ink);resize:vertical;min-height:90px;}
+  .ci-own textarea:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(229,23,158,.12);}
+  [hidden]{display:none!important;}
+
+  /* Section B foundational skills */
+  .ci-foundation{background:var(--ci-grad-soft);border:1px solid #F0D9EC;border-radius:var(--r-md);padding:20px;}
+  .ci-foundation .stmt{color:var(--ink);font-size:14px;line-height:1.55;margin-bottom:16px;}
+  .ci-foundation .stmt b{font-family:var(--font-display);}
+  .ci-fskills{display:flex;flex-direction:column;gap:10px;}
+  .ci-fskill{display:flex;gap:11px;align-items:flex-start;background:rgba(255,255,255,.7);border-radius:10px;padding:11px 13px;}
+  .ci-fskill .dot{width:22px;height:22px;border-radius:7px;background:#fff;color:var(--ci-magenta-deep);
+    display:grid;place-items:center;flex:none;box-shadow:var(--shadow);}
+  .ci-fskill span{font-size:13px;color:var(--ink);font-weight:600;}
+
+  /* data grid */
+  .ci-tablewrap{overflow-x:auto;border-radius:var(--r-md);border:1px solid var(--line);}
+  table.ci-grid{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;min-width:520px;}
+  table.ci-grid th,table.ci-grid td{padding:11px 12px;text-align:center;font-size:13px;border-bottom:1px solid var(--line);}
+  table.ci-grid thead th{background:#F6F8FB;color:var(--ink);font-family:var(--font-display);font-weight:800;font-size:12px;letter-spacing:.4px;position:sticky;top:0;}
+  table.ci-grid tbody th{text-align:left;font-weight:700;color:var(--ink);background:#fff;position:sticky;left:0;font-family:var(--font-body);}
+  table.ci-grid td.score{color:#fff;font-weight:800;}
+  .ci-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:11.5px;color:var(--ink-soft);font-weight:600;}
+  .ci-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .ci-legend i{width:12px;height:12px;border-radius:4px;display:inline-block;}
+
+  /* footer actions + disclaimer */
+  .ci-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .btn{border:0;font-family:var(--font-display);font-weight:800;cursor:pointer;border-radius:999px;
+    padding:14px 26px;font-size:15px;display:inline-flex;align-items:center;gap:9px;transition:transform .12s,box-shadow .12s;}
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--ci-grad);color:#fff;box-shadow:var(--shadow-lift);}
+  .btn-primary:hover{box-shadow:0 8px 22px rgba(162,63,208,.32);}
+  .btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
+  .btn-ghost:hover{border-color:#C9D2DE;}
+
+  .ci-disclaimer{display:flex;gap:12px;align-items:flex-start;background:#EEF6FB;border:1px solid #D4E7F2;
+    border-radius:var(--r-md);padding:14px 16px;color:#3E5A6B;font-size:12.5px;line-height:1.5;}
+  .ci-disclaimer svg{flex:none;color:var(--teal);margin-top:1px;}
+  .ci-disclaimer b{color:#274a5c;}
+
+  a:focus-visible,button:focus-visible,textarea:focus-visible{outline:2px solid var(--ci-magenta);outline-offset:2px;}
+  a:focus-visible,button:focus-visible,textarea:focus-visible{outline:2px solid var(--ci-magenta);outline-offset:2px;}
+
+  /* ---------- BOY sub-tabs (Personal Plan / Targeted Skill Profile) ---------- */
+  .ci-subtabs{display:flex;gap:26px;border-bottom:1px solid var(--line);padding:0 4px;margin-top:-4px;}
+  .ci-subtabs button{border:0;background:none;font-family:var(--font-display);font-weight:800;font-size:15px;
+    color:var(--ink-faint);padding:10px 2px 12px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;}
+  .ci-subtabs button:hover{color:var(--ink);}
+  .ci-subtabs button.active{color:var(--ci-magenta-deep);border-color:var(--ci-magenta);}
+  .ci-subtabs button i{font-style:normal;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;
+    background:#E1E7F0;color:var(--ink-faint);font-size:11px;font-weight:800;margin-right:8px;vertical-align:-3px;font-family:var(--font-display);}
+  .ci-subtabs button.active i{background:var(--ci-grad);color:#fff;}
+  .ci-subtabs button.done i{background:var(--band-a);color:#fff;}
+
+  /* ---------- Personal Plan: percentage bands ---------- */
+  .ci-bands{display:flex;flex-direction:column;gap:10px;}
+  .ci-bandrow{display:flex;align-items:center;gap:14px;justify-content:space-between;
+    background:#FAFBFD;border:1px solid var(--line);border-radius:var(--r-md);padding:10px 14px;}
+  .ci-bandrow .chip{color:#fff;font-family:var(--font-display);font-weight:800;font-size:13px;
+    padding:6px 14px;border-radius:999px;}
+  .ci-bandrow .rng{display:flex;align-items:center;gap:7px;color:var(--ink-soft);font-weight:700;}
+  .ci-bandrow .rng input{width:58px;text-align:center;border:1.5px solid var(--line);border-radius:9px;
+    padding:7px 6px;font-family:var(--font-body);font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink);}
+  .ci-bandrow .rng input:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(229,23,158,.12);}
+  .ci-bandrow .rng .pct{color:var(--ink-faint);}
+
+  /* ---------- Personal Plan: differentiation questions ---------- */
+  .ci-questions{display:flex;flex-direction:column;gap:18px;}
+  .ci-q{display:flex;flex-direction:column;gap:8px;}
+  .ci-q .q-label{font-weight:700;color:var(--ink);font-size:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+  .ci-q-tag,.q-tag{color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:3px 9px;border-radius:999px;}
+  .ci-q textarea{border:1.5px solid var(--line);border-radius:var(--r-md);padding:13px;font-family:var(--font-body);
+    font-size:13.5px;color:var(--ink);resize:vertical;min-height:74px;}
+  .ci-q textarea:focus,.ci-input:focus,.ci-select select:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(229,23,158,.12);}
+  .ci-q2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:640px){.ci-q2{grid-template-columns:1fr;}}
+  .ci-input{border:1.5px solid var(--line);border-radius:var(--r-md);padding:12px 13px;font-family:var(--font-body);font-size:13.5px;color:var(--ink);}
+  .ci-select{position:relative;}
+  .ci-select select{appearance:none;width:100%;border:1.5px solid var(--line);border-radius:var(--r-md);
+    padding:12px 36px 12px 13px;font-family:var(--font-body);font-size:13.5px;color:var(--ink);font-weight:600;background:#fff;cursor:pointer;}
+  .ci-select svg{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--ink-faint);pointer-events:none;}
+
+  /* ---------- Personal Plan: evidence sources ---------- */
+  .ci-sources{display:flex;flex-wrap:wrap;gap:10px;}
+  .ci-source{display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid var(--line);border-radius:999px;
+    padding:9px 16px 9px 12px;font-weight:700;color:var(--ink-soft);font-size:13px;cursor:pointer;transition:border-color .15s,background .15s,color .15s;}
+  .ci-source input{position:absolute;opacity:0;pointer-events:none;}
+  .ci-source .ic{width:14px;height:14px;border-radius:5px;flex:none;opacity:.35;transition:opacity .15s;}
+  .ci-source.sel{border-color:var(--ci-magenta);background:var(--pink-soft);color:var(--ink);}
+  .ci-source.sel .ic{opacity:1;}
+
+  /* ---------- BOY Data: two options ---------- */
+  .ci-dualopt{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:760px){.ci-dualopt{grid-template-columns:1fr;}}
+  .ci-optcard{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);
+    padding:26px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;transition:border-color .15s,box-shadow .15s;}
+  .ci-optcard:hover{border-color:#D9B9D0;box-shadow:var(--shadow-lift);}
+  .ci-opticon{width:48px;height:48px;border-radius:14px;color:#fff;display:grid;place-items:center;margin-bottom:4px;}
+  .ci-optcard h3{font-family:var(--font-display);font-size:17px;color:var(--ink);}
+  .ci-optcard p{color:var(--ink-soft);font-size:13.5px;line-height:1.5;flex:1;}
+  .ci-optcard .btn{margin-top:8px;}
+  .ci-tag-note,.ci-tag-tia{font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:999px;}
+  .ci-tag-note{background:#EEF6FB;color:#3E5A6B;}
+  .ci-tag-tia{background:#E6F4EC;color:#2E7D5B;}
+
+  /* ---------- Data dashboard ---------- */
+  .ci-source-chip{background:var(--ink);color:#fff;font-family:var(--font-body);font-weight:700;font-size:12px;
+    padding:7px 14px;border-radius:999px;}
+  .ci-benchtabs{display:inline-flex;gap:4px;background:#EEF1F6;border-radius:999px;padding:4px;}
+  .ci-benchtabs button{border:0;background:transparent;font-family:var(--font-body);font-weight:700;font-size:12.5px;
+    color:var(--ink-soft);padding:7px 18px;border-radius:999px;cursor:pointer;}
+  .ci-benchtabs button.active{background:#fff;color:var(--ink);box-shadow:var(--shadow);}
+  .ci-benchtabs button:disabled{opacity:.45;cursor:not-allowed;}
+  table.ci-grid td.level{font-family:var(--font-display);font-weight:800;font-size:12px;}
+
+  /* ---------- Placeholder / locked states ---------- */
+  .ci-soon{text-align:center;padding:48px 30px;}
+  .ci-soon-badge{display:inline-block;background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;
+    font-size:11px;letter-spacing:1px;text-transform:uppercase;padding:5px 14px;border-radius:999px;margin-bottom:14px;}
+  .ci-soon h2{font-size:22px;margin-bottom:8px;}
+  .ci-soon p{color:var(--ink-soft);max-width:52ch;margin:0 auto 22px;font-size:14px;}
+  .ci-lock-badge{width:52px;height:52px;border-radius:50%;background:#EEF1F6;color:var(--ink-faint);
+    display:grid;place-items:center;margin:0 auto 16px;}
+
+  /* locked step tab */
+  .ci-subtabs button.locked{opacity:.55;}
+  .ci-subtabs button.locked i{background:#E1E7F0;color:var(--ink-faint);}
+  .ci-subtabs button .lockdot{margin-left:6px;vertical-align:-2px;}
+
+  /* ---------- Targeted Skill Profile ---------- */
+  .ci-slo-banner{background:var(--ci-grad);color:#fff;border-radius:var(--r-lg);padding:24px 26px;box-shadow:var(--shadow-lift);}
+  .ci-slo-banner .eyebrow{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.85);}
+  .ci-slo-banner p{font-family:var(--font-display);font-weight:700;font-size:17px;line-height:1.5;margin-top:8px;text-wrap:balance;}
+  .ci-slo-banner small{display:block;margin-top:12px;color:rgba(255,255,255,.92);font-size:12.5px;font-weight:600;}
+
+  .ci-rubric{display:flex;flex-direction:column;gap:12px;}
+  .ci-level{display:grid;grid-template-columns:214px 1fr;border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
+  .ci-level .head{padding:16px 18px;color:#fff;display:flex;flex-direction:column;gap:9px;justify-content:center;}
+  .ci-level .head{gap:9px;}
+  .ci-level .head b{font-family:var(--font-display);font-size:15px;line-height:1.2;}
+  .ci-level .head .rng-badge{background:rgba(255,255,255,.26);border-radius:999px;padding:3px 11px;font-size:12px;
+    font-weight:700;width:max-content;font-variant-numeric:tabular-nums;}
+  .ci-level .head .rng-badge:empty{display:none;}
+  .ci-editbands{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:#fff;color:var(--ci-magenta-deep);
+    font-family:var(--font-body);font-weight:700;font-size:12.5px;padding:9px 15px;border-radius:999px;cursor:pointer;white-space:nowrap;flex:none;}
+  .ci-editbands:hover{border-color:var(--ci-magenta);background:var(--pink-soft);}
+
+  /* ---------- Modal ---------- */
+  .ci-modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:24px;}
+  .ci-modal[hidden]{display:none;}
+  .ci-modal-backdrop{position:absolute;inset:0;background:rgba(27,27,58,.45);backdrop-filter:blur(2px);}
+  .ci-modal-card{position:relative;background:#fff;border-radius:var(--r-lg);box-shadow:0 24px 60px rgba(27,27,58,.35);
+    width:min(560px,100%);max-height:90vh;overflow-y:auto;padding:26px;animation:ci-modalIn .18s ease;}
+  @keyframes ci-modalIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  .ci-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px;}
+  .ci-modal-head h2{font-size:20px;font-weight:800;}
+  .ci-modal-x{border:0;background:#F1F3F7;color:var(--ink-soft);width:32px;height:32px;border-radius:50%;
+    cursor:pointer;flex:none;display:grid;place-items:center;}
+  .ci-modal-x:hover{background:#E4E8EF;color:var(--ink);}
+  .ci-modal-sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:18px;line-height:1.5;}
+  .ci-modal-foot{display:flex;justify-content:flex-end;gap:12px;margin-top:22px;flex-wrap:wrap;}
+  .ci-modal-foot .btn{padding:12px 20px;font-size:14px;}
+  @media (prefers-reduced-motion:reduce){.ci-modal-card{animation:none;}}
+  .ci-level .desc{padding:16px 18px;font-size:13.5px;color:var(--ink-soft);line-height:1.55;background:#fff;transition:box-shadow .15s;}
+  .ci-level .desc:focus{outline:none;box-shadow:inset 0 0 0 2px var(--ci-magenta);}
+  .ci-level .desc:hover{background:#FCFBFD;}
+  @media(max-width:680px){.ci-level{grid-template-columns:1fr;}}
+
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+  @media(max-width:820px){.ci-app{grid-template-columns:1fr;}.ci-side{display:none;}}
+</style>
+
+<div class="ci-app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="ci-side">
+    <div class="ci-brand">
+      <svg class="ci-diamond" viewBox="0 0 40 40" aria-hidden="true">
+        <defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#F050C0"/><stop offset="1" stop-color="#C1148A"/></linearGradient></defs>
+        <path d="M20 2 L34 14 L20 38 L6 14 Z" fill="url(#dg)"/>
+        <path d="M20 2 L34 14 L20 20 Z" fill="#fff" opacity=".28"/>
+        <path d="M6 14 L20 20 L20 38 Z" fill="#000" opacity=".12"/>
+      </svg>
+      <span class="ci-brand-text"><span class="c1">Crystal</span><span class="c2">Instruction</span></span>
+    </div>
+
+    <nav class="ci-nav">
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M16 6a3 3 0 010 6M18 20a6 6 0 00-3-5"/></svg>Class Manager</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>ClearSheets</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>ClearLessons</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z"/></svg>ClassCade Showdown</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 3v4h6V3M8 12h8M8 16h8"/></svg>Curriculum Connect</a>
+      <a><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Crystal Reports</a>
+      <!-- NEW feature -->
+      <a class="new active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>T-TESS / SLO<span class="ci-chip-new">NEW</span></a>
+    </nav>
+
+    <div class="ci-mascot"><div>⭐</div></div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div class="ci-main">
+    <header class="ci-top">
+      <button class="ci-hamb" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <div class="ci-crumb">Home / <b>T-TESS / SLO Growth Tracker</b></div>
+      <div class="ci-save-status" id="saveStatus" role="status" aria-live="polite"></div>
+      <div class="ci-user">
+        <div class="ci-avatar">N</div>
+        <div class="who"><b>Teacher</b><small>Dallas Mavs Elementary</small></div>
+      </div>
+    </header>
+
+    <div class="ci-page">
+      <!-- Page head -->
+      <div class="ci-pagehead">
+        <div>
+          <h1>T-TESS / SLO Growth Tracker</h1>
+          <p>Build a Student Learning Objective, then collect a standards-aligned Body of Evidence across the year to support your appraisal in <b>Domains 2 &amp; 3</b>.</p>
+        </div>
+        <div class="ci-yeartag"><i></i>2026–27 School Year</div>
+      </div>
+
+      <!-- Resume banner (shown when a saved draft is restored on return) -->
+      <div class="ci-resume" id="resumeBanner" hidden>
+        <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 4v4h4"/><path d="M12 7v5l3 2"/></svg></span>
+        <div class="txt"><b>Welcome back —</b> your SLO setup is saved. When your pre-assessment data is in, pick up at Growth Targets. Nothing to redo.</div>
+        <button class="btn btn-primary" data-goto="targets">Continue to Growth Targets
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="ci-resume-x" id="resumeDismiss" aria-label="Dismiss">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+
+      <!-- Phase stepper -->
+      <div class="ci-stepper" aria-label="SLO progress">
+        <div class="ci-step current">
+          <span class="num">1</span>
+          <span class="lbl"><small>You are here</small><b>Create the SLO</b></span>
+          <span class="bar"></span>
+        </div>
+        <div class="ci-step">
+          <span class="num">2</span>
+          <span class="lbl"><small>Sep – Apr</small><b>Monitor Progress</b></span>
+          <span class="bar"></span>
+        </div>
+        <div class="ci-step">
+          <span class="num">3</span>
+          <span class="lbl"><small>End of year</small><b>Body of Evidence</b></span>
+        </div>
+      </div>
+
+      <!-- Sub tabs -->
+      <div class="ci-tabs" role="tablist">
+        <button role="tab" class="active">BOY Setup</button>
+        <button role="tab">Evidence Lockers</button>
+        <button role="tab">T-TESS Rubric</button>
+        <button role="tab">MOY</button>
+        <button role="tab">Progress</button>
+        <button role="tab">EOY</button>
+      </div>
+
+      <!-- BOY setup step nav (deck order: slides 9 → 10 → 11 → 12) -->
+      <div class="ci-subtabs" role="tablist">
+        <button class="active" data-view="skill"><i>1</i>Skill Statement</button>
+        <button data-view="tsp"><i>2</i>Skill Profile</button>
+        <button data-view="personal"><i>3</i>Personal Plan</button>
+        <button data-view="boydata"><i>4</i>BOY Data</button>
+        <button data-view="targets"><i>5</i>Growth Targets</button>
+      </div>
+
+      <!-- =================== STEP 1: SKILL STATEMENT (slide 9) =================== -->
+      <div id="view-plan">
+
+      <!-- ===== Section A: choose skill statement ===== -->
+      <section class="ci-card">
+        <header>
+          <span class="ci-sectionbadge">A</span>
+          <div><div class="ci-eyebrow">Step 1 · Create the SLO</div><h2>Choose your skill statement</h2></div>
+        </header>
+        <p class="sub">Pick a research-based goal with standards and assessments already built for you — or write your own and still use Crystal Instruction to collect and organize your evidence.</p>
+
+        <div class="ci-selrow">
+          <div class="ci-subject sel"><span class="ic">∑</span>Math</div>
+          <div class="ci-subject"><span class="ic">A</span>ELAR</div>
+          <div class="ci-subject"><span class="ic">🔬</span>Science</div>
+          <div class="ci-pill-select">Grade&nbsp;3
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+        </div>
+
+        <div class="ci-goals" id="goals">
+          <label class="ci-goal sel" data-skills="mult-div">
+            <span class="radio"></span>
+            <span class="txt">
+              <b>Multiplication &amp; Division Word Problems</b>
+              <small>Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.</small>
+              <span class="std"><span>3.4K</span><span>3.4H</span><span>3.4I</span><span>3.4J</span></span>
+            </span>
+          </label>
+          <label class="ci-goal" data-skills="place-value">
+            <span class="radio"></span>
+            <span class="txt">
+              <b>Place Value &amp; Number Relationships</b>
+              <small>Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding and multiple representations.</small>
+              <span class="std"><span>3.2A</span><span>3.2B</span><span>3.2C</span><span>3.2D</span></span>
+            </span>
+          </label>
+          <label class="ci-goal" data-skills="fractions">
+            <span class="radio"></span>
+            <span class="txt">
+              <b>Fractions as Numbers</b>
+              <small>Students will represent, compare, and reason about fractions as numbers on a number line and in real-world contexts.</small>
+              <span class="std"><span>3.3A</span><span>3.3D</span><span>3.3F</span><span>3.3H</span></span>
+            </span>
+          </label>
+          <label class="ci-goal" data-skills="own">
+            <span class="radio"></span>
+            <span class="txt">
+              <b>Write my own skill statement</b>
+              <small>Define a custom goal. You'll still get the full evidence locker, progress monitoring, and T-TESS reporting.</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="ci-own" id="ownBox" hidden style="margin-top:14px;">
+          <textarea placeholder="Students will…"></textarea>
+        </div>
+      </section>
+
+      <!-- ===== Section B: foundational skills ===== -->
+      <section class="ci-card">
+        <header>
+          <span class="ci-sectionbadge">B</span>
+          <div><div class="ci-eyebrow">Foundational skills</div><h2>What this goal is built on</h2></div>
+        </header>
+        <p class="sub">These are the underlying skills Crystal Instruction will monitor. Learning paths, ClearLessons, and ClearSheets are already aligned to each one.</p>
+
+        <div class="ci-foundation">
+          <p class="stmt" id="stmtEcho"><b>Selected goal:</b> Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.</p>
+          <div class="ci-fskills" id="fskills">
+            <div class="ci-fskill"><span class="dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span><span>Understanding multiplication &amp; division relationships</span></div>
+            <div class="ci-fskill"><span class="dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span><span>Applying place value &amp; number sense</span></div>
+            <div class="ci-fskill"><span class="dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span><span>Interpreting and modeling word problems</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Disclaimer -->
+      <div class="ci-disclaimer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <div><b>Crystal Instruction assessments are for progress-monitoring only.</b> They support your Body of Evidence but do not replace your district-approved assessments for TIA, and using this tool does not guarantee a TIA designation.</div>
+      </div>
+
+      <!-- Actions -->
+      <div class="ci-actions">
+        <button class="btn btn-primary" id="toTsp">Next steps
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="btn btn-ghost" id="saveDraftBtn">Save draft</button>
+        <span style="color:var(--ink-faint);font-size:12.5px;">Your progress saves automatically — you can leave and finish later.</span>
+      </div>
+
+      </div><!-- /view-plan -->
+
+      <!-- =================== VIEW 2: TARGETED SKILL PROFILE =================== -->
+      <div id="view-tsp" hidden>
+
+        <!-- SLO statement banner -->
+        <div class="ci-slo-banner">
+          <span class="eyebrow">Your SLO skill statement</span>
+          <p>Students will develop and demonstrate a comprehensive understanding of number relationships — including multiplication &amp; division concepts, place-value reasoning, and fraction representation — to accurately solve real-world mathematical problems.</p>
+          <small>Crystal Instruction provides a pre-assessment, two progress-monitoring checks, a MOY, and a post-assessment to track this goal.</small>
+        </div>
+
+        <!-- descriptor rubric -->
+        <section class="ci-card" style="margin-top:22px;">
+          <header style="justify-content:space-between;align-items:flex-start;">
+            <div><div class="ci-eyebrow">Skill Profile · Grade 3 Math</div><h2>Performance-level descriptors</h2></div>
+            <button class="ci-editbands" id="editBands" type="button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+              Edit percentage bands
+            </button>
+          </header>
+          <p class="sub">Each level's score range is set by your percentage bands. Tap any descriptor to customize the wording for your class — this becomes the shared language you'll use to place and grow students.</p>
+
+          <div class="ci-rubric">
+            <div class="ci-level">
+              <div class="head" style="background:var(--band-wa)"><b>Well Above Typical</b><span class="rng-badge" data-band="wa"></span></div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student independently and consistently solves one- and two-step multiplication and division word problems with a high level of accuracy and efficiency. Student flexibly applies multiple strategies, models, and equations to solve complex or unfamiliar problems and communicates mathematical reasoning using precise mathematical vocabulary and detailed explanations.</div>
+            </div>
+            <div class="ci-level">
+              <div class="head" style="background:var(--band-a)"><b>Above Typical</b><span class="rng-badge" data-band="a"></span></div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student accurately solves one- and two-step multiplication and division word problems using appropriate strategies, models, and equations. Student explains reasoning clearly, demonstrates strong conceptual understanding, and applies skills independently in most grade-level situations.</div>
+            </div>
+            <div class="ci-level">
+              <div class="head" style="background:var(--band-t)"><b>Typical</b><span class="rng-badge" data-band="t"></span></div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student solves grade-level multiplication and division word problems using strategies, models, or equations with occasional teacher support. Student demonstrates developing understanding of mathematical reasoning and can explain thinking, though accuracy or consistency may vary.</div>
+            </div>
+            <div class="ci-level">
+              <div class="head" style="background:var(--band-b)"><b>Below Typical</b><span class="rng-badge" data-band="b"></span></div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student demonstrates partial understanding of multiplication and division concepts and requires frequent support to solve word problems. Student may struggle to select effective strategies, represent problems with models, or clearly explain mathematical reasoning.</div>
+            </div>
+            <div class="ci-level">
+              <div class="head" style="background:var(--band-wb)"><b>Well Below Typical</b><span class="rng-badge" data-band="wb"></span></div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student demonstrates limited understanding of multiplication and division problem-solving concepts and is unable to consistently solve grade-level word problems, even with significant teacher support. Student has difficulty using models, strategies, equations, and mathematical language to explain thinking.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- info + actions -->
+        <div class="ci-disclaimer" style="margin-top:22px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div>Your percentage bands and descriptors become the shared scale for this SLO. You'll finalize and <b>lock everything after you build your Personal Plan</b> — so you can still adjust the wording and cut points until then.</div>
+        </div>
+
+        <div class="ci-actions" style="margin-top:20px;">
+          <button class="btn btn-ghost" data-goto="skill">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back
+          </button>
+          <button class="btn btn-primary" data-goto="personal">Continue to Personal Plan
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+
+      </div><!-- /view-tsp -->
+
+      <!-- =================== STEP 3: PERSONAL PLAN (slide 11) =================== -->
+      <div id="view-personal" hidden>
+
+        <!-- Differentiation plan -->
+        <section class="ci-card">
+          <header>
+            <div><div class="ci-eyebrow">Your differentiation plan</div><h2>How you'll grow every group</h2></div>
+          </header>
+          <p class="sub">A short plan for how you'll reach your highest and lowest groups. This travels with your SLO and becomes part of your Body of Evidence.</p>
+
+          <div class="ci-questions">
+            <label class="ci-q">
+              <span class="q-label"><span class="q-tag" style="background:var(--band-wa)">Highest group</span> How will you differentiate instruction for your highest-performing students?</span>
+              <textarea placeholder="e.g. Extension tasks, multi-step problems, peer-teaching roles…"></textarea>
+            </label>
+            <label class="ci-q">
+              <span class="q-label"><span class="q-tag" style="background:var(--band-wb)">Lowest group</span> How will you differentiate instruction for your lowest-performing students?</span>
+              <textarea placeholder="e.g. Small-group reteach with Snap Lessons, manipulatives, scaffolded models…"></textarea>
+            </label>
+            <div class="ci-q2">
+              <label class="ci-q">
+                <span class="q-label">How often will you monitor progress?</span>
+                <div class="ci-select">
+                  <select>
+                    <option>Every 2 weeks</option>
+                    <option selected>Every 3 weeks</option>
+                    <option>Monthly</option>
+                    <option>Each grading period</option>
+                  </select>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+              </label>
+              <label class="ci-q">
+                <span class="q-label">Who else provides student support for this goal?</span>
+                <input class="ci-input" type="text" placeholder="e.g. Interventionist, co-teacher, tutor, family…">
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- Anticipatory Body of Evidence -->
+        <section class="ci-card" style="margin-top:22px;">
+          <header>
+            <div><div class="ci-eyebrow">Anticipatory Body of Evidence</div><h2>Where your evidence will come from</h2></div>
+          </header>
+          <p class="sub">Pick the Crystal Instruction sources you plan to pull evidence from. Anything you tag as a <b>T-TESS Assignment</b> during the year lands automatically in each student's evidence locker.</p>
+
+          <div class="ci-sources">
+            <label class="ci-source sel"><input type="checkbox" checked><span class="ic" style="background:var(--teal)"></span>Learning Paths</label>
+            <label class="ci-source sel"><input type="checkbox" checked><span class="ic" style="background:var(--ci-magenta)"></span>ClearLessons</label>
+            <label class="ci-source sel"><input type="checkbox" checked><span class="ic" style="background:var(--ci-purple)"></span>ClearSheets</label>
+            <label class="ci-source"><input type="checkbox"><span class="ic" style="background:#5A8DEE"></span>Snap Lessons</label>
+            <label class="ci-source"><input type="checkbox"><span class="ic" style="background:var(--band-b)"></span>ClassCade Showdown</label>
+          </div>
+        </section>
+
+        <!-- disclaimer + actions -->
+        <div class="ci-disclaimer" style="margin-top:22px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.4 1 6.7L12 17l-5.5 3 1-6.7L3 8.9 9 8z"/></svg>
+          <div>Your Personal Plan is developed at the beginning of the year. Next you'll bring in your BOY data, then set each student's growth targets and <b>Accept &amp; Lock</b> your SLO with your appraiser.</div>
+        </div>
+
+        <div class="ci-actions" style="margin-top:20px;">
+          <button class="btn btn-ghost" data-goto="tsp">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back
+          </button>
+          <button class="btn btn-primary" data-goto="boydata">Continue: bring in BOY data
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+
+      </div><!-- /view-personal -->
+
+      <!-- =================== STEP 4: BOY DATA =================== -->
+      <div id="view-boydata" hidden>
+
+        <!-- State A: choose how to bring in data -->
+        <div id="boyChoose">
+          <div class="ci-pagehead" style="margin-bottom:18px;">
+            <div>
+              <div class="ci-eyebrow">Beginning-of-year data</div>
+              <h2 style="font-size:22px;">Bring in your BOY data</h2>
+              <p>You'll set each student's growth target from real starting data. Choose how to bring it in — you can do both.</p>
+            </div>
+          </div>
+
+          <div class="ci-dualopt">
+            <div class="ci-optcard">
+              <span class="ci-opticon" style="background:var(--ci-grad)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </span>
+              <h3>Administer BOY Assessment</h3>
+              <p>Send Crystal Instruction's pre-assessment for this SLO to your students. Scores flow back here as they finish.</p>
+              <span class="ci-tag-note">Monitoring-only — supports your evidence, not your TIA score</span>
+              <button class="btn btn-primary" data-boy="administer">Send to students
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+              </button>
+            </div>
+            <div class="ci-optcard">
+              <span class="ci-opticon" style="background:var(--teal)">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              </span>
+              <h3>Input my BOY Scores</h3>
+              <p>Already have NWEA MAP, a district benchmark, or other approved BOY data? Enter or import it here.</p>
+              <span class="ci-tag-tia">✓ Recommended for TIA</span>
+              <button class="btn btn-primary" data-boy="input">Enter scores
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="ci-actions" style="margin-top:22px;">
+            <button class="btn btn-ghost" data-goto="personal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back
+            </button>
+          </div>
+        </div>
+
+        <!-- State B: data is in → student data dashboard -->
+        <div id="boyDashboard" hidden>
+          <section class="ci-card">
+            <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div><div class="ci-eyebrow">Student data dashboard</div><h2>BOY scores by standard</h2></div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <span class="ci-source-chip" id="boySourceChip">Source: —</span>
+                <button class="ci-editbands" id="changeSource" type="button">Change data source</button>
+              </div>
+            </header>
+
+            <div class="ci-benchtabs">
+              <button class="active">BOY</button>
+              <button disabled title="Available at mid-year">MOY</button>
+              <button disabled title="Available at end of year">EOY</button>
+            </div>
+
+            <div class="ci-tablewrap" style="margin-top:14px;">
+              <table class="ci-grid">
+                <thead><tr><th style="text-align:left;">Student</th><th>3.4K</th><th>3.4H</th><th>3.4I</th><th>3.4J</th><th>Level</th></tr></thead>
+                <tbody id="boyGridBody"></tbody>
+              </table>
+            </div>
+            <div class="ci-legend">
+              <span><i style="background:var(--band-wb)"></i>Well Below</span>
+              <span><i style="background:var(--band-b)"></i>Below</span>
+              <span><i style="background:var(--band-t)"></i>Typical</span>
+              <span><i style="background:var(--band-a)"></i>Above</span>
+              <span><i style="background:var(--band-wa)"></i>Well Above</span>
+            </div>
+
+            <div class="ci-disclaimer" style="margin-top:18px;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+              <div>Sending the assessment to students and collecting their responses happens in the <b>Student Dashboard</b> — a connected project we'll build separately. Here you'll see results and set growth targets.</div>
+            </div>
+          </section>
+
+          <div class="ci-actions" style="margin-top:20px;">
+            <button class="btn btn-ghost" data-goto="personal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back
+            </button>
+            <button class="btn btn-primary" data-goto="targets">Set growth targets
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /view-boydata -->
+
+      <!-- =================== STEP 5: GROWTH TARGETS (slide 12) =================== -->
+      <div id="view-targets" hidden>
+
+        <!-- Locked: no BOY data yet -->
+        <section class="ci-card ci-soon" id="targetsLocked">
+          <div class="ci-lock-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+          </div>
+          <h2>Growth targets unlock with your data</h2>
+          <p>You set each student's expected growth from their real starting point — so you'll pick this up once your BOY data is in.</p>
+          <button class="btn btn-primary" data-goto="boydata">Bring in BOY data
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </section>
+
+        <!-- Ready: data is in (sliders build comes next) -->
+        <section class="ci-card ci-soon" id="targetsReady" hidden>
+          <div class="ci-soon-badge">Next build</div>
+          <h2>Set expected growth targets</h2>
+          <p>Your BOY data is in. This is where you'll set each student's pre-test&nbsp;→&nbsp;target with sliders (slide 12), then send the SLO for admin review &amp; <b>Accept &amp; Lock</b> for the year.</p>
+          <button class="btn btn-ghost" data-goto="boydata">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to data
+          </button>
+        </section>
+
+      </div><!-- /view-targets -->
+
+      <!-- =================== PERCENTAGE-BANDS MODAL (Skill Profile step) =================== -->
+      <div class="ci-modal" id="bandsModal" hidden>
+        <div class="ci-modal-backdrop" data-close></div>
+        <div class="ci-modal-card" role="dialog" aria-modal="true" aria-labelledby="bandsTitle">
+          <div class="ci-modal-head">
+            <div>
+              <div class="ci-eyebrow">Skill Profile · set your scale</div>
+              <h2 id="bandsTitle">Set your percentage bands</h2>
+            </div>
+            <button class="ci-modal-x" data-close aria-label="Close">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            </button>
+          </div>
+          <p class="ci-modal-sub">These cut points decide which performance level each score falls into. Set them for your class, then review how they map to your descriptors. You can adjust until you lock your SLO.</p>
+          <div class="ci-bands" id="modalBands">
+            <div class="ci-bandrow"><span class="chip" style="background:var(--band-wb)">Well Below Typical</span>
+              <div class="rng"><input type="number" value="0" data-band="wb" data-edge="lo" aria-label="Well Below low"><span>–</span><input type="number" value="54" data-band="wb" data-edge="hi" aria-label="Well Below high"><span class="pct">%</span></div></div>
+            <div class="ci-bandrow"><span class="chip" style="background:var(--band-b)">Below Typical</span>
+              <div class="rng"><input type="number" value="55" data-band="b" data-edge="lo"><span>–</span><input type="number" value="69" data-band="b" data-edge="hi"><span class="pct">%</span></div></div>
+            <div class="ci-bandrow"><span class="chip" style="background:var(--band-t)">Typical</span>
+              <div class="rng"><input type="number" value="70" data-band="t" data-edge="lo"><span>–</span><input type="number" value="84" data-band="t" data-edge="hi"><span class="pct">%</span></div></div>
+            <div class="ci-bandrow"><span class="chip" style="background:var(--band-a)">Above Typical</span>
+              <div class="rng"><input type="number" value="85" data-band="a" data-edge="lo"><span>–</span><input type="number" value="94" data-band="a" data-edge="hi"><span class="pct">%</span></div></div>
+            <div class="ci-bandrow"><span class="chip" style="background:var(--band-wa)">Well Above Typical</span>
+              <div class="rng"><input type="number" value="95" data-band="wa" data-edge="lo"><span>–</span><input type="number" value="100" data-band="wa" data-edge="hi"><span class="pct">%</span></div></div>
+          </div>
+          <div class="ci-modal-foot">
+            <button class="btn btn-ghost" data-close>Cancel</button>
+            <button class="btn btn-primary" id="saveBands">Save bands &amp; view descriptors</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // --- goal selection ---
+  var skillSets={
+    'mult-div':{stmt:"Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.",
+      skills:["Understanding multiplication & division relationships","Applying place value & number sense","Interpreting and modeling word problems"]},
+    'place-value':{stmt:"Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding and multiple representations.",
+      skills:["Understanding base-ten place value","Comparing & ordering whole numbers","Representing numbers multiple ways"]},
+    'fractions':{stmt:"Students will represent, compare, and reason about fractions as numbers on a number line and in real-world contexts.",
+      skills:["Fractions as numbers on a number line","Comparing fractions with reasoning","Modeling fractions in real-world contexts"]},
+    'own':{stmt:"You're writing a custom skill statement — Crystal Instruction will still align learning paths and evidence once you choose your standards.",skills:[]}
+  };
+  var goals=document.querySelectorAll('.ci-goal');
+  var ownBox=document.getElementById('ownBox');
+  var echo=document.getElementById('stmtEcho');
+  var fs=document.getElementById('fskills');
+  function selectGoal(g){
+    goals.forEach(function(x){x.classList.remove('sel');});
+    g.classList.add('sel');
+    var key=g.getAttribute('data-skills');
+    ownBox.hidden=(key!=='own');
+    var data=skillSets[key];
+    echo.innerHTML='<b>Selected goal:</b> '+data.stmt;
+    fs.innerHTML='';
+    if(data.skills.length===0){
+      fs.innerHTML='<div class="ci-fskill"><span class="dot">✎</span><span>Choose your aligned standards after launching setup.</span></div>';
+    } else {
+      data.skills.forEach(function(s){
+        fs.innerHTML+='<div class="ci-fskill"><span class="dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span><span>'+s+'</span></div>';
+      });
+    }
+  }
+  goals.forEach(function(g){g.addEventListener('click',function(){selectGoal(g); scheduleSave();});});
+
+  // --- subject toggle (visual only) ---
+  document.querySelectorAll('.ci-subject').forEach(function(s){
+    s.addEventListener('click',function(){
+      document.querySelectorAll('.ci-subject').forEach(function(x){x.classList.remove('sel');});
+      s.classList.add('sel'); scheduleSave();
+    });
+  });
+
+  // --- BOY setup step navigation (Skill → Skill Profile → Personal Plan → Growth Targets) ---
+  var STEPS=['skill','tsp','personal','boydata','targets'];
+  var VIEW={skill:'view-plan',tsp:'view-tsp',personal:'view-personal',boydata:'view-boydata',targets:'view-targets'};
+  var subtabs=document.querySelectorAll('.ci-subtabs button');
+  var currentStep='skill';
+  function show(step){
+    currentStep=step; scheduleSave();
+    STEPS.forEach(function(s){document.getElementById(VIEW[s]).hidden=(s!==step);});
+    var idx=STEPS.indexOf(step);
+    subtabs.forEach(function(b){
+      var s=b.getAttribute('data-view');
+      b.classList.toggle('active',s===step);
+      b.classList.toggle('done',STEPS.indexOf(s)<idx);
+    });
+    applyDataState();
+    document.querySelector('.ci-page').scrollIntoView({behavior:'smooth',block:'start'});
+    // first time the teacher reaches the Skill Profile, prompt them to set bands
+    if(step==='tsp' && !bandsShownOnce){bandsShownOnce=true; openBands();}
+  }
+
+  // --- BOY data state (gates Growth Targets) ---
+  var hasData=false, boySource='';
+  var BANDVAR={wb:'--band-wb',b:'--band-b',t:'--band-t',a:'--band-a',wa:'--band-wa'};
+  var BANDNAME={wb:'Well Below',b:'Below',t:'Typical',a:'Above',wa:'Well Above'};
+  var boyStudents=[["Kennady",20,35,0,56],["Jeremy",0,25,0,34],["Stacey",14,83,25,31],
+    ["Sophie",36,52,76,68],["Rebecca",95,74,14,31],["Lauren",5,92,24,37],
+    ["Emily",0,62,89,22],["Erin",0,0,24,74]];
+  function classifyBand(v){
+    var b=readBands(); v=+v; var order=['wb','b','t','a','wa'];
+    for(var k=0;k<order.length;k++){var bk=order[k]; if(b[bk] && v>=(+b[bk].lo) && v<=(+b[bk].hi)) return bk;}
+    return 'wb';
+  }
+  function buildGrid(){
+    var tb=document.getElementById('boyGridBody'); if(!tb) return; tb.innerHTML='';
+    boyStudents.forEach(function(r){
+      var tr=document.createElement('tr');
+      var th=document.createElement('th'); th.textContent=r[0]; tr.appendChild(th);
+      var sum=0;
+      for(var i=1;i<=4;i++){
+        var v=r[i]; sum+=v; var bk=classifyBand(v);
+        var td=document.createElement('td'); td.className='score';
+        td.style.background='var('+BANDVAR[bk]+')'; td.textContent=v+'%'; tr.appendChild(td);
+      }
+      var abk=classifyBand(Math.round(sum/4));
+      var lt=document.createElement('td'); lt.className='level';
+      lt.style.color='var('+BANDVAR[abk]+')'; lt.textContent=BANDNAME[abk]; tr.appendChild(lt);
+      tb.appendChild(tr);
+    });
+  }
+  function applyDataState(){
+    if(hasData) buildGrid();
+    var choose=document.getElementById('boyChoose'), dash=document.getElementById('boyDashboard');
+    if(choose&&dash){ choose.hidden=hasData; dash.hidden=!hasData; }
+    var tl=document.getElementById('targetsLocked'), tr=document.getElementById('targetsReady');
+    if(tl&&tr){ tl.hidden=hasData; tr.hidden=!hasData; }
+    var tab=document.querySelector('.ci-subtabs button[data-view="targets"]');
+    if(tab) tab.classList.toggle('locked',!hasData);
+    var chip=document.getElementById('boySourceChip'); if(chip&&boySource) chip.textContent='Source: '+boySource;
+  }
+  function setData(source){ hasData=true; boySource=source; applyDataState(); scheduleSave(); }
+  document.querySelectorAll('[data-boy]').forEach(function(b){
+    b.addEventListener('click',function(){
+      setData(b.getAttribute('data-boy')==='input' ? 'NWEA MAP · BOY' : 'Crystal Instruction Pre-Assessment · BOY');
+    });
+  });
+  var changeSrc=document.getElementById('changeSource');
+  if(changeSrc) changeSrc.addEventListener('click',function(){
+    document.getElementById('boyChoose').hidden=false; document.getElementById('boyDashboard').hidden=true;
+  });
+  // step-nav tabs
+  subtabs.forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-view'));});});
+  // any button with data-goto advances/returns
+  document.getElementById('toTsp').addEventListener('click',function(){show('tsp');});
+  document.querySelectorAll('[data-goto]').forEach(function(b){
+    b.addEventListener('click',function(){show(b.getAttribute('data-goto'));});
+  });
+
+  // --- Body-of-Evidence source toggles (visual) ---
+  document.querySelectorAll('.ci-source input').forEach(function(cb){
+    cb.addEventListener('change',function(){cb.closest('.ci-source').classList.toggle('sel',cb.checked);});
+  });
+
+  // --- Percentage-bands modal (lives on the Skill Profile step) ---
+  var bandsShownOnce=false;
+  var modal=document.getElementById('bandsModal');
+  function readBands(){
+    var o={};
+    document.querySelectorAll('#modalBands input').forEach(function(i){
+      var b=i.getAttribute('data-band'); o[b]=o[b]||{}; o[b][i.getAttribute('data-edge')]=i.value;
+    });
+    return o;
+  }
+  function updateBadges(){
+    var o=readBands();
+    document.querySelectorAll('.rng-badge').forEach(function(el){
+      var b=el.getAttribute('data-band');
+      if(o[b]) el.textContent=o[b].lo+'–'+o[b].hi+'%';
+    });
+  }
+  function openBands(){modal.hidden=false; document.body.style.overflow='hidden';}
+  function closeBands(){modal.hidden=true; document.body.style.overflow='';}
+  document.getElementById('editBands').addEventListener('click',openBands);
+  document.getElementById('saveBands').addEventListener('click',function(){updateBadges(); closeBands(); scheduleSave();});
+  modal.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',closeBands);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape' && !modal.hidden) closeBands();});
+  updateBadges(); // seed the descriptor range badges from the default bands
+
+  /* ============================================================
+     DRAFT PERSISTENCE
+     Mockup uses localStorage so the demo survives reload / return.
+     PRODUCTION: replace save()/loadDraft() with API calls that
+     persist this SLO draft per teacher, so they resume with the
+     Personal Plan intact and only add per-student growth targets
+     once their pre-assessment data is in.
+     ============================================================ */
+  var KEY='ci-slo-draft-v1';
+  var statusEl=document.getElementById('saveStatus');
+  var saveTimer=null;
+
+  function collect(){
+    var bands={};
+    document.querySelectorAll('#modalBands input').forEach(function(i){
+      var b=i.getAttribute('data-band'); bands[b]=bands[b]||{}; bands[b][i.getAttribute('data-edge')]=i.value;
+    });
+    var desc={};
+    document.querySelectorAll('#view-tsp .ci-level').forEach(function(l){
+      desc[l.querySelector('.rng-badge').getAttribute('data-band')]=l.querySelector('.desc').innerHTML;
+    });
+    var sources={};
+    document.querySelectorAll('.ci-source').forEach(function(s){sources[s.textContent.trim()]=s.querySelector('input').checked;});
+    var sel=document.querySelector('.ci-goal.sel');
+    var diffTa=document.querySelectorAll('#view-personal .ci-q textarea');
+    return {
+      subject:((document.querySelector('.ci-subject.sel')||{}).textContent||'').trim(),
+      goalKey:sel?sel.getAttribute('data-skills'):null,
+      custom:(document.querySelector('#ownBox textarea')||{}).value||'',
+      bands:bands, descriptors:desc, sources:sources,
+      diff:{
+        highest:diffTa[0]?diffTa[0].value:'',
+        lowest:diffTa[1]?diffTa[1].value:'',
+        cadence:(document.querySelector('#view-personal select')||{}).value||'',
+        support:(document.querySelector('#view-personal .ci-input')||{}).value||''
+      },
+      hasData:hasData, boySource:boySource,
+      step:currentStep
+    };
+  }
+  function setStatus(cls,text){ if(!statusEl)return; statusEl.className='ci-save-status '+cls; statusEl.textContent=text; }
+  function save(){
+    try{ localStorage.setItem(KEY,JSON.stringify(collect())); setStatus('saved','✓ All changes saved'); }
+    catch(e){ /* storage unavailable — production API would handle this */ }
+  }
+  function scheduleSave(){ setStatus('saving','Saving…'); clearTimeout(saveTimer); saveTimer=setTimeout(save,500); }
+
+  function loadDraft(){
+    var raw; try{ raw=localStorage.getItem(KEY); }catch(e){ return false; }
+    if(!raw) return false;
+    var d; try{ d=JSON.parse(raw); }catch(e){ return false; }
+    if(d.goalKey){ var g=document.querySelector('.ci-goal[data-skills="'+d.goalKey+'"]'); if(g) selectGoal(g); }
+    if(d.custom){ var ta=document.querySelector('#ownBox textarea'); if(ta) ta.value=d.custom; }
+    if(d.subject){ document.querySelectorAll('.ci-subject').forEach(function(s){s.classList.toggle('sel',s.textContent.trim()===d.subject);}); }
+    if(d.bands){ document.querySelectorAll('#modalBands input').forEach(function(i){
+      var b=i.getAttribute('data-band'),e=i.getAttribute('data-edge'); if(d.bands[b]&&d.bands[b][e]!=null) i.value=d.bands[b][e]; }); }
+    updateBadges();
+    if(d.descriptors){ document.querySelectorAll('#view-tsp .ci-level').forEach(function(l){
+      var b=l.querySelector('.rng-badge').getAttribute('data-band'); if(d.descriptors[b]!=null) l.querySelector('.desc').innerHTML=d.descriptors[b]; }); }
+    if(d.diff){ var dt=document.querySelectorAll('#view-personal .ci-q textarea');
+      if(dt[0]) dt[0].value=d.diff.highest||''; if(dt[1]) dt[1].value=d.diff.lowest||'';
+      var sc=document.querySelector('#view-personal select'); if(sc&&d.diff.cadence) sc.value=d.diff.cadence;
+      var ip=document.querySelector('#view-personal .ci-input'); if(ip) ip.value=d.diff.support||''; }
+    if(d.sources){ document.querySelectorAll('.ci-source').forEach(function(s){
+      var cb=s.querySelector('input'), name=s.textContent.trim();
+      if(d.sources[name]!=null){ cb.checked=d.sources[name]; s.classList.toggle('sel',cb.checked); } }); }
+    hasData=!!d.hasData; boySource=d.boySource||'';
+    bandsShownOnce=true;              // don't re-prompt the bands modal on resume
+    if(d.step) show(d.step); else applyDataState();
+    setStatus('saved','✓ All changes saved');
+    return true;
+  }
+
+  // autosave on any field edit (inputs, selects, checkboxes, contenteditable descriptors)
+  document.addEventListener('input',scheduleSave,true);
+  document.addEventListener('change',scheduleSave,true);
+
+  // explicit Save draft button
+  var saveDraftBtn=document.getElementById('saveDraftBtn');
+  if(saveDraftBtn) saveDraftBtn.addEventListener('click',function(){ clearTimeout(saveTimer); save(); });
+
+  // restore on load; if a draft existed, offer to resume
+  if(loadDraft()){
+    var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
+    var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
+  } else {
+    applyDataState(); // fresh start: reflect the locked Growth Targets tab
+  }
+})();
+</script>
