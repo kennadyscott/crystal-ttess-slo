@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crystal Instruction — T-TESS / SLO Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
      Crystal Instruction — T-TESS / SLO Generator
@@ -41,8 +44,10 @@
     --shadow:0 1px 2px rgba(27,27,58,.04),0 8px 24px rgba(27,27,58,.06);
     --shadow-lift:0 6px 18px rgba(162,63,208,.18);
 
-    --font-display:"SF Pro Rounded","Segoe UI Rounded",ui-rounded,"Baloo 2","Quicksand",system-ui,sans-serif;
-    --font-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    /* Crystal Instruction UI font is Inter (from production teacher.css). */
+    --font-display:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-logo:"Baloo 2","SF Pro Rounded",ui-rounded,"Quicksand",system-ui,sans-serif; /* wordmark only, echoes the logo */
   }
 
   *{box-sizing:border-box;}
@@ -70,7 +75,7 @@
   }
   .ci-brand{display:flex;align-items:center;gap:10px;padding:2px 6px 20px;}
   .ci-diamond{width:30px;height:33px;flex:none;}
-  .ci-brand-text{font-family:var(--font-display);font-weight:800;line-height:1;}
+  .ci-brand-text{font-family:var(--font-logo);font-weight:800;line-height:1;}
   .ci-brand-text .c1{color:var(--ci-magenta);font-size:20px;display:block;}
   .ci-brand-text .c2{color:var(--ink);font-size:14px;letter-spacing:.5px;display:block;}
 
