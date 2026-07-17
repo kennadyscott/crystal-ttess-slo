@@ -310,6 +310,11 @@
   .ci-source .ic{width:14px;height:14px;border-radius:5px;flex:none;opacity:.35;transition:opacity .15s;}
   .ci-source.sel{border-color:var(--ci-magenta);background:var(--pink-soft);color:var(--ink);}
   .ci-source.sel .ic{opacity:1;}
+  .ci-otherbox{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+  .ci-otherbox-label{font-weight:700;color:var(--ink);font-size:13px;}
+  .ci-otherbox textarea{border:1.5px solid var(--line);border-radius:var(--r-md);padding:13px;
+    font-family:var(--font-body);font-size:13.5px;color:var(--ink);resize:vertical;min-height:70px;}
+  .ci-otherbox textarea:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
 
   /* ---------- BOY Data: two options ---------- */
   .ci-dualopt{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
@@ -754,6 +759,11 @@
             <label class="ci-source"><input type="checkbox"><span class="ic" style="background:#5A8DEE"></span>Snap Lessons</label>
             <label class="ci-source"><input type="checkbox"><span class="ic" style="background:var(--band-b)"></span>ClassCade Showdown</label>
           </div>
+
+          <label class="ci-otherbox">
+            <span class="ci-otherbox-label">Other sources of evidence</span>
+            <textarea id="otherSources" placeholder="Add any evidence not listed above — e.g. student journals, conferring notes, project rubrics, work samples, district benchmarks…"></textarea>
+          </label>
         </section>
 
         <!-- disclaimer + actions -->
@@ -1212,6 +1222,7 @@
         cadence:(document.querySelector('#view-personal select')||{}).value||'',
         support:(document.querySelector('#view-personal .ci-input')||{}).value||''
       },
+      otherSources:(document.getElementById('otherSources')||{}).value||'',
       hasData:hasData, boySource:boySource,
       targets:(function(){var t={};document.querySelectorAll('#targetRows input[type=range]').forEach(function(s){t[s.getAttribute('data-name')]=s.value;});return t;})(),
       approved:(document.getElementById('adminApproved')||{}).checked||false,
@@ -1242,6 +1253,7 @@
       if(dt[0]) dt[0].value=d.diff.highest||''; if(dt[1]) dt[1].value=d.diff.lowest||'';
       var sc=document.querySelector('#view-personal select'); if(sc&&d.diff.cadence) sc.value=d.diff.cadence;
       var ip=document.querySelector('#view-personal .ci-input'); if(ip) ip.value=d.diff.support||''; }
+    if(d.otherSources!=null){ var os=document.getElementById('otherSources'); if(os) os.value=d.otherSources; }
     if(d.sources){ document.querySelectorAll('.ci-source').forEach(function(s){
       var cb=s.querySelector('input'), name=s.textContent.trim();
       if(d.sources[name]!=null){ cb.checked=d.sources[name]; s.classList.toggle('sel',cb.checked); } }); }
