@@ -339,6 +339,9 @@
   .ci-benchtabs button.active{background:#fff;color:var(--ink);box-shadow:var(--shadow);}
   .ci-benchtabs button:disabled{opacity:.45;cursor:not-allowed;}
   table.ci-grid td.level{font-family:var(--font-display);font-weight:800;font-size:12px;}
+  .ci-scoreinput{width:88px;text-align:center;border:1.5px solid var(--line);border-radius:8px;padding:7px 6px;
+    font-family:var(--font-body);font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink);}
+  .ci-scoreinput:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
 
   /* ---------- Placeholder / locked states ---------- */
   .ci-soon{text-align:center;padding:48px 30px;}
@@ -561,47 +564,16 @@
         <p class="sub">Pick a research-based goal with standards and assessments already built for you — or write your own and still use Crystal Instruction to collect and organize your evidence.</p>
 
         <div class="ci-selrow">
-          <div class="ci-subject sel"><span class="ic">∑</span>Math</div>
-          <div class="ci-subject"><span class="ic">A</span>ELAR</div>
-          <div class="ci-subject"><span class="ic">🔬</span>Science</div>
+          <div class="ci-subject sel" data-subject="Math"><span class="ic">∑</span>Math</div>
+          <div class="ci-subject" data-subject="ELAR"><span class="ic">A</span>ELAR</div>
+          <div class="ci-subject" data-subject="Science"><span class="ic">🔬</span>Science</div>
           <div class="ci-pill-select">Grade&nbsp;3
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
           </div>
         </div>
 
-        <div class="ci-goals" id="goals">
-          <label class="ci-goal sel" data-skills="mult-div">
-            <span class="radio"></span>
-            <span class="txt">
-              <b>Multiplication &amp; Division Word Problems</b>
-              <small>Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.</small>
-              <span class="std"><span>3.4K</span><span>3.4H</span><span>3.4I</span><span>3.4J</span></span>
-            </span>
-          </label>
-          <label class="ci-goal" data-skills="place-value">
-            <span class="radio"></span>
-            <span class="txt">
-              <b>Place Value &amp; Number Relationships</b>
-              <small>Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding and multiple representations.</small>
-              <span class="std"><span>3.2A</span><span>3.2B</span><span>3.2C</span><span>3.2D</span></span>
-            </span>
-          </label>
-          <label class="ci-goal" data-skills="fractions">
-            <span class="radio"></span>
-            <span class="txt">
-              <b>Fractions as Numbers</b>
-              <small>Students will represent, compare, and reason about fractions as numbers on a number line and in real-world contexts.</small>
-              <span class="std"><span>3.3A</span><span>3.3D</span><span>3.3F</span><span>3.3H</span></span>
-            </span>
-          </label>
-          <label class="ci-goal" data-skills="own">
-            <span class="radio"></span>
-            <span class="txt">
-              <b>Write my own skill statement</b>
-              <small>Define a custom goal. You'll still get the full evidence locker, progress monitoring, and T-TESS reporting.</small>
-            </span>
-          </label>
-        </div>
+        <!-- goal cards render here per selected subject -->
+        <div class="ci-goals" id="goals"></div>
 
         <div class="ci-own" id="ownBox" hidden style="margin-top:14px;">
           <textarea placeholder="Students will…"></textarea>
@@ -828,6 +800,51 @@
           </div>
         </div>
 
+        <!-- State A2: enter scores manually -->
+        <div id="boyEntry" hidden>
+          <section class="ci-card">
+            <header><div><div class="ci-eyebrow">Input BOY scores</div><h2>Enter your data</h2></div></header>
+
+            <label class="ci-otherbox" style="margin:4px 0 22px;">
+              <span class="ci-otherbox-label">Where are these scores from?</span>
+              <input class="ci-input" id="entrySource" type="text" placeholder="e.g. NWEA MAP, district benchmark, unit pre-test">
+            </label>
+
+            <div class="ci-eyebrow" style="margin-bottom:6px;">Set your color bands</div>
+            <p class="sub" style="margin-bottom:14px;">Decide what score range each level covers — this color-codes your data using the same levels as your Skill Profile. Enter whatever scale your data uses (percent, RIT, raw points…).</p>
+            <div class="ci-bands" id="entryBands">
+              <div class="ci-bandrow"><span class="chip" style="background:var(--band-wb)">Well Below Typical</span>
+                <div class="rng"><input type="number" value="0" data-eband="wb" data-edge="lo" aria-label="Well Below low"><span>–</span><input type="number" value="54" data-eband="wb" data-edge="hi" aria-label="Well Below high"></div></div>
+              <div class="ci-bandrow"><span class="chip" style="background:var(--band-b)">Below Typical</span>
+                <div class="rng"><input type="number" value="55" data-eband="b" data-edge="lo"><span>–</span><input type="number" value="69" data-eband="b" data-edge="hi"></div></div>
+              <div class="ci-bandrow"><span class="chip" style="background:var(--band-t)">Typical</span>
+                <div class="rng"><input type="number" value="70" data-eband="t" data-edge="lo"><span>–</span><input type="number" value="84" data-eband="t" data-edge="hi"></div></div>
+              <div class="ci-bandrow"><span class="chip" style="background:var(--band-a)">Above Typical</span>
+                <div class="rng"><input type="number" value="85" data-eband="a" data-edge="lo"><span>–</span><input type="number" value="94" data-eband="a" data-edge="hi"></div></div>
+              <div class="ci-bandrow"><span class="chip" style="background:var(--band-wa)">Well Above Typical</span>
+                <div class="rng"><input type="number" value="95" data-eband="wa" data-edge="lo"><span>–</span><input type="number" value="100" data-eband="wa" data-edge="hi"></div></div>
+            </div>
+
+            <div class="ci-eyebrow" style="margin:24px 0 8px;">Enter each student's score</div>
+            <div class="ci-tablewrap">
+              <table class="ci-grid">
+                <thead><tr><th style="text-align:left;">Student</th><th>BOY score</th><th>Level</th></tr></thead>
+                <tbody id="entryRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <div class="ci-actions" style="margin-top:20px;">
+            <button class="btn btn-ghost" id="entryBack">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back
+            </button>
+            <button class="btn btn-primary" id="saveScores">Save scores
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            </button>
+            <span class="ci-lockhint" id="entryHint" style="color:var(--ink-faint);font-size:12.5px;">Add a source and at least one score to continue.</span>
+          </div>
+        </div>
+
         <!-- State B: data is in → student data dashboard -->
         <div id="boyDashboard" hidden>
           <section class="ci-card">
@@ -846,10 +863,7 @@
             </div>
 
             <div class="ci-tablewrap" style="margin-top:14px;">
-              <table class="ci-grid">
-                <thead><tr><th style="text-align:left;">Student</th><th>3.4K</th><th>3.4H</th><th>3.4I</th><th>3.4J</th><th>Level</th></tr></thead>
-                <tbody id="boyGridBody"></tbody>
-              </table>
+              <table class="ci-grid" id="boyGrid"></table>
             </div>
             <div class="ci-legend">
               <span><i style="background:var(--band-wb)"></i>Well Below</span>
@@ -984,43 +998,99 @@
 
 <script>
 (function(){
-  // --- goal selection ---
-  var skillSets={
-    'mult-div':{stmt:"Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.",
-      skills:["Understanding multiplication & division relationships","Applying place value & number sense","Interpreting and modeling word problems"]},
-    'place-value':{stmt:"Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding and multiple representations.",
-      skills:["Understanding base-ten place value","Comparing & ordering whole numbers","Representing numbers multiple ways"]},
-    'fractions':{stmt:"Students will represent, compare, and reason about fractions as numbers on a number line and in real-world contexts.",
-      skills:["Fractions as numbers on a number line","Comparing fractions with reasoning","Modeling fractions in real-world contexts"]},
-    'own':{stmt:"You're writing a custom skill statement — Crystal Instruction will still align learning paths and evidence once you choose your standards.",skills:[]}
+  // --- skill statements by subject (Grade 3) ---
+  var OWN={key:'own',title:'Write my own skill statement',
+    stmt:"You're writing a custom skill statement — Crystal Instruction will still align learning paths and evidence once you choose your standards.",
+    stds:[],skills:[]};
+  var goalsBySubject={
+    Math:[
+      {key:'mult-div',title:'Multiplication & Division Word Problems',
+        stmt:"Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.",
+        stds:['3.4K','3.4H','3.4I','3.4J'],
+        skills:["Understanding multiplication & division relationships","Applying place value & number sense","Interpreting and modeling word problems"]},
+      {key:'place-value',title:'Place Value & Number Relationships',
+        stmt:"Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding and multiple representations.",
+        stds:['3.2A','3.2B','3.2C','3.2D'],
+        skills:["Understanding base-ten place value","Comparing & ordering whole numbers","Representing numbers multiple ways"]},
+      {key:'fractions',title:'Fractions as Numbers',
+        stmt:"Students will represent, compare, and reason about fractions as numbers on a number line and in real-world contexts.",
+        stds:['3.3A','3.3D','3.3F','3.3H'],
+        skills:["Fractions as numbers on a number line","Comparing fractions with reasoning","Modeling fractions in real-world contexts"]},
+      OWN
+    ],
+    ELAR:[
+      {key:'main-idea',title:'Main Idea & Supporting Details',
+        stmt:"Students will identify the central idea of literary and informational texts and explain how key details support it.",
+        stds:['3.6G','3.7C','3.9Dii'],
+        skills:["Distinguishing main idea from supporting details","Summarizing key points","Using text features & structure"]},
+      {key:'inference',title:'Inference & Textual Evidence',
+        stmt:"Students will make inferences about a text and use specific textual evidence to support their understanding.",
+        stds:['3.6F','3.6G','3.7C'],
+        skills:["Drawing logical inferences","Citing textual evidence","Monitoring comprehension while reading"]},
+      {key:'vocabulary',title:'Vocabulary in Context',
+        stmt:"Students will use context clues and word parts to determine the meaning of unfamiliar words in grade-level texts.",
+        stds:['3.3B','3.3C','3.3D'],
+        skills:["Using context clues","Analyzing prefixes, suffixes & roots","Applying newly learned vocabulary"]},
+      OWN
+    ],
+    Science:[
+      {key:'energy',title:'Forms of Energy',
+        stmt:"Students will explore and describe different forms of energy — mechanical, light, sound, and thermal — and their uses in everyday life.",
+        stds:['3.6A'],
+        skills:["Identifying forms of energy","Observing energy in everyday contexts","Explaining how energy is used & transferred"]},
+      {key:'forces',title:'Forces & Motion',
+        stmt:"Students will demonstrate and explain how forces — a push or a pull — change the motion of an object.",
+        stds:['3.6B','3.6C'],
+        skills:["Describing pushes and pulls","Predicting the effect of a force","Measuring & comparing motion"]},
+      {key:'ecosystems',title:'Organisms & Environments',
+        stmt:"Students will describe how organisms depend on their environment and how changes in the environment affect them.",
+        stds:['3.9A','3.10A'],
+        skills:["Relating organisms to their habitats","Explaining interdependence","Analyzing environmental change"]},
+      OWN
+    ]
   };
-  var goals=document.querySelectorAll('.ci-goal');
+  var currentSubject='Math';
   var ownBox=document.getElementById('ownBox');
   var echo=document.getElementById('stmtEcho');
   var fs=document.getElementById('fskills');
+  function findGoal(subject,key){ var l=goalsBySubject[subject]||[]; for(var i=0;i<l.length;i++){ if(l[i].key===key) return l[i]; } return null; }
   function selectGoal(g){
-    goals.forEach(function(x){x.classList.remove('sel');});
+    var wrap=document.getElementById('goals');
+    wrap.querySelectorAll('.ci-goal').forEach(function(x){x.classList.remove('sel');});
     g.classList.add('sel');
     var key=g.getAttribute('data-skills');
     ownBox.hidden=(key!=='own');
-    var data=skillSets[key];
+    var data=findGoal(currentSubject,key)||OWN;
     echo.innerHTML='<b>Selected goal:</b> '+data.stmt;
     fs.innerHTML='';
-    if(data.skills.length===0){
-      fs.innerHTML='<div class="ci-fskill"><span class="dot">✎</span><span>Choose your aligned standards after launching setup.</span></div>';
+    if(!data.skills.length){
+      fs.innerHTML='<div class="ci-fskill"><span class="dot">✎</span><span>Choose your aligned standards after you set up this SLO.</span></div>';
     } else {
       data.skills.forEach(function(s){
         fs.innerHTML+='<div class="ci-fskill"><span class="dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span><span>'+s+'</span></div>';
       });
     }
   }
-  goals.forEach(function(g){g.addEventListener('click',function(){selectGoal(g); scheduleSave();});});
+  function goalCardHTML(g){
+    var stds = g.stds.length ? '<span class="std">'+g.stds.map(function(s){return '<span>'+s+'</span>';}).join('')+'</span>' : '';
+    return '<label class="ci-goal" data-skills="'+g.key+'"><span class="radio"></span><span class="txt"><b>'+g.title+'</b><small>'+g.stmt+'</small>'+stds+'</span></label>';
+  }
+  function renderGoals(subject,selectKey){
+    currentSubject=subject;
+    var wrap=document.getElementById('goals');
+    wrap.innerHTML=(goalsBySubject[subject]||[]).map(goalCardHTML).join('');
+    wrap.querySelectorAll('.ci-goal').forEach(function(g){ g.addEventListener('click',function(){selectGoal(g); scheduleSave();}); });
+    var target = selectKey && wrap.querySelector('.ci-goal[data-skills="'+selectKey+'"]');
+    selectGoal(target || wrap.querySelector('.ci-goal'));
+  }
 
-  // --- subject toggle (visual only) ---
+  // --- subject switcher ---
   document.querySelectorAll('.ci-subject').forEach(function(s){
     s.addEventListener('click',function(){
       document.querySelectorAll('.ci-subject').forEach(function(x){x.classList.remove('sel');});
-      s.classList.add('sel'); scheduleSave();
+      s.classList.add('sel');
+      renderGoals(s.getAttribute('data-subject'));
+      scheduleSave();
     });
   });
 
@@ -1045,63 +1115,129 @@
   }
 
   // --- BOY data state (gates Growth Targets) ---
-  var hasData=false, boySource='';
+  var hasData=false, boySource='', boyMode='', enteredScores={};
   var BANDVAR={wb:'--band-wb',b:'--band-b',t:'--band-t',a:'--band-a',wa:'--band-wa'};
   var BANDNAME={wb:'Well Below',b:'Below',t:'Typical',a:'Above',wa:'Well Above'};
   var boyStudents=[["Kennady",20,35,0,56],["Jeremy",0,25,0,34],["Stacey",14,83,25,31],
     ["Sophie",36,52,76,68],["Rebecca",95,74,14,31],["Lauren",5,92,24,37],
     ["Emily",0,62,89,22],["Erin",0,0,24,74]];
-  function classifyBand(v){
-    var b=readBands(); v=+v; var order=['wb','b','t','a','wa'];
+  var ROSTER=boyStudents.map(function(r){return r[0];});
+  function classifyWith(v,b){ v=+v; if(isNaN(v)) return null; var order=['wb','b','t','a','wa'];
     for(var k=0;k<order.length;k++){var bk=order[k]; if(b[bk] && v>=(+b[bk].lo) && v<=(+b[bk].hi)) return bk;}
-    return 'wb';
-  }
+    return (b.wb && v<(+b.wb.lo)) ? 'wb' : 'wa'; }
+  function readEntryBands(){ var o={}; document.querySelectorAll('#entryBands input').forEach(function(i){
+    var b=i.getAttribute('data-eband'); o[b]=o[b]||{}; o[b][i.getAttribute('data-edge')]=i.value; }); return o; }
+  function activeBands(){ return boyMode==='input' ? readEntryBands() : readBands(); }
+  function classifyBand(v){ return classifyWith(v, activeBands()) || 'wb'; }
+  function scoreUnit(){ return boyMode==='input' ? '' : '%'; }
+
   function buildGrid(){
-    var tb=document.getElementById('boyGridBody'); if(!tb) return; tb.innerHTML='';
-    boyStudents.forEach(function(r){
-      var tr=document.createElement('tr');
-      var th=document.createElement('th'); th.textContent=r[0]; tr.appendChild(th);
-      var sum=0;
-      for(var i=1;i<=4;i++){
-        var v=r[i]; sum+=v; var bk=classifyBand(v);
-        var td=document.createElement('td'); td.className='score';
-        td.style.background='var('+BANDVAR[bk]+')'; td.textContent=v+'%'; tr.appendChild(td);
-      }
-      var abk=classifyBand(Math.round(sum/4));
-      var lt=document.createElement('td'); lt.className='level';
-      lt.style.color='var('+BANDVAR[abk]+')'; lt.textContent=BANDNAME[abk]; tr.appendChild(lt);
-      tb.appendChild(tr);
-    });
+    var grid=document.getElementById('boyGrid'); if(!grid) return;
+    if(boyMode==='input'){
+      var b=readEntryBands();
+      var html='<thead><tr><th style="text-align:left;">Student</th><th>BOY score</th><th>Level</th></tr></thead><tbody>';
+      ROSTER.forEach(function(name){
+        var v=enteredScores[name];
+        if(v==null||v===''){ html+='<tr><th>'+name+'</th><td>—</td><td>—</td></tr>'; return; }
+        var bk=classifyWith(v,b);
+        html+='<tr><th>'+name+'</th><td class="score" style="background:var('+BANDVAR[bk]+')">'+v+'</td><td class="level" style="color:var('+BANDVAR[bk]+')">'+BANDNAME[bk]+'</td></tr>';
+      });
+      grid.innerHTML=html+'</tbody>';
+    } else {
+      var h='<thead><tr><th style="text-align:left;">Student</th><th>3.4K</th><th>3.4H</th><th>3.4I</th><th>3.4J</th><th>Level</th></tr></thead><tbody>';
+      boyStudents.forEach(function(r){
+        var sum=0,cells='';
+        for(var i=1;i<=4;i++){var val=r[i];sum+=val;var bk=classifyBand(val);cells+='<td class="score" style="background:var('+BANDVAR[bk]+')">'+val+'%</td>';}
+        var abk=classifyBand(Math.round(sum/4));
+        h+='<tr><th>'+r[0]+'</th>'+cells+'<td class="level" style="color:var('+BANDVAR[abk]+')">'+BANDNAME[abk]+'</td></tr>';
+      });
+      grid.innerHTML=h+'</tbody>';
+    }
   }
+
+  // manual score entry (Input my BOY Scores)
+  function updateEntryRow(tr){
+    var inp=tr.querySelector('input'), lvl=tr.querySelector('.level'), v=inp.value;
+    if(v===''){ inp.style.background=''; inp.style.color=''; lvl.textContent='—'; lvl.style.color=''; return; }
+    var bk=classifyWith(v, readEntryBands());
+    inp.style.background='var('+BANDVAR[bk]+')'; inp.style.color='#fff';
+    lvl.textContent=BANDNAME[bk]; lvl.style.color='var('+BANDVAR[bk]+')';
+  }
+  function recolorEntry(){ document.querySelectorAll('#entryRows tr').forEach(updateEntryRow); }
+  function buildEntryTable(){
+    var tb=document.getElementById('entryRows'); if(!tb||tb.dataset.built) return;
+    ROSTER.forEach(function(name){
+      var tr=document.createElement('tr');
+      tr.innerHTML='<th>'+name+'</th><td><input type="number" class="ci-scoreinput" data-name="'+name+'" placeholder="—"></td><td class="level">—</td>';
+      tb.appendChild(tr);
+      tr.querySelector('input').addEventListener('input',function(){updateEntryRow(tr);scheduleSave();});
+    });
+    tb.dataset.built='1';
+  }
+  document.querySelectorAll('#entryBands input').forEach(function(i){ i.addEventListener('input',recolorEntry); });
+
   function applyDataState(){
     if(hasData){ buildGrid(); buildTargets(); applyLockState(); }
-    var choose=document.getElementById('boyChoose'), dash=document.getElementById('boyDashboard');
-    if(choose&&dash){ choose.hidden=hasData; dash.hidden=!hasData; }
-    var tl=document.getElementById('targetsLocked'), tr=document.getElementById('targetsReady');
-    if(tl&&tr){ tl.hidden=hasData; tr.hidden=!hasData; }
+    var choose=document.getElementById('boyChoose'), entry=document.getElementById('boyEntry'), dash=document.getElementById('boyDashboard');
+    if(dash) dash.hidden=!hasData;
+    if(hasData){ if(choose) choose.hidden=true; if(entry) entry.hidden=true; }
+    else if(choose && (!entry || entry.hidden)){ choose.hidden=false; }
+    var tl=document.getElementById('targetsLocked'), tr2=document.getElementById('targetsReady');
+    if(tl&&tr2){ tl.hidden=hasData; tr2.hidden=!hasData; }
     var tab=document.querySelector('.ci-subtabs button[data-view="targets"]');
     if(tab) tab.classList.toggle('locked',!hasData);
     var chip=document.getElementById('boySourceChip'); if(chip&&boySource) chip.textContent='Source: '+boySource;
   }
-  function setData(source){ hasData=true; boySource=source; applyDataState(); scheduleSave(); }
+  function setData(mode,source){ boyMode=mode; hasData=true; boySource=source;
+    var tw=document.getElementById('targetRows'); if(tw) tw.dataset.built=''; applyDataState(); scheduleSave(); }
+
+  // option cards: Administer (CI) vs Input (manual)
   document.querySelectorAll('[data-boy]').forEach(function(b){
     b.addEventListener('click',function(){
-      setData(b.getAttribute('data-boy')==='input' ? 'NWEA MAP · BOY' : 'Crystal Instruction Pre-Assessment · BOY');
+      if(b.getAttribute('data-boy')==='input'){
+        document.getElementById('boyChoose').hidden=true;
+        document.getElementById('boyEntry').hidden=false;
+        buildEntryTable(); recolorEntry();
+        document.querySelector('.ci-page').scrollIntoView({behavior:'smooth',block:'start'});
+      } else {
+        setData('administer','Crystal Instruction Pre-Assessment · BOY');
+      }
     });
+  });
+  var entryBack=document.getElementById('entryBack');
+  if(entryBack) entryBack.addEventListener('click',function(){
+    document.getElementById('boyEntry').hidden=true; document.getElementById('boyChoose').hidden=false;
+  });
+  var saveScoresBtn=document.getElementById('saveScores');
+  if(saveScoresBtn) saveScoresBtn.addEventListener('click',function(){
+    var src=(document.getElementById('entrySource').value||'').trim();
+    var scores={}; document.querySelectorAll('#entryRows input').forEach(function(i){ if(i.value!=='') scores[i.getAttribute('data-name')]=i.value; });
+    var hint=document.getElementById('entryHint');
+    if(!src || !Object.keys(scores).length){ if(hint){ hint.textContent='Add a source and at least one score to continue.'; hint.style.color='var(--band-wb)'; } return; }
+    if(hint){ hint.textContent=''; }
+    enteredScores=scores;
+    setData('input', src);
   });
   var changeSrc=document.getElementById('changeSource');
   if(changeSrc) changeSrc.addEventListener('click',function(){
-    document.getElementById('boyChoose').hidden=false; document.getElementById('boyDashboard').hidden=true;
+    document.getElementById('boyDashboard').hidden=true;
+    if(boyMode==='input'){ document.getElementById('boyEntry').hidden=false; }
+    else { document.getElementById('boyChoose').hidden=false; }
   });
 
   // --- Growth Targets: per-student pre-test → target sliders ---
   var sloLocked=false;
-  function pretestOf(r){ return Math.round((r[1]+r[2]+r[3]+r[4])/4); }
+  function studentList(){
+    if(boyMode==='input'){ return ROSTER.filter(function(n){return enteredScores[n]!=null && enteredScores[n]!=='';})
+      .map(function(n){return {name:n, pre:Math.round(+enteredScores[n])};}); }
+    return boyStudents.map(function(r){return {name:r[0], pre:Math.round((r[1]+r[2]+r[3]+r[4])/4)};});
+  }
+  function targetMax(){ return boyMode==='input' ? (parseInt(readEntryBands().wa.hi,10)||100) : 100; }
   function updateRow(row){
     var s=row.querySelector('input[type=range]');
-    var pre=+s.getAttribute('data-pre'), tgt=+s.value, bk=classifyBand(tgt);
+    var pre=+s.getAttribute('data-pre'), tgt=+s.value, bk=classifyBand(tgt), u=scoreUnit();
     var tchip=row.querySelector('.ci-target-chip');
-    tchip.style.background='var('+BANDVAR[bk]+')'; tchip.textContent=tgt+'% · '+BANDNAME[bk];
+    tchip.style.background='var('+BANDVAR[bk]+')'; tchip.textContent=tgt+u+' · '+BANDNAME[bk];
     var g=tgt-pre, gc=row.querySelector('.ci-growth');
     gc.textContent=(g>0?'+':'')+g+' pts'; gc.className='ci-growth '+(g>0?'up':'flat');
   }
@@ -1113,13 +1249,14 @@
   }
   function buildTargets(){
     var wrap=document.getElementById('targetRows'); if(!wrap || wrap.dataset.built) return;
-    boyStudents.forEach(function(r){
-      var pre=pretestOf(r), tgt=Math.min(100,pre+15), preBk=classifyBand(pre);
+    var maxV=targetMax(), u=scoreUnit();
+    studentList().forEach(function(st){
+      var pre=st.pre, tgt=Math.min(maxV,pre+15), preBk=classifyBand(pre);
       var row=document.createElement('div'); row.className='ci-target-row';
       row.innerHTML=
-        '<span class="name">'+r[0]+'</span>'+
-        '<span class="ci-scorechip" style="background:var('+BANDVAR[preBk]+')">'+pre+'% · '+BANDNAME[preBk]+'</span>'+
-        '<span class="ci-slidercell"><input type="range" class="ci-range" min="'+pre+'" max="100" value="'+tgt+'" data-pre="'+pre+'" data-name="'+r[0]+'" aria-label="End-of-year target for '+r[0]+'"><span class="ci-scorechip ci-target-chip"></span></span>'+
+        '<span class="name">'+st.name+'</span>'+
+        '<span class="ci-scorechip" style="background:var('+BANDVAR[preBk]+')">'+pre+u+' · '+BANDNAME[preBk]+'</span>'+
+        '<span class="ci-slidercell"><input type="range" class="ci-range" min="'+pre+'" max="'+maxV+'" value="'+tgt+'" data-pre="'+pre+'" data-name="'+st.name+'" aria-label="End-of-year target for '+st.name+'"><span class="ci-scorechip ci-target-chip"></span></span>'+
         '<span class="ci-growth"></span>';
       wrap.appendChild(row);
       row.querySelector('input[type=range]').addEventListener('input',function(){updateRow(row);updateSummary();scheduleSave();});
@@ -1212,7 +1349,7 @@
     var sel=document.querySelector('.ci-goal.sel');
     var diffTa=document.querySelectorAll('#view-personal .ci-q textarea');
     return {
-      subject:((document.querySelector('.ci-subject.sel')||{}).textContent||'').trim(),
+      subject:currentSubject,
       goalKey:sel?sel.getAttribute('data-skills'):null,
       custom:(document.querySelector('#ownBox textarea')||{}).value||'',
       bands:bands, descriptors:desc, sources:sources,
@@ -1223,7 +1360,9 @@
         support:(document.querySelector('#view-personal .ci-input')||{}).value||''
       },
       otherSources:(document.getElementById('otherSources')||{}).value||'',
-      hasData:hasData, boySource:boySource,
+      hasData:hasData, boySource:boySource, boyMode:boyMode, enteredScores:enteredScores,
+      entrySource:(document.getElementById('entrySource')||{}).value||'',
+      entryBands:readEntryBands(),
       targets:(function(){var t={};document.querySelectorAll('#targetRows input[type=range]').forEach(function(s){t[s.getAttribute('data-name')]=s.value;});return t;})(),
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
@@ -1241,9 +1380,10 @@
     var raw; try{ raw=localStorage.getItem(KEY); }catch(e){ return false; }
     if(!raw) return false;
     var d; try{ d=JSON.parse(raw); }catch(e){ return false; }
-    if(d.goalKey){ var g=document.querySelector('.ci-goal[data-skills="'+d.goalKey+'"]'); if(g) selectGoal(g); }
+    var subj=d.subject||'Math';
+    document.querySelectorAll('.ci-subject').forEach(function(s){s.classList.toggle('sel',s.getAttribute('data-subject')===subj);});
+    renderGoals(subj, d.goalKey);
     if(d.custom){ var ta=document.querySelector('#ownBox textarea'); if(ta) ta.value=d.custom; }
-    if(d.subject){ document.querySelectorAll('.ci-subject').forEach(function(s){s.classList.toggle('sel',s.textContent.trim()===d.subject);}); }
     if(d.bands){ document.querySelectorAll('#modalBands input').forEach(function(i){
       var b=i.getAttribute('data-band'),e=i.getAttribute('data-edge'); if(d.bands[b]&&d.bands[b][e]!=null) i.value=d.bands[b][e]; }); }
     updateBadges();
@@ -1257,6 +1397,13 @@
     if(d.sources){ document.querySelectorAll('.ci-source').forEach(function(s){
       var cb=s.querySelector('input'), name=s.textContent.trim();
       if(d.sources[name]!=null){ cb.checked=d.sources[name]; s.classList.toggle('sel',cb.checked); } }); }
+    boyMode=d.boyMode||''; enteredScores=d.enteredScores||{};
+    if(d.entrySource){ var es=document.getElementById('entrySource'); if(es) es.value=d.entrySource; }
+    if(d.entryBands){ document.querySelectorAll('#entryBands input').forEach(function(i){
+      var b=i.getAttribute('data-eband'),e=i.getAttribute('data-edge'); if(d.entryBands[b]&&d.entryBands[b][e]!=null) i.value=d.entryBands[b][e]; }); }
+    if(boyMode==='input'){ buildEntryTable();
+      Object.keys(enteredScores).forEach(function(n){ var inp=document.querySelector('#entryRows input[data-name="'+n+'"]'); if(inp) inp.value=enteredScores[n]; });
+      recolorEntry(); }
     hasData=!!d.hasData; boySource=d.boySource||'';
     sloLocked=!!d.locked;
     bandsShownOnce=true;              // don't re-prompt the bands modal on resume
@@ -1279,7 +1426,8 @@
   var saveDraftBtn=document.getElementById('saveDraftBtn');
   if(saveDraftBtn) saveDraftBtn.addEventListener('click',function(){ clearTimeout(saveTimer); save(); });
 
-  // restore on load; if a draft existed, offer to resume
+  // render default subject's goals, then restore any saved draft
+  renderGoals('Math');
   if(loadDraft()){
     var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
     var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
