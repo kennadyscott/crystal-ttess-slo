@@ -200,8 +200,11 @@
   .ci-subject.sel{border-color:var(--teal);box-shadow:0 0 0 3px rgba(23,162,196,.15);}
   .ci-subject.sel .ic{background:var(--teal);}
   .ci-subject:not(.sel) .ic{background:#C9D2DE;}
-  .ci-pill-select{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--line);
-    border-radius:999px;padding:9px 16px;font-weight:700;color:var(--ink);font-size:13px;}
+  .ci-pill-select{display:flex;align-items:center;gap:4px;background:#fff;border:1.5px solid var(--line);
+    border-radius:999px;padding:9px 14px 9px 16px;font-weight:700;color:var(--ink);font-size:13px;}
+  .ci-grade-select{border:0;background:transparent;font-family:var(--font-body);font-weight:800;font-size:13px;
+    color:var(--ink);cursor:pointer;padding-right:2px;}
+  .ci-grade-select:focus{outline:none;}
 
   /* goal cards */
   .ci-goals{display:flex;flex-direction:column;gap:12px;}
@@ -606,8 +609,13 @@
           <div class="ci-subject sel" data-subject="Math"><span class="ic">∑</span>Math</div>
           <div class="ci-subject" data-subject="ELAR"><span class="ic">A</span>ELAR</div>
           <div class="ci-subject" data-subject="Science"><span class="ic">🔬</span>Science</div>
-          <div class="ci-pill-select">Grade&nbsp;3
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          <div class="ci-pill-select">Grade&nbsp;
+            <select id="gradeSelect" class="ci-grade-select" aria-label="Grade">
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
           </div>
         </div>
 
@@ -660,41 +668,41 @@
         <!-- SLO statement banner -->
         <div class="ci-slo-banner">
           <span class="eyebrow">Your SLO skill statement</span>
-          <p>Students will develop and demonstrate a comprehensive understanding of number relationships — including multiplication &amp; division concepts, place-value reasoning, and fraction representation — to accurately solve real-world mathematical problems.</p>
+          <p id="sloStatement">Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.</p>
           <small>Crystal Instruction provides a pre-assessment, two progress-monitoring checks, a MOY, and a post-assessment to track this goal.</small>
         </div>
 
         <!-- descriptor rubric -->
         <section class="ci-card" style="margin-top:22px;">
           <header style="justify-content:space-between;align-items:flex-start;">
-            <div><div class="ci-eyebrow">Skill Profile · Grade 3 Math</div><h2>Performance-level descriptors</h2></div>
+            <div><div class="ci-eyebrow" id="skillProfileEyebrow">Skill Profile · Grade 3 Math</div><h2>Performance-level descriptors</h2></div>
             <button class="ci-editbands" id="editBands" type="button">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
               Edit percentage bands
             </button>
           </header>
-          <p class="sub">Each level's score range is set by your percentage bands. Tap any descriptor to customize the wording for your class — this becomes the shared language you'll use to place and grow students.</p>
+          <p class="sub">Each level's score range is set by your percentage bands. These descriptors are a starting template — tap any one to tailor the wording to your goal, so it becomes the shared language you'll use to place and grow students.</p>
 
           <div class="ci-rubric">
             <div class="ci-level">
               <div class="head" style="background:var(--band-wa)"><b>Well Above Typical</b><span class="rng-badge" data-band="wa"></span></div>
-              <div class="desc" contenteditable="true" spellcheck="false">Student independently and consistently solves one- and two-step multiplication and division word problems with a high level of accuracy and efficiency. Student flexibly applies multiple strategies, models, and equations to solve complex or unfamiliar problems and communicates mathematical reasoning using precise mathematical vocabulary and detailed explanations.</div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student independently and consistently demonstrates this skill with a high level of accuracy and efficiency, flexibly applying strategies to complex or unfamiliar tasks and communicating their reasoning with precise academic vocabulary and detailed explanations.</div>
             </div>
             <div class="ci-level">
               <div class="head" style="background:var(--band-a)"><b>Above Typical</b><span class="rng-badge" data-band="a"></span></div>
-              <div class="desc" contenteditable="true" spellcheck="false">Student accurately solves one- and two-step multiplication and division word problems using appropriate strategies, models, and equations. Student explains reasoning clearly, demonstrates strong conceptual understanding, and applies skills independently in most grade-level situations.</div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student accurately demonstrates this skill using appropriate strategies, explains their reasoning clearly, shows strong conceptual understanding, and applies it independently in most grade-level situations.</div>
             </div>
             <div class="ci-level">
               <div class="head" style="background:var(--band-t)"><b>Typical</b><span class="rng-badge" data-band="t"></span></div>
-              <div class="desc" contenteditable="true" spellcheck="false">Student solves grade-level multiplication and division word problems using strategies, models, or equations with occasional teacher support. Student demonstrates developing understanding of mathematical reasoning and can explain thinking, though accuracy or consistency may vary.</div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student demonstrates this skill on grade-level tasks with occasional teacher support and can explain their thinking, though accuracy or consistency may vary.</div>
             </div>
             <div class="ci-level">
               <div class="head" style="background:var(--band-b)"><b>Below Typical</b><span class="rng-badge" data-band="b"></span></div>
-              <div class="desc" contenteditable="true" spellcheck="false">Student demonstrates partial understanding of multiplication and division concepts and requires frequent support to solve word problems. Student may struggle to select effective strategies, represent problems with models, or clearly explain mathematical reasoning.</div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student demonstrates partial understanding and requires frequent support; may struggle to select effective strategies, use models, or clearly explain their reasoning.</div>
             </div>
             <div class="ci-level">
               <div class="head" style="background:var(--band-wb)"><b>Well Below Typical</b><span class="rng-badge" data-band="wb"></span></div>
-              <div class="desc" contenteditable="true" spellcheck="false">Student demonstrates limited understanding of multiplication and division problem-solving concepts and is unable to consistently solve grade-level word problems, even with significant teacher support. Student has difficulty using models, strategies, equations, and mathematical language to explain thinking.</div>
+              <div class="desc" contenteditable="true" spellcheck="false">Student demonstrates limited understanding and cannot yet complete grade-level tasks consistently, even with significant support, and has difficulty explaining their thinking.</div>
             </div>
           </div>
         </section>
@@ -1073,69 +1081,98 @@
 
 <script>
 (function(){
-  // --- skill statements by subject (Grade 3) ---
+  // --- SLO skill statements by subject × grade (Grades 2–5, TEKS-aligned) ---
   var OWN={key:'own',title:'Write my own skill statement',
     stmt:"You're writing a custom skill statement — Crystal Instruction will still align learning paths and evidence once you choose your standards.",
     stds:[],skills:[]};
-  var goalsBySubject={
-    Math:[
-      {key:'mult-div',title:'Multiplication & Division Word Problems',
-        stmt:"Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.",
-        stds:['3.4K','3.4H','3.4I','3.4J'],
-        skills:["Understanding multiplication & division relationships","Applying place value & number sense","Interpreting and modeling word problems"]},
-      {key:'place-value',title:'Place Value & Number Relationships',
-        stmt:"Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding and multiple representations.",
-        stds:['3.2A','3.2B','3.2C','3.2D'],
-        skills:["Understanding base-ten place value","Comparing & ordering whole numbers","Representing numbers multiple ways"]},
-      {key:'fractions',title:'Fractions as Numbers',
-        stmt:"Students will represent, compare, and reason about fractions as numbers on a number line and in real-world contexts.",
-        stds:['3.3A','3.3D','3.3F','3.3H'],
-        skills:["Fractions as numbers on a number line","Comparing fractions with reasoning","Modeling fractions in real-world contexts"]},
-      OWN
-    ],
-    ELAR:[
-      {key:'main-idea',title:'Main Idea & Supporting Details',
-        stmt:"Students will identify the central idea of literary and informational texts and explain how key details support it.",
-        stds:['3.6G','3.7C','3.9Dii'],
-        skills:["Distinguishing main idea from supporting details","Summarizing key points","Using text features & structure"]},
-      {key:'inference',title:'Inference & Textual Evidence',
-        stmt:"Students will make inferences about a text and use specific textual evidence to support their understanding.",
-        stds:['3.6F','3.6G','3.7C'],
-        skills:["Drawing logical inferences","Citing textual evidence","Monitoring comprehension while reading"]},
-      {key:'vocabulary',title:'Vocabulary in Context',
-        stmt:"Students will use context clues and word parts to determine the meaning of unfamiliar words in grade-level texts.",
-        stds:['3.3B','3.3C','3.3D'],
-        skills:["Using context clues","Analyzing prefixes, suffixes & roots","Applying newly learned vocabulary"]},
-      OWN
-    ],
-    Science:[
-      {key:'energy',title:'Forms of Energy',
-        stmt:"Students will explore and describe different forms of energy — mechanical, light, sound, and thermal — and their uses in everyday life.",
-        stds:['3.6A'],
-        skills:["Identifying forms of energy","Observing energy in everyday contexts","Explaining how energy is used & transferred"]},
-      {key:'forces',title:'Forces & Motion',
-        stmt:"Students will demonstrate and explain how forces — a push or a pull — change the motion of an object.",
-        stds:['3.6B','3.6C'],
-        skills:["Describing pushes and pulls","Predicting the effect of a force","Measuring & comparing motion"]},
-      {key:'ecosystems',title:'Organisms & Environments',
-        stmt:"Students will describe how organisms depend on their environment and how changes in the environment affect them.",
-        stds:['3.9A','3.10A'],
-        skills:["Relating organisms to their habitats","Explaining interdependence","Analyzing environmental change"]},
-      OWN
-    ]
+  var GOALS={
+    Math:{
+      '2':[
+        {key:'m2-addsub',title:'Addition & Subtraction within 1,000',stmt:"Students will add and subtract within 1,000 using place value, properties of operations, and strategies to solve one- and two-step problems.",stds:['2.4B','2.4C','2.4D'],skills:["Composing & decomposing by place value","Choosing efficient strategies","Solving one- and two-step problems"]},
+        {key:'m2-place',title:'Place Value to 1,200',stmt:"Students will use place value to compose, decompose, compare, and order whole numbers up to 1,200.",stds:['2.2A','2.2B','2.2C','2.2D'],skills:["Understanding hundreds, tens & ones","Comparing & ordering numbers","Representing numbers multiple ways"]},
+        {key:'m2-mult',title:'Foundations of Multiplication',stmt:"Students will model multiplication as repeated addition using equal groups and arrays.",stds:['2.6A','2.6B'],skills:["Building equal groups","Using arrays","Connecting arrays to repeated addition"]}
+      ],
+      '3':[
+        {key:'m3-multdiv',title:'Multiplication & Division Word Problems',stmt:"Students will solve one- and two-step multiplication and division word problems using strategies, models, equations, and mathematical reasoning to explain their thinking.",stds:['3.4K','3.4H','3.4I','3.4J'],skills:["Understanding multiplication & division relationships","Applying place value & number sense","Interpreting and modeling word problems"]},
+        {key:'m3-place',title:'Place Value & Number Relationships',stmt:"Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding and multiple representations.",stds:['3.2A','3.2B','3.2C','3.2D'],skills:["Understanding base-ten place value","Comparing & ordering whole numbers","Representing numbers multiple ways"]},
+        {key:'m3-fractions',title:'Fractions as Numbers',stmt:"Students will represent, compare, and reason about fractions as numbers on a number line and in real-world contexts.",stds:['3.3A','3.3D','3.3F','3.3H'],skills:["Fractions as numbers on a number line","Comparing fractions with reasoning","Modeling fractions in real-world contexts"]}
+      ],
+      '4':[
+        {key:'m4-multdiv',title:'Multi-Digit Multiplication & Division',stmt:"Students will multiply up to four digits by one digit and divide up to four digits by one digit using strategies and standard algorithms.",stds:['4.4D','4.4E','4.4F','4.4H'],skills:["Applying place value to multiply","Using area models & partial products","Interpreting remainders"]},
+        {key:'m4-fractions',title:'Fraction Equivalence & Comparison',stmt:"Students will generate equivalent fractions and compare and order fractions using models, benchmarks, and reasoning.",stds:['4.3A','4.3C','4.3D','4.3G'],skills:["Generating equivalent fractions","Comparing with benchmarks","Representing fractions on a number line"]},
+        {key:'m4-decimals',title:'Decimals & Place Value',stmt:"Students will relate decimals to fractions and represent, compare, and order decimals to the hundredths.",stds:['4.2A','4.2E','4.2G','4.2H'],skills:["Relating decimals & fractions","Reading & writing decimals","Comparing & ordering decimals"]}
+      ],
+      '5':[
+        {key:'m5-decops',title:'Operations with Decimals',stmt:"Students will add, subtract, multiply, and divide decimals to the hundredths using strategies and algorithms.",stds:['5.3A','5.3D','5.3E','5.3G'],skills:["Aligning place value","Estimating to check reasonableness","Applying algorithms fluently"]},
+        {key:'m5-fractions',title:'Adding & Subtracting Fractions',stmt:"Students will add and subtract fractions with unequal denominators using equivalent fractions and models.",stds:['5.3H','5.3I'],skills:["Finding common denominators","Using models to add & subtract","Simplifying & checking reasonableness"]},
+        {key:'m5-volume',title:'Volume of Rectangular Prisms',stmt:"Students will represent and solve problems involving the volume of rectangular prisms using unit cubes and formulas.",stds:['5.4G','5.4H','5.6A','5.6B'],skills:["Counting unit cubes","Applying V = l × w × h","Solving real-world volume problems"]}
+      ]
+    },
+    ELAR:{
+      '2':[
+        {key:'e2-mainidea',title:'Retell & Main Idea',stmt:"Students will retell and identify the main idea and key details of texts read aloud and independently.",stds:['2.6G','2.7C','2.9Dii'],skills:["Retelling in sequence","Identifying the main idea","Naming key details"]},
+        {key:'e2-decoding',title:'Phonics & Decoding',stmt:"Students will decode multisyllabic words using letter-sound relationships and word parts to read grade-level text.",stds:['2.2A','2.2B'],skills:["Applying letter-sound patterns","Decoding by syllables","Reading with accuracy"]},
+        {key:'e2-inference',title:'Predictions & Inferences',stmt:"Students will make and confirm predictions and simple inferences using details from the text.",stds:['2.6C','2.6F'],skills:["Making predictions","Confirming with text","Drawing simple inferences"]}
+      ],
+      '3':[
+        {key:'e3-mainidea',title:'Main Idea & Supporting Details',stmt:"Students will identify the central idea of literary and informational texts and explain how key details support it.",stds:['3.6G','3.7C','3.9Dii'],skills:["Distinguishing main idea from details","Summarizing key points","Using text features & structure"]},
+        {key:'e3-inference',title:'Inference & Textual Evidence',stmt:"Students will make inferences about a text and use specific textual evidence to support their understanding.",stds:['3.6F','3.6G','3.7C'],skills:["Drawing logical inferences","Citing textual evidence","Monitoring comprehension while reading"]},
+        {key:'e3-vocab',title:'Vocabulary in Context',stmt:"Students will use context clues and word parts to determine the meaning of unfamiliar words in grade-level texts.",stds:['3.3B','3.3C','3.3D'],skills:["Using context clues","Analyzing prefixes, suffixes & roots","Applying newly learned vocabulary"]}
+      ],
+      '4':[
+        {key:'e4-summary',title:'Summarize & Central Idea',stmt:"Students will summarize informational and literary texts and explain the central idea supported by evidence.",stds:['4.6G','4.7C','4.9Dii'],skills:["Summarizing objectively","Determining central idea","Supporting with evidence"]},
+        {key:'e4-inference',title:'Inference & Evidence',stmt:"Students will make inferences and draw conclusions using specific textual evidence.",stds:['4.6F','4.6G','4.7C'],skills:["Making inferences","Drawing conclusions","Citing precise evidence"]},
+        {key:'e4-structure',title:"Text Structure & Author's Purpose",stmt:"Students will analyze how authors organize texts and explain the author's purpose and craft.",stds:['4.9Diii','4.10A','4.10B'],skills:["Identifying text structures","Explaining author's purpose","Analyzing author's craft"]}
+      ],
+      '5':[
+        {key:'e5-theme',title:'Theme & Summary',stmt:"Students will determine the theme of literary texts and summarize using key supporting details.",stds:['5.6G','5.7C','5.8A'],skills:["Determining theme","Summarizing accurately","Supporting with details"]},
+        {key:'e5-inference',title:'Inference & Synthesis',stmt:"Students will make inferences and synthesize ideas across texts using specific textual evidence.",stds:['5.6F','5.6G','5.7C'],skills:["Making inferences","Synthesizing across texts","Citing textual evidence"]},
+        {key:'e5-craft',title:"Author's Craft & Point of View",stmt:"Students will analyze the author's craft and point of view and explain how they shape meaning.",stds:['5.9Diii','5.10A','5.10B'],skills:["Analyzing point of view","Examining author's craft","Explaining effect on meaning"]}
+      ]
+    },
+    Science:{
+      '2':[
+        {key:'s2-matter',title:'Properties of Matter',stmt:"Students will observe, classify, and describe the physical properties of matter, including states of matter.",stds:['2.5A','2.5B','2.5C'],skills:["Observing physical properties","Classifying materials","Describing states of matter"]},
+        {key:'s2-forces',title:'Forces, Motion & Energy',stmt:"Students will demonstrate and describe how forces cause changes in the motion of objects.",stds:['2.6A','2.6B','2.6D'],skills:["Describing pushes & pulls","Observing changes in motion","Exploring forms of energy"]},
+        {key:'s2-organisms',title:'Living Things & Their Needs',stmt:"Students will observe and describe how living things depend on their environment and each other.",stds:['2.9A','2.9C','2.10A'],skills:["Identifying basic needs","Relating living things to habitats","Observing dependence"]}
+      ],
+      '3':[
+        {key:'s3-energy',title:'Forms of Energy',stmt:"Students will explore and describe different forms of energy — mechanical, light, sound, and thermal — and their uses in everyday life.",stds:['3.6A'],skills:["Identifying forms of energy","Observing energy in everyday contexts","Explaining how energy is used"]},
+        {key:'s3-forces',title:'Forces & Motion',stmt:"Students will demonstrate and explain how forces — a push or a pull — change the motion of an object.",stds:['3.6B','3.6C'],skills:["Describing pushes and pulls","Predicting the effect of a force","Measuring & comparing motion"]},
+        {key:'s3-ecosystems',title:'Organisms & Environments',stmt:"Students will describe how organisms depend on their environment and how changes in the environment affect them.",stds:['3.9A','3.10A'],skills:["Relating organisms to habitats","Explaining interdependence","Analyzing environmental change"]}
+      ],
+      '4':[
+        {key:'s4-energy',title:'Forms & Uses of Energy',stmt:"Students will differentiate among forms of energy, including mechanical, sound, electrical, light, and thermal energy.",stds:['4.6A','4.6B'],skills:["Differentiating forms of energy","Observing energy transfer","Connecting energy to daily life"]},
+        {key:'s4-forces',title:'Forces & Motion',stmt:"Students will investigate and explain how forces change the position and motion of objects.",stds:['4.6C','4.6D'],skills:["Investigating forces","Explaining changes in motion","Measuring distance & speed"]},
+        {key:'s4-ecosystems',title:'Ecosystems & Adaptations',stmt:"Students will explore how organisms and their environments interact and how adaptations help survival.",stds:['4.9A','4.9B','4.10A'],skills:["Describing ecosystem interactions","Explaining adaptations","Analyzing environmental change"]}
+      ],
+      '5':[
+        {key:'s5-matter',title:'Matter & Its Properties',stmt:"Students will classify matter based on measurable physical properties and identify changes in state.",stds:['5.5A','5.5B','5.5C','5.5D'],skills:["Measuring physical properties","Classifying matter","Identifying physical changes"]},
+        {key:'s5-energy',title:'Energy, Force & Motion',stmt:"Students will explore the relationship between force, motion, and different forms of energy.",stds:['5.6A','5.6B','5.6C','5.6D'],skills:["Relating force & motion","Exploring forms of energy","Investigating light & electricity"]},
+        {key:'s5-ecosystems',title:'Ecosystems & Cycles',stmt:"Students will describe how matter and energy move through ecosystems and food webs.",stds:['5.9A','5.9B','5.9C','5.9D'],skills:["Tracing food webs","Explaining energy flow","Describing matter cycles"]}
+      ]
+    }
   };
-  var currentSubject='Math';
+  var currentSubject='Math', currentGrade='3';
   var ownBox=document.getElementById('ownBox');
   var echo=document.getElementById('stmtEcho');
   var fs=document.getElementById('fskills');
-  function findGoal(subject,key){ var l=goalsBySubject[subject]||[]; for(var i=0;i<l.length;i++){ if(l[i].key===key) return l[i]; } return null; }
+  function goalsFor(subject,grade){ return ((GOALS[subject]||{})[grade]||[]).concat([OWN]); }
+  function findGoal(subject,grade,key){ var l=goalsFor(subject,grade); for(var i=0;i<l.length;i++){ if(l[i].key===key) return l[i]; } return null; }
+  function currentGoal(){ var sel=document.querySelector('#goals .ci-goal.sel'); return sel?findGoal(currentSubject,currentGrade,sel.getAttribute('data-skills')):null; }
+  function syncSkillProfile(){
+    var g=currentGoal();
+    var stmt = g ? (g.key==='own' ? ((ownBox.querySelector('textarea')||{}).value || g.stmt) : g.stmt) : '';
+    var sp=document.getElementById('sloStatement'); if(sp && stmt) sp.textContent=stmt;
+    var ey=document.getElementById('skillProfileEyebrow'); if(ey) ey.textContent='Skill Profile · Grade '+currentGrade+' '+currentSubject;
+  }
   function selectGoal(g){
     var wrap=document.getElementById('goals');
     wrap.querySelectorAll('.ci-goal').forEach(function(x){x.classList.remove('sel');});
     g.classList.add('sel');
     var key=g.getAttribute('data-skills');
     ownBox.hidden=(key!=='own');
-    var data=findGoal(currentSubject,key)||OWN;
+    var data=findGoal(currentSubject,currentGrade,key)||OWN;
     echo.innerHTML='<b>Selected goal:</b> '+data.stmt;
     fs.innerHTML='';
     if(!data.skills.length){
@@ -1145,28 +1182,34 @@
         fs.innerHTML+='<div class="ci-fskill"><span class="dot"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span><span>'+s+'</span></div>';
       });
     }
+    syncSkillProfile();
   }
   function goalCardHTML(g){
     var stds = g.stds.length ? '<span class="std">'+g.stds.map(function(s){return '<span>'+s+'</span>';}).join('')+'</span>' : '';
     return '<label class="ci-goal" data-skills="'+g.key+'"><span class="radio"></span><span class="txt"><b>'+g.title+'</b><small>'+g.stmt+'</small>'+stds+'</span></label>';
   }
-  function renderGoals(subject,selectKey){
-    currentSubject=subject;
+  function renderGoals(subject,grade,selectKey){
+    currentSubject=subject; currentGrade=grade;
     var wrap=document.getElementById('goals');
-    wrap.innerHTML=(goalsBySubject[subject]||[]).map(goalCardHTML).join('');
+    wrap.innerHTML=goalsFor(subject,grade).map(goalCardHTML).join('');
     wrap.querySelectorAll('.ci-goal').forEach(function(g){ g.addEventListener('click',function(){selectGoal(g); scheduleSave();}); });
     var target = selectKey && wrap.querySelector('.ci-goal[data-skills="'+selectKey+'"]');
     selectGoal(target || wrap.querySelector('.ci-goal'));
   }
 
-  // --- subject switcher ---
+  // --- subject + grade switchers ---
   document.querySelectorAll('.ci-subject').forEach(function(s){
     s.addEventListener('click',function(){
       document.querySelectorAll('.ci-subject').forEach(function(x){x.classList.remove('sel');});
       s.classList.add('sel');
-      renderGoals(s.getAttribute('data-subject'));
+      renderGoals(s.getAttribute('data-subject'), currentGrade);
       scheduleSave();
     });
+  });
+  var gradeSelect=document.getElementById('gradeSelect');
+  if(gradeSelect) gradeSelect.addEventListener('change',function(){
+    renderGoals(currentSubject, gradeSelect.value);
+    scheduleSave();
   });
 
   // --- BOY setup step navigation (Skill → Skill Profile → Personal Plan → Growth Targets) ---
@@ -1526,7 +1569,7 @@
     var sel=document.querySelector('.ci-goal.sel');
     var diffTa=document.querySelectorAll('#view-personal .ci-q textarea');
     return {
-      subject:currentSubject,
+      subject:currentSubject, grade:currentGrade,
       goalKey:sel?sel.getAttribute('data-skills'):null,
       custom:(document.querySelector('#ownBox textarea')||{}).value||'',
       bands:bands, descriptors:desc, sources:sources,
@@ -1558,10 +1601,11 @@
     var raw; try{ raw=localStorage.getItem(KEY); }catch(e){ return false; }
     if(!raw) return false;
     var d; try{ d=JSON.parse(raw); }catch(e){ return false; }
-    var subj=d.subject||'Math';
+    var subj=d.subject||'Math', grd=d.grade||'3';
     document.querySelectorAll('.ci-subject').forEach(function(s){s.classList.toggle('sel',s.getAttribute('data-subject')===subj);});
-    renderGoals(subj, d.goalKey);
+    var gs=document.getElementById('gradeSelect'); if(gs) gs.value=grd;
     if(d.custom){ var ta=document.querySelector('#ownBox textarea'); if(ta) ta.value=d.custom; }
+    renderGoals(subj, grd, d.goalKey);
     if(d.bands){ document.querySelectorAll('#modalBands input').forEach(function(i){
       var b=i.getAttribute('data-band'),e=i.getAttribute('data-edge'); if(d.bands[b]&&d.bands[b][e]!=null) i.value=d.bands[b][e]; }); }
     updateBadges();
@@ -1606,8 +1650,9 @@
   var saveDraftBtn=document.getElementById('saveDraftBtn');
   if(saveDraftBtn) saveDraftBtn.addEventListener('click',function(){ clearTimeout(saveTimer); save(); });
 
-  // render default subject's goals, then restore any saved draft
-  renderGoals('Math');
+  // render default subject/grade goals, then restore any saved draft
+  renderGoals('Math','3');
+  var _ownTa=document.querySelector('#ownBox textarea'); if(_ownTa) _ownTa.addEventListener('input',syncSkillProfile);
   if(loadDraft()){
     var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
     var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
