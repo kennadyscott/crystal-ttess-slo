@@ -382,6 +382,40 @@
   .ci-evi-btn.upload{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
   .ci-evi-btn.upload:hover{border-color:#C9D2DE;}
 
+  /* ---------- T-TESS Rubric ---------- */
+  .ci-ttess-summary{background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;font-size:12.5px;padding:8px 14px;border-radius:999px;white-space:nowrap;}
+  .ci-ttess-summary.met{background:#E6F4EC;color:#2E7D5B;}
+  .ci-ttess-layout{display:grid;grid-template-columns:236px 1fr;gap:22px;align-items:start;}
+  @media(max-width:820px){.ci-ttess-layout{grid-template-columns:1fr;}}
+  .ci-dim-nav{display:flex;flex-direction:column;gap:3px;}
+  .ci-dim-domain{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);margin:14px 6px 5px;}
+  .ci-dim-nav .ci-dim-domain:first-child{margin-top:0;}
+  .ci-dim-nav button{display:flex;align-items:center;gap:10px;text-align:left;border:0;background:transparent;border-radius:10px;
+    padding:10px 12px;cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--ink);}
+  .ci-dim-nav button:hover{background:rgba(27,27,58,.05);}
+  .ci-dim-nav button.active{background:var(--ci-dark);color:#fff;}
+  .ci-dim-nav .code{font-family:var(--font-display);font-weight:800;flex:none;}
+  .ci-dim-nav .rate-dot{margin-left:auto;width:24px;height:24px;border-radius:50%;color:#fff;font-weight:800;font-size:11px;
+    display:grid;place-items:center;flex:none;font-variant-numeric:tabular-nums;}
+  .ci-dim-nav .rate-dot.empty{background:#E1E7F0;color:var(--ink-faint);}
+
+  .ci-dim-detail .dim-head{font-family:var(--font-display);font-weight:800;color:var(--ink);font-size:19px;margin-bottom:4px;}
+  .ci-dim-detail .dim-eyebrow{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ci-magenta-deep);}
+  .ci-dim-detail .desc-box{background:var(--ci-grad-soft);border:1px solid #F0D9EC;border-radius:var(--r-md);
+    padding:15px 17px;color:var(--ink);font-size:14px;line-height:1.55;margin:14px 0 20px;}
+  .ci-dim-detail h4{font-family:var(--font-display);font-size:13px;color:var(--ink);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px;}
+  .ci-rate-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .ci-rate{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px 7px 7px;cursor:pointer;
+    font-weight:700;font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:8px;}
+  .ci-rate .pt{width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;font-family:var(--font-display);}
+  .ci-rate.sel{border-color:var(--ink);color:var(--ink);box-shadow:0 0 0 3px rgba(27,27,58,.08);}
+  .ci-rate-note{font-size:12px;color:var(--ink-faint);margin-top:10px;}
+  .ci-help{list-style:none;display:flex;flex-direction:column;gap:9px;}
+  .ci-help li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink-soft);line-height:1.45;}
+  .ci-help li .dot{width:22px;height:22px;border-radius:7px;background:var(--pink-soft);color:var(--ci-magenta-deep);
+    display:grid;place-items:center;flex:none;}
+  .ci-dim-section{margin-top:22px;}
+
   /* ---------- Placeholder / locked states ---------- */
   .ci-soon{text-align:center;padding:48px 30px;}
   .ci-soon-badge{display:inline-block;background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;
@@ -590,7 +624,7 @@
         <button role="tab" data-panel="overview">Overview</button>
         <button role="tab" class="active" data-panel="boysetup">BOY Setup</button>
         <button role="tab" data-panel="evidence">Evidence Lockers</button>
-        <button role="tab" data-panel="soon" data-label="T-TESS Rubric">T-TESS Rubric</button>
+        <button role="tab" data-panel="ttess">T-TESS Rubric</button>
         <button role="tab" data-panel="soon" data-label="MOY">MOY</button>
         <button role="tab" data-panel="soon" data-label="Progress">Progress</button>
         <button role="tab" data-panel="soon" data-label="EOY">EOY</button>
@@ -1061,6 +1095,21 @@
         </section>
       </div><!-- /panel-evidence -->
 
+      <!-- ============ PANEL: T-TESS RUBRIC (Domains 2 & 3 · slide 18) ============ -->
+      <div id="panel-ttess" hidden>
+        <section class="ci-card">
+          <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+            <div><div class="ci-eyebrow">The 35% · Teacher performance</div><h2>T-TESS Rubric · Domains 2 &amp; 3</h2></div>
+            <div class="ci-ttess-summary" id="ttessSummary">—</div>
+          </header>
+          <p class="sub">Collect evidence and track your standing across the Instruction and Learning Environment dimensions. TIA looks for a cumulative <b>3.75</b> across Domains 2 &amp; 3. <b>Proficient</b> is the expected level; <b>Accomplished</b> and <b>Distinguished</b> require students to drive their own learning.</p>
+          <div class="ci-ttess-layout">
+            <nav class="ci-dim-nav" id="dimNav"></nav>
+            <div class="ci-dim-detail" id="dimDetail"></div>
+          </div>
+        </section>
+      </div><!-- /panel-ttess -->
+
       <!-- ============ PANEL: other tabs (next builds) ============ -->
       <div id="panel-soon" hidden>
         <section class="ci-card ci-soon">
@@ -1451,7 +1500,7 @@
   });
 
   // --- top-level panel switching (Overview / BOY Setup / Evidence Lockers / …) ---
-  var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', soon:'panel-soon'};
+  var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', ttess:'panel-ttess', soon:'panel-soon'};
   function showPanel(p,label){
     Object.keys(PANELS).forEach(function(k){ var el=document.getElementById(PANELS[k]); if(el) el.hidden=(k!==p); });
     document.querySelectorAll('.ci-tabs button').forEach(function(b){
@@ -1461,6 +1510,7 @@
     if(p==='overview'){ var ol=document.getElementById('overviewLocked'), orr=document.getElementById('overviewReady');
       if(ol) ol.hidden=sloLocked; if(orr){ orr.hidden=!sloLocked; if(sloLocked) renderOverview(); } }
     if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
+    if(p==='ttess'){ renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); }
     if(p==='soon'){ var t=document.getElementById('soonTitle'), x=document.getElementById('soonText');
       if(t) t.textContent=label||'Coming next';
       if(x) x.textContent=(label||'This section')+' is on the roadmap — BOY Setup and the Evidence Locker are built out first.'; }
@@ -1517,6 +1567,89 @@
         '<button type="button" class="btn btn-primary" data-panel-go="evidence">Go to Evidence Locker</button>'+
         '<button type="button" class="btn btn-ghost" data-panel-go="boysetup">Reference BOY Setup</button>'+
       '</section>';
+  }
+
+  // --- T-TESS Rubric (Domains 2 & 3) ---
+  var DIMENSIONS=[
+    {id:'2.1',domain:'Instruction · Domain 2',title:'Achieving Expectations',desc:"The teacher supports all learners in their pursuit of high levels of academic and social-emotional success.",ci:["Real-time student data during instruction lets you persist until all students reach the objective","Built-in Skill Builder remediation pathways support understanding within the lesson","Exit tickets and checkpoints make mastery visible for every student"]},
+    {id:'2.2',domain:'Instruction · Domain 2',title:'Content Knowledge & Expertise',desc:"The teacher uses content and pedagogical expertise to design and execute lessons aligned with state standards, related content, and student needs.",ci:["ClearLessons and ClearSheets are built to TEKS with accurate, grade-level content","Snap Lessons let you reteach a specific concept with precision","Lesson sequences connect prior knowledge to new learning"]},
+    {id:'2.3',domain:'Instruction · Domain 2',title:'Communication',desc:"The teacher clearly and accurately communicates to support persistence, deeper learning, and effort.",ci:["ClearLessons model clear explanations and precise academic vocabulary","Checkpoints prompt student discussion and questioning","Worked examples and visuals make thinking visible"]},
+    {id:'2.4',domain:'Instruction · Domain 2',title:'Differentiation',desc:"The teacher differentiates instruction, aligning methods and techniques to diverse student needs.",ci:["Tiered learning paths and Snap Lessons target diverse needs","Group students by real-time data for small-group instruction","ClearSheets are available at multiple levels of support"]},
+    {id:'2.5',domain:'Instruction · Domain 2',title:'Monitor & Adjust',desc:"The teacher formally and informally collects, analyzes, and uses student progress data and makes needed lesson adjustments.",ci:["Real-time checkpoints and exit tickets surface understanding as you teach","Crystal Reports dashboards analyze progress at a glance","Flagged misconceptions help you adjust mid-lesson"]},
+    {id:'3.1',domain:'Learning Environment · Domain 3',title:'Classroom Environment, Routines & Procedures',desc:"The teacher organizes a safe, accessible, and efficient classroom.",ci:["Consistent lesson routines keep learning time efficient","Digital workflows reduce transition downtime","Students access tasks and materials independently"]},
+    {id:'3.2',domain:'Learning Environment · Domain 3',title:'Managing Student Behavior',desc:"The teacher establishes, communicates, and maintains clear expectations for student behavior.",ci:["ClassCade Showdown reinforces expectations with positive rewards","Engagement data highlights when to re-engage students","Clear task structures keep students on task"]},
+    {id:'3.3',domain:'Learning Environment · Domain 3',title:'Classroom Culture',desc:"The teacher leads a mutually respectful and collaborative class of actively engaged learners.",ci:["ClassCade rewards and collaborative games build a positive culture","Students take ownership of their progress and growth","Celebrate growth with badges and recognition"]}
+  ];
+  var RATENAME={5:'Distinguished',4:'Accomplished',3:'Proficient',2:'Developing',1:'Improvement Needed'};
+  var RATEBAND={5:'--band-wa',4:'--band-a',3:'--band-t',2:'--band-b',1:'--band-wb'};
+  var ratingByDim={}, currentDim='2.1';
+  var evidenceByDim={ '2.1':[
+    {type:'ClearLesson Exit Ticket',label:'Solve 1-Step Multiplication — class avg 95%'},
+    {type:'ClearSheet',label:'Solve 1-Step Multiplication — class avg 98%'} ]};
+  function findDim(id){ for(var i=0;i<DIMENSIONS.length;i++){ if(DIMENSIONS[i].id===id) return DIMENSIONS[i]; } return DIMENSIONS[0]; }
+  function ttessAvg(){ var k=Object.keys(ratingByDim); if(!k.length) return null; var t=0; k.forEach(function(x){t+=ratingByDim[x];}); return t/k.length; }
+  function updateTtessSummary(){
+    var el=document.getElementById('ttessSummary'); if(!el) return;
+    var a=ttessAvg(), rated=Object.keys(ratingByDim).length;
+    if(a==null){ el.textContent='Not yet rated'; el.className='ci-ttess-summary'; }
+    else { el.textContent='Avg '+a.toFixed(2)+' / 3.75 · '+rated+' of '+DIMENSIONS.length+' rated';
+      el.className='ci-ttess-summary'+(a>=3.75?' met':''); }
+  }
+  function renderDimNav(){
+    var nav=document.getElementById('dimNav'); if(!nav) return; nav.innerHTML='';
+    var lastDomain='';
+    DIMENSIONS.forEach(function(d){
+      if(d.domain!==lastDomain){ lastDomain=d.domain; var h=document.createElement('div'); h.className='ci-dim-domain'; h.textContent=d.domain; nav.appendChild(h); }
+      var r=ratingByDim[d.id];
+      var b=document.createElement('button'); b.type='button'; if(d.id===currentDim) b.className='active';
+      b.innerHTML='<span class="code">'+d.id+'</span><span>'+d.title+'</span>'+
+        (r?'<span class="rate-dot" style="background:var('+RATEBAND[r]+')">'+r+'</span>':'<span class="rate-dot empty">–</span>');
+      b.addEventListener('click',function(){ currentDim=d.id; renderDimNav(); renderDimDetail(d.id); scheduleSave(); });
+      nav.appendChild(b);
+    });
+  }
+  function renderDimDetail(id){
+    var wrap=document.getElementById('dimDetail'); if(!wrap) return;
+    var d=findDim(id); var r=ratingByDim[id];
+    var esc=function(v){return (v||'').replace(/</g,'&lt;');};
+    var rates=[5,4,3,2,1].map(function(p){
+      return '<button type="button" class="ci-rate'+(r===p?' sel':'')+'" data-pt="'+p+'"><span class="pt" style="background:var('+RATEBAND[p]+')">'+p+'</span>'+RATENAME[p]+'</button>';
+    }).join('');
+    var help=d.ci.map(function(c){ return '<li><span class="dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><span>'+c+'</span></li>'; }).join('');
+    var items=evidenceByDim[id]||(evidenceByDim[id]=[]);
+    var itemsHTML=items.length ? items.map(function(it,idx){
+      return '<div class="ci-evi-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span>'+
+        '<span class="lab">'+esc(it.label)+'<small>'+it.type+'</small></span>'+
+        '<button class="rm" data-idx="'+idx+'" aria-label="Remove">✕</button></div>';
+    }).join('') : '<div class="ci-evi-empty">No evidence yet for this dimension.</div>';
+    wrap.innerHTML=
+      '<div class="dim-eyebrow">'+d.domain+'</div>'+
+      '<div class="dim-head">'+d.id+' · '+d.title+'</div>'+
+      '<div class="desc-box">'+d.desc+'</div>'+
+      '<h4>Your rating</h4><div class="ci-rate-row">'+rates+'</div>'+
+      '<div class="ci-rate-note">Proficient (3) is the expected level. Accomplished and Distinguished require students to drive their own learning.</div>'+
+      '<div class="ci-dim-section"><h4>How Crystal Instruction helps</h4><ul class="ci-help">'+help+'</ul></div>'+
+      '<div class="ci-dim-section"><h4>Evidence I\'ve collected</h4>'+
+        '<div class="ci-evi-items">'+itemsHTML+'</div>'+
+        '<div class="ci-evi-add" id="dimAdd">'+
+          '<select class="ci-evi-type">'+EVI_TYPES.map(function(t){return '<option>'+t.v+'</option>';}).join('')+'</select>'+
+          '<input class="lbl-in" placeholder="Label (e.g. Walkthrough note, exit-ticket data)">'+
+          '<button type="button" class="ci-evi-btn add">Add</button>'+
+          '<button type="button" class="ci-evi-btn upload">Upload artifact<input type="file" hidden></button>'+
+        '</div></div>';
+    wrap.querySelectorAll('.ci-rate').forEach(function(b){ b.addEventListener('click',function(){
+      ratingByDim[id]=+b.getAttribute('data-pt'); renderDimNav(); renderDimDetail(id); updateTtessSummary(); scheduleSave(); }); });
+    wrap.querySelectorAll('.rm').forEach(function(b){ b.addEventListener('click',function(){
+      evidenceByDim[id].splice(+b.getAttribute('data-idx'),1); renderDimDetail(id); scheduleSave(); }); });
+    var addRow=wrap.querySelector('#dimAdd');
+    addRow.querySelector('.add').addEventListener('click',function(){
+      var type=addRow.querySelector('.ci-evi-type').value;
+      var label=(addRow.querySelector('.lbl-in').value||'').trim()||type;
+      evidenceByDim[id].push({type:type,label:label}); renderDimDetail(id); scheduleSave();
+    });
+    var up=addRow.querySelector('.upload'), fi=up.querySelector('input[type=file]');
+    up.addEventListener('click',function(e){ e.preventDefault(); fi.click(); });
+    fi.addEventListener('change',function(){ if(fi.files&&fi.files[0]){ evidenceByDim[id].push({type:'Artifact',label:fi.files[0].name}); renderDimDetail(id); scheduleSave(); } });
   }
 
   // --- Evidence Locker (per student) ---
@@ -1674,6 +1807,7 @@
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
       evidence:evidenceByStudent, eviStudent:currentEviStudent,
+      ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim,
       step:currentStep
     };
   }
@@ -1725,6 +1859,9 @@
     applyLockState();
     if(d.evidence) evidenceByStudent=d.evidence;
     if(d.eviStudent) currentEviStudent=d.eviStudent;
+    if(d.ttessRatings) ratingByDim=d.ttessRatings;
+    if(d.ttessEvidence) evidenceByDim=d.ttessEvidence;
+    if(d.ttessDim) currentDim=d.ttessDim;
     setStatus('saved','✓ All changes saved');
     return true;
   }
