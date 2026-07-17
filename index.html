@@ -391,6 +391,19 @@
   .ci-lock-badge{width:52px;height:52px;border-radius:50%;background:#EEF1F6;color:var(--ink-faint);
     display:grid;place-items:center;margin:0 auto 16px;}
 
+  /* ---------- SLO Overview ---------- */
+  .ov-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);color:#fff;
+    font-weight:800;font-size:11px;letter-spacing:.5px;text-transform:uppercase;padding:5px 12px;border-radius:999px;}
+  .ov-stats{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:16px;}
+  .ov-stat{font-family:var(--font-display);font-weight:800;font-size:28px;color:var(--ink);line-height:1;}
+  .ov-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);margin-top:4px;}
+  .ov-pill{display:inline-flex;color:#fff;font-weight:700;font-size:12px;padding:4px 11px;border-radius:999px;margin:0 6px 6px 0;}
+  .ov-row{margin-bottom:13px;}
+  .ov-row b{display:block;font-size:11px;color:var(--ink-faint);font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;}
+  .ov-row > span{color:var(--ink);font-size:13.5px;}
+  .ov-chips span{display:inline-block;background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:700;
+    font-size:12px;padding:4px 11px;border-radius:999px;margin:0 6px 6px 0;}
+
   /* ---------- Growth Targets ---------- */
   .ci-target-summary{background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:700;
     font-size:12.5px;padding:8px 14px;border-radius:999px;white-space:nowrap;}
@@ -574,6 +587,7 @@
 
       <!-- Sub tabs -->
       <div class="ci-tabs" role="tablist">
+        <button role="tab" data-panel="overview">Overview</button>
         <button role="tab" class="active" data-panel="boysetup">BOY Setup</button>
         <button role="tab" data-panel="evidence">Evidence Lockers</button>
         <button role="tab" data-panel="soon" data-label="T-TESS Rubric">T-TESS Rubric</button>
@@ -1007,6 +1021,21 @@
       </div><!-- /view-targets -->
       </div><!-- /panel-boysetup -->
 
+      <!-- ============ PANEL: OVERVIEW (post-lock SLO summary) ============ -->
+      <div id="panel-overview" hidden>
+        <section class="ci-card ci-soon" id="overviewLocked">
+          <div class="ci-lock-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+          </div>
+          <h2>Your SLO overview appears here</h2>
+          <p>Finish BOY Setup and lock your SLO — then this becomes your at-a-glance plan for the year.</p>
+          <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </section>
+        <div id="overviewReady" hidden></div>
+      </div><!-- /panel-overview -->
+
       <!-- ============ PANEL: EVIDENCE LOCKERS (Phase 2 · slide 15) ============ -->
       <div id="panel-evidence" hidden>
         <section class="ci-card">
@@ -1392,13 +1421,23 @@
     var hint=document.getElementById('lockHint');
     if(hint) hint.textContent = sloLocked ? 'SLO locked — unlock below to make changes.'
       : ((approve&&approve.checked) ? 'Ready to lock for the year.' : 'Check appraiser approval to enable locking.');
+    updatePhase();
+  }
+  // phase stepper reflects lock state (Phase 1 → Phase 2 on lock)
+  function updatePhase(){
+    var n = sloLocked ? 2 : 1;
+    document.querySelectorAll('.ci-stepper .ci-step').forEach(function(st,i){
+      var idx=i+1, small=st.querySelector('.lbl small');
+      st.classList.toggle('current',idx===n);
+      st.classList.toggle('done',idx<n);
+      if(small) small.textContent = idx<n ? 'Complete' : (idx===n ? 'You are here' : (idx===2?'Sep – Apr':'End of year'));
+    });
   }
   var approveEl=document.getElementById('adminApproved');
   if(approveEl) approveEl.addEventListener('change',function(){applyLockState();scheduleSave();});
   var lockBtnEl=document.getElementById('lockBtn');
   if(lockBtnEl) lockBtnEl.addEventListener('click',function(){
-    if(approveEl&&approveEl.checked){ sloLocked=true; applyLockState(); scheduleSave();
-      document.getElementById('lockedBanner').scrollIntoView({behavior:'smooth',block:'center'}); }
+    if(approveEl&&approveEl.checked){ sloLocked=true; applyLockState(); scheduleSave(); showPanel('overview'); }
   });
   var unlockBtnEl=document.getElementById('unlockBtn');
   if(unlockBtnEl) unlockBtnEl.addEventListener('click',function(){ sloLocked=false; applyLockState(); scheduleSave(); });
@@ -1411,14 +1450,16 @@
     b.addEventListener('click',function(){show(b.getAttribute('data-goto'));});
   });
 
-  // --- top-level panel switching (BOY Setup / Evidence Lockers / …) ---
-  var PANELS={boysetup:'panel-boysetup', evidence:'panel-evidence', soon:'panel-soon'};
+  // --- top-level panel switching (Overview / BOY Setup / Evidence Lockers / …) ---
+  var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', soon:'panel-soon'};
   function showPanel(p,label){
     Object.keys(PANELS).forEach(function(k){ var el=document.getElementById(PANELS[k]); if(el) el.hidden=(k!==p); });
     document.querySelectorAll('.ci-tabs button').forEach(function(b){
       var match=(b.getAttribute('data-panel')===p) && (p!=='soon' || b.getAttribute('data-label')===label);
       b.classList.toggle('active',match);
     });
+    if(p==='overview'){ var ol=document.getElementById('overviewLocked'), orr=document.getElementById('overviewReady');
+      if(ol) ol.hidden=sloLocked; if(orr){ orr.hidden=!sloLocked; if(sloLocked) renderOverview(); } }
     if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
     if(p==='soon'){ var t=document.getElementById('soonTitle'), x=document.getElementById('soonText');
       if(t) t.textContent=label||'Coming next';
@@ -1428,9 +1469,55 @@
   document.querySelectorAll('.ci-tabs button').forEach(function(b){
     b.addEventListener('click',function(){ showPanel(b.getAttribute('data-panel'), b.getAttribute('data-label')); });
   });
-  document.querySelectorAll('[data-panel-go]').forEach(function(b){
-    b.addEventListener('click',function(){ showPanel(b.getAttribute('data-panel-go')); });
-  });
+  document.addEventListener('click',function(e){ var b=e.target.closest && e.target.closest('[data-panel-go]'); if(b) showPanel(b.getAttribute('data-panel-go')); });
+
+  // --- SLO Overview (post-lock summary) ---
+  function renderOverview(){
+    var wrap=document.getElementById('overviewReady'); if(!wrap) return;
+    var g=currentGoal();
+    var stmt=(document.getElementById('sloStatement')||{}).textContent||'';
+    var rows=document.querySelectorAll('#targetRows .ci-target-row');
+    var n=rows.length,tot=0,dist={wb:0,b:0,t:0,a:0,wa:0};
+    rows.forEach(function(r){var s=r.querySelector('input[type=range]');tot+=(+s.value)-(+s.getAttribute('data-pre'));dist[classifyBand(+s.value)]++;});
+    var avg=n?Math.round(tot/n):0;
+    var distHTML=['wa','a','t','b','wb'].map(function(k){ return dist[k]?'<span class="ov-pill" style="background:var('+BANDVAR[k]+')">'+dist[k]+' '+BANDNAME[k]+'</span>':''; }).join('') || '<span style="color:var(--ink-faint);font-size:13px;">Set growth targets to see this.</span>';
+    var dt=document.querySelectorAll('#view-personal .ci-q textarea');
+    var esc=function(v){ return (v||'').replace(/</g,'&lt;'); };
+    var highest=esc(dt[0]&&dt[0].value)||'—', lowest=esc(dt[1]&&dt[1].value)||'—';
+    var cadence=(document.querySelector('#view-personal select')||{}).value||'—';
+    var support=esc((document.querySelector('#view-personal .ci-input')||{}).value)||'—';
+    var other=(document.getElementById('otherSources')||{}).value||'';
+    var srcs=[].map.call(document.querySelectorAll('.ci-source.sel'),function(e){return e.textContent.trim();});
+    if(other) srcs.push(other);
+    var evTot=0; ROSTER.forEach(function(nm){evTot+=eviTotal(nm);});
+    wrap.innerHTML=
+      '<div class="ci-slo-banner">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">'+
+          '<span class="eyebrow">Your SLO · Grade '+currentGrade+' '+currentSubject+'</span>'+
+          '<span class="ov-badge">🔒 Locked · 2026–27</span></div>'+
+        '<p>'+(g?g.title:'')+'</p><small>'+stmt+'</small></div>'+
+      '<div class="ci-grid2" style="margin-top:22px;">'+
+        '<section class="ci-card"><header><div><div class="ci-eyebrow">What you\'re working toward</div><h2>Class growth goal</h2></div></header>'+
+          '<div class="ov-stats">'+
+            '<div><div class="ov-stat">'+n+'</div><div class="ov-label">Students</div></div>'+
+            '<div><div class="ov-stat">+'+avg+'</div><div class="ov-label">Avg target growth</div></div>'+
+            '<div><div class="ov-stat">'+evTot+'</div><div class="ov-label">Evidence collected</div></div></div>'+
+          '<div class="ov-label" style="margin-bottom:8px;">Target performance levels</div><div>'+distHTML+'</div>'+
+        '</section>'+
+        '<section class="ci-card"><header><div><div class="ci-eyebrow">Your plan</div><h2>How you\'ll get there</h2></div></header>'+
+          '<div class="ov-row"><b>Highest group</b><span>'+highest+'</span></div>'+
+          '<div class="ov-row"><b>Lowest group</b><span>'+lowest+'</span></div>'+
+          '<div class="ov-row"><b>Progress monitoring</b><span>'+cadence+'</span></div>'+
+          '<div class="ov-row"><b>Additional support</b><span>'+support+'</span></div>'+
+          '<div class="ov-row"><b>Evidence sources</b><div class="ov-chips">'+(srcs.length?srcs.map(function(s){return '<span>'+esc(s)+'</span>';}).join(''):'<span>—</span>')+'</div></div>'+
+        '</section></div>'+
+      '<section class="ci-card" style="margin-top:22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;">'+
+        '<div style="flex:1;min-width:220px;"><div class="ci-eyebrow">Phase 2 · Monitor Progress</div>'+
+          '<p class="sub" style="margin:4px 0 0;">Your baseline is locked. Collect evidence and check in on progress across the year.</p></div>'+
+        '<button type="button" class="btn btn-primary" data-panel-go="evidence">Go to Evidence Locker</button>'+
+        '<button type="button" class="btn btn-ghost" data-panel-go="boysetup">Reference BOY Setup</button>'+
+      '</section>';
+  }
 
   // --- Evidence Locker (per student) ---
   var EVI_TYPES=[
@@ -1656,9 +1743,11 @@
   if(loadDraft()){
     var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
     var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
+    if(sloLocked) showPanel('overview'); // locked SLO → land on the overview
   } else {
     applyDataState(); // fresh start: reflect the locked Growth Targets tab
   }
+  updatePhase();
 })();
 </script>
 </body>
