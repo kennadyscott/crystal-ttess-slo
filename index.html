@@ -343,6 +343,42 @@
     font-family:var(--font-body);font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink);}
   .ci-scoreinput:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
 
+  /* ---------- Evidence Locker ---------- */
+  .ci-evi-pick{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;color:var(--ink);}
+  .ci-evi-pick .ci-select{min-width:170px;}
+  .ci-evi-summary{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:#FAFBFD;border:1px solid var(--line);
+    border-radius:var(--r-md);padding:14px 16px;margin-bottom:20px;}
+  .ci-evi-growth{font-family:var(--font-display);font-weight:800;color:var(--ink);font-size:15px;}
+  .ci-evi-progress{margin-left:auto;min-width:200px;}
+  .ci-evi-count{font-size:12.5px;color:var(--ink-soft);font-weight:600;margin-bottom:6px;}
+  .ci-evi-count b{color:var(--ci-magenta-deep);font-family:var(--font-display);}
+  .ci-evi-bar{height:8px;border-radius:5px;background:var(--line);overflow:hidden;}
+  .ci-evi-bar span{display:block;height:100%;border-radius:5px;background:var(--ci-grad);width:0;transition:width .25s;}
+
+  .ci-evi-std{border:1px solid var(--line);border-radius:var(--r-md);padding:16px;margin-bottom:14px;}
+  .ci-evi-std-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .ci-evi-std-head .std-chip{background:var(--ink);color:#fff;font-weight:800;font-size:12px;padding:4px 11px;border-radius:8px;letter-spacing:.3px;}
+  .ci-evi-std-head .cnt{font-size:12px;color:var(--ink-faint);font-weight:700;}
+  .ci-evi-items{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+  .ci-evi-item{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;}
+  .ci-evi-item .dot{width:26px;height:26px;border-radius:7px;flex:none;display:grid;place-items:center;color:#fff;font-size:12px;}
+  .ci-evi-item .lab{font-weight:600;color:var(--ink);font-size:13px;}
+  .ci-evi-item .lab small{display:block;color:var(--ink-faint);font-size:11px;font-weight:600;}
+  .ci-evi-item .sc{margin-left:auto;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;font-size:13px;}
+  .ci-evi-item .rm{border:0;background:transparent;color:var(--ink-faint);cursor:pointer;padding:4px;border-radius:6px;flex:none;}
+  .ci-evi-item .rm:hover{background:rgba(0,0,0,.06);color:var(--band-wb);}
+  .ci-evi-empty{color:var(--ink-faint);font-size:12.5px;font-style:italic;margin-bottom:12px;}
+  .ci-evi-add{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .ci-evi-add .ci-evi-type{min-width:190px;}
+  .ci-evi-add input{border:1.5px solid var(--line);border-radius:9px;padding:8px 11px;font-family:var(--font-body);font-size:13px;color:var(--ink);}
+  .ci-evi-add .lbl-in{flex:1;min-width:150px;}
+  .ci-evi-add .sc-in{width:80px;text-align:center;}
+  .ci-evi-add input:focus,.ci-evi-add select:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
+  .ci-evi-btn{border:0;border-radius:999px;font-family:var(--font-display);font-weight:800;font-size:13px;cursor:pointer;padding:9px 16px;display:inline-flex;align-items:center;gap:6px;}
+  .ci-evi-btn.add{background:var(--ci-grad);color:#fff;box-shadow:var(--shadow-lift);}
+  .ci-evi-btn.upload{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
+  .ci-evi-btn.upload:hover{border-color:#C9D2DE;}
+
   /* ---------- Placeholder / locked states ---------- */
   .ci-soon{text-align:center;padding:48px 30px;}
   .ci-soon-badge{display:inline-block;background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;
@@ -535,13 +571,16 @@
 
       <!-- Sub tabs -->
       <div class="ci-tabs" role="tablist">
-        <button role="tab" class="active">BOY Setup</button>
-        <button role="tab">Evidence Lockers</button>
-        <button role="tab">T-TESS Rubric</button>
-        <button role="tab">MOY</button>
-        <button role="tab">Progress</button>
-        <button role="tab">EOY</button>
+        <button role="tab" class="active" data-panel="boysetup">BOY Setup</button>
+        <button role="tab" data-panel="evidence">Evidence Lockers</button>
+        <button role="tab" data-panel="soon" data-label="T-TESS Rubric">T-TESS Rubric</button>
+        <button role="tab" data-panel="soon" data-label="MOY">MOY</button>
+        <button role="tab" data-panel="soon" data-label="Progress">Progress</button>
+        <button role="tab" data-panel="soon" data-label="EOY">EOY</button>
       </div>
+
+      <!-- ============ PANEL: BOY SETUP ============ -->
+      <div id="panel-boysetup">
 
       <!-- BOY setup step nav (deck order: slides 9 → 10 → 11 → 12) -->
       <div class="ci-subtabs" role="tablist">
@@ -958,6 +997,42 @@
         </div>
 
       </div><!-- /view-targets -->
+      </div><!-- /panel-boysetup -->
+
+      <!-- ============ PANEL: EVIDENCE LOCKERS (Phase 2 · slide 15) ============ -->
+      <div id="panel-evidence" hidden>
+        <section class="ci-card">
+          <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+            <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2>Evidence Locker</h2></div>
+            <label class="ci-evi-pick">Student
+              <span class="ci-select"><select id="eviStudent"></select>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+            </label>
+          </header>
+          <p class="sub">Collect a Body of Evidence for each student across the year. Tag work to a standard, add a checkpoint, or upload an artifact — aim for at least <b>5 data points</b> per student.</p>
+
+          <div class="ci-evi-summary">
+            <div class="ci-evi-growth" id="eviGrowth">—</div>
+            <div class="ci-evi-progress">
+              <div class="ci-evi-count"><b id="eviCount">0</b> of 5 minimum data points</div>
+              <div class="ci-evi-bar"><span id="eviBarFill"></span></div>
+            </div>
+          </div>
+
+          <div id="eviStandards"></div>
+        </section>
+      </div><!-- /panel-evidence -->
+
+      <!-- ============ PANEL: other tabs (next builds) ============ -->
+      <div id="panel-soon" hidden>
+        <section class="ci-card ci-soon">
+          <div class="ci-soon-badge">Next build</div>
+          <h2 id="soonTitle">Coming next</h2>
+          <p id="soonText">This section is on the roadmap. The BOY Setup and Evidence Locker flows are built out first.</p>
+          <button class="btn btn-ghost" data-panel-go="boysetup">Back to BOY Setup</button>
+        </section>
+      </div><!-- /panel-soon -->
 
       <!-- =================== PERCENTAGE-BANDS MODAL (Skill Profile step) =================== -->
       <div class="ci-modal" id="bandsModal" hidden>
@@ -1293,6 +1368,108 @@
     b.addEventListener('click',function(){show(b.getAttribute('data-goto'));});
   });
 
+  // --- top-level panel switching (BOY Setup / Evidence Lockers / …) ---
+  var PANELS={boysetup:'panel-boysetup', evidence:'panel-evidence', soon:'panel-soon'};
+  function showPanel(p,label){
+    Object.keys(PANELS).forEach(function(k){ var el=document.getElementById(PANELS[k]); if(el) el.hidden=(k!==p); });
+    document.querySelectorAll('.ci-tabs button').forEach(function(b){
+      var match=(b.getAttribute('data-panel')===p) && (p!=='soon' || b.getAttribute('data-label')===label);
+      b.classList.toggle('active',match);
+    });
+    if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
+    if(p==='soon'){ var t=document.getElementById('soonTitle'), x=document.getElementById('soonText');
+      if(t) t.textContent=label||'Coming next';
+      if(x) x.textContent=(label||'This section')+' is on the roadmap — BOY Setup and the Evidence Locker are built out first.'; }
+    document.querySelector('.ci-page').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  document.querySelectorAll('.ci-tabs button').forEach(function(b){
+    b.addEventListener('click',function(){ showPanel(b.getAttribute('data-panel'), b.getAttribute('data-label')); });
+  });
+  document.querySelectorAll('[data-panel-go]').forEach(function(b){
+    b.addEventListener('click',function(){ showPanel(b.getAttribute('data-panel-go')); });
+  });
+
+  // --- Evidence Locker (per student) ---
+  var EVI_TYPES=[
+    {v:'ClearLesson Exit Ticket',c:'--ci-magenta'},{v:'ClearSheet',c:'--ci-purple'},
+    {v:'Snap Lesson Checkpoint',c:'#5A8DEE'},{v:'Learning Path',c:'--teal'},
+    {v:'ClassCade Showdown',c:'--band-b'},{v:'Artifact',c:'--band-a'},{v:'Note',c:'--ink-faint'}];
+  var evidenceByStudent={ 'Kennady':{ '3.4K':[
+    {type:'ClearSheet',label:'Solve 1-Step Multiplication',score:'92%'},
+    {type:'ClearLesson Exit Ticket',label:'Equal Groups & Arrays',score:'88%'},
+    {type:'Snap Lesson Checkpoint',label:'Multiplication Facts',score:'80%'} ]}};
+  var currentEviStudent=ROSTER[0];
+  function eviColor(type){ for(var i=0;i<EVI_TYPES.length;i++){ if(EVI_TYPES[i].v===type) return EVI_TYPES[i].c; } return '--ink-faint'; }
+  function eviGlyph(type){ return type==='Artifact'?'📎':(type==='Note'?'✎':'✓'); }
+  function sloStandards(){
+    var selEl=document.querySelector('#goals .ci-goal.sel');
+    var g=selEl?findGoal(currentSubject, selEl.getAttribute('data-skills')):null;
+    return (g && g.stds && g.stds.length) ? g.stds : ['3.4K','3.4H','3.4I','3.4J'];
+  }
+  function eviTotal(name){ var s=evidenceByStudent[name]||{}; var n=0; Object.keys(s).forEach(function(k){n+=s[k].length;}); return n; }
+  function fillStudentPicker(){
+    var sel=document.getElementById('eviStudent'); if(!sel||sel.dataset.built) return;
+    sel.innerHTML=ROSTER.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('');
+    sel.addEventListener('change',function(){ renderEvidence(sel.value); scheduleSave(); });
+    sel.dataset.built='1';
+  }
+  function eviGrowthLabel(name){
+    var list=studentList(), st=null; list.forEach(function(x){if(x.name===name)st=x;});
+    if(!st) return name;
+    var preBk=classifyBand(st.pre);
+    var slider=document.querySelector('#targetRows input[data-name="'+name+'"]');
+    if(slider) return name+' · '+BANDNAME[preBk]+' → '+BANDNAME[classifyBand(+slider.value)];
+    return name+' · starting '+BANDNAME[preBk];
+  }
+  function renderEvidence(name){
+    if(!name) name=ROSTER[0];
+    currentEviStudent=name;
+    var sel=document.getElementById('eviStudent'); if(sel) sel.value=name;
+    var g=document.getElementById('eviGrowth'); if(g) g.textContent = hasData ? eviGrowthLabel(name) : name;
+    var total=eviTotal(name);
+    document.getElementById('eviCount').textContent=total;
+    document.getElementById('eviBarFill').style.width=Math.min(100,Math.round(total/5*100))+'%';
+    var wrap=document.getElementById('eviStandards'); wrap.innerHTML='';
+    var studentEvi=evidenceByStudent[name]||(evidenceByStudent[name]={});
+    sloStandards().forEach(function(std){
+      var items=studentEvi[std]||(studentEvi[std]=[]);
+      var itemsHTML = items.length ? items.map(function(it,idx){
+        return '<div class="ci-evi-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span>'+
+          '<span class="lab">'+it.label+'<small>'+it.type+'</small></span>'+
+          (it.score?'<span class="sc">'+it.score+'</span>':'')+
+          '<button class="rm" data-std="'+std+'" data-idx="'+idx+'" aria-label="Remove">✕</button></div>';
+      }).join('') : '<div class="ci-evi-empty">No evidence yet for this standard.</div>';
+      var block=document.createElement('div'); block.className='ci-evi-std';
+      block.innerHTML=
+        '<div class="ci-evi-std-head"><span class="std-chip">'+std+'</span><span class="cnt">'+items.length+' item'+(items.length===1?'':'s')+'</span></div>'+
+        '<div class="ci-evi-items">'+itemsHTML+'</div>'+
+        '<div class="ci-evi-add" data-std="'+std+'">'+
+          '<select class="ci-evi-type">'+EVI_TYPES.map(function(t){return '<option>'+t.v+'</option>';}).join('')+'</select>'+
+          '<input class="lbl-in" placeholder="Label (e.g. Solve 1-step multiplication)">'+
+          '<input class="sc-in" placeholder="Score">'+
+          '<button type="button" class="ci-evi-btn add">Add</button>'+
+          '<button type="button" class="ci-evi-btn upload">Upload artifact<input type="file" hidden></button>'+
+        '</div>';
+      wrap.appendChild(block);
+    });
+    wrap.querySelectorAll('.rm').forEach(function(b){ b.addEventListener('click',function(){
+      evidenceByStudent[name][b.getAttribute('data-std')].splice(+b.getAttribute('data-idx'),1);
+      renderEvidence(name); scheduleSave(); }); });
+    wrap.querySelectorAll('.ci-evi-add').forEach(function(row){
+      var std=row.getAttribute('data-std');
+      row.querySelector('.add').addEventListener('click',function(){
+        var type=row.querySelector('.ci-evi-type').value;
+        var label=(row.querySelector('.lbl-in').value||'').trim()||type;
+        var score=(row.querySelector('.sc-in').value||'').trim();
+        evidenceByStudent[name][std].push({type:type,label:label,score:score});
+        renderEvidence(name); scheduleSave();
+      });
+      var up=row.querySelector('.upload'), fi=up.querySelector('input[type=file]');
+      up.addEventListener('click',function(e){ e.preventDefault(); fi.click(); });
+      fi.addEventListener('change',function(){ if(fi.files&&fi.files[0]){ evidenceByStudent[name][std].push({type:'Artifact',label:fi.files[0].name,score:''}); renderEvidence(name); scheduleSave(); } });
+    });
+  }
+
   // --- Body-of-Evidence source toggles (visual) ---
   document.querySelectorAll('.ci-source input').forEach(function(cb){
     cb.addEventListener('change',function(){cb.closest('.ci-source').classList.toggle('sel',cb.checked);});
@@ -1366,6 +1543,7 @@
       targets:(function(){var t={};document.querySelectorAll('#targetRows input[type=range]').forEach(function(s){t[s.getAttribute('data-name')]=s.value;});return t;})(),
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
+      evidence:evidenceByStudent, eviStudent:currentEviStudent,
       step:currentStep
     };
   }
@@ -1414,6 +1592,8 @@
       if(s){ s.value=d.targets[name]; updateRow(s.closest('.ci-target-row')); } }); updateSummary(); }
     if(d.approved){ var ap=document.getElementById('adminApproved'); if(ap) ap.checked=true; }
     applyLockState();
+    if(d.evidence) evidenceByStudent=d.evidence;
+    if(d.eviStudent) currentEviStudent=d.eviStudent;
     setStatus('saved','✓ All changes saved');
     return true;
   }
