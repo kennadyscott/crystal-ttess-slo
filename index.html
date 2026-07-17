@@ -344,6 +344,53 @@
   .ci-lock-badge{width:52px;height:52px;border-radius:50%;background:#EEF1F6;color:var(--ink-faint);
     display:grid;place-items:center;margin:0 auto 16px;}
 
+  /* ---------- Growth Targets ---------- */
+  .ci-target-summary{background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:700;
+    font-size:12.5px;padding:8px 14px;border-radius:999px;white-space:nowrap;}
+  .ci-target-head,.ci-target-row{display:grid;grid-template-columns:140px 130px 1fr 92px;gap:16px;align-items:center;}
+  .ci-target-head{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+    color:var(--ink-faint);padding:0 4px 10px;border-bottom:1px solid var(--line);}
+  .ci-target-row{padding:14px 4px;border-bottom:1px solid var(--line);}
+  .ci-target-row .name{font-weight:700;color:var(--ink);}
+  .ci-scorechip{display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;
+    color:#fff;padding:5px 12px;border-radius:999px;width:max-content;font-variant-numeric:tabular-nums;}
+  .ci-slidercell{display:flex;align-items:center;gap:14px;}
+  .ci-slidercell .ci-range{flex:1;min-width:80px;}
+  .ci-growth{font-weight:800;font-variant-numeric:tabular-nums;text-align:right;}
+  .ci-growth.up{color:var(--band-wa);}
+  .ci-growth.flat{color:var(--ink-faint);}
+  @media(max-width:720px){
+    .ci-target-head{display:none;}
+    .ci-target-row{grid-template-columns:1fr 1fr;gap:8px 16px;}
+    .ci-target-row .ci-slidercell{grid-column:1/-1;}
+  }
+
+  input[type=range].ci-range{-webkit-appearance:none;appearance:none;height:6px;border-radius:4px;
+    background:var(--line);outline:none;cursor:pointer;}
+  input[type=range].ci-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;
+    border-radius:50%;background:var(--ci-magenta);border:2px solid #fff;box-shadow:0 1px 4px rgba(27,27,58,.25);cursor:pointer;}
+  input[type=range].ci-range::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ci-magenta);
+    border:2px solid #fff;box-shadow:0 1px 4px rgba(27,27,58,.25);cursor:pointer;}
+  input[type=range].ci-range:disabled{opacity:.55;cursor:not-allowed;}
+  input[type=range].ci-range:disabled::-webkit-slider-thumb{background:var(--ink-faint);cursor:not-allowed;}
+
+  .ci-approve{display:flex;align-items:center;gap:12px;cursor:pointer;font-weight:600;color:var(--ink);font-size:14px;}
+  .ci-approve input{position:absolute;opacity:0;pointer-events:none;}
+  .ci-approve .box{width:22px;height:22px;border-radius:7px;border:2px solid #C9D2DE;flex:none;
+    display:grid;place-items:center;color:#fff;transition:background .15s,border-color .15s;}
+  .ci-approve .box svg{opacity:0;transition:opacity .15s;}
+  .ci-approve input:checked+.box{background:var(--band-wa);border-color:var(--band-wa);}
+  .ci-approve input:checked+.box svg{opacity:1;}
+  .ci-approve input:focus-visible+.box{outline:2px solid var(--ci-magenta);outline-offset:2px;}
+
+  .ci-locked-banner{display:flex;align-items:center;gap:14px;margin-top:22px;
+    background:#E6F4EC;border:1px solid #BEE3CC;border-radius:var(--r-md);padding:16px 18px;}
+  .ci-locked-banner[hidden]{display:none;}
+  .ci-locked-banner .ic{width:36px;height:36px;border-radius:50%;background:var(--band-wa);color:#fff;
+    display:grid;place-items:center;flex:none;}
+  .ci-locked-banner .txt{flex:1;color:#245c3c;font-size:13.5px;line-height:1.45;}
+  .ci-locked-banner .btn{flex:none;padding:9px 16px;font-size:13px;}
+
   /* locked step tab */
   .ci-subtabs button.locked{opacity:.55;}
   .ci-subtabs button.locked i{background:#E1E7F0;color:var(--ink-faint);}
@@ -835,15 +882,56 @@
           </button>
         </section>
 
-        <!-- Ready: data is in (sliders build comes next) -->
-        <section class="ci-card ci-soon" id="targetsReady" hidden>
-          <div class="ci-soon-badge">Next build</div>
-          <h2>Set expected growth targets</h2>
-          <p>Your BOY data is in. This is where you'll set each student's pre-test&nbsp;→&nbsp;target with sliders (slide 12), then send the SLO for admin review &amp; <b>Accept &amp; Lock</b> for the year.</p>
-          <button class="btn btn-ghost" data-goto="boydata">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to data
-          </button>
-        </section>
+        <!-- Ready: BOY data is in — set per-student growth targets -->
+        <div id="targetsReady" hidden>
+          <section class="ci-card">
+            <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div><div class="ci-eyebrow">Phase 1 · Set growth targets</div><h2>Expected growth for each student</h2></div>
+              <div class="ci-target-summary" id="targetSummary">—</div>
+            </header>
+            <p class="sub">Each student's BOY score sets their starting point. Drag to set the end-of-year target — aim for meaningful, attainable growth. Targets lock with your SLO.</p>
+
+            <div class="ci-legend" style="margin-bottom:14px;">
+              <span><i style="background:var(--band-wb)"></i>Well Below</span>
+              <span><i style="background:var(--band-b)"></i>Below</span>
+              <span><i style="background:var(--band-t)"></i>Typical</span>
+              <span><i style="background:var(--band-a)"></i>Above</span>
+              <span><i style="background:var(--band-wa)"></i>Well Above</span>
+            </div>
+
+            <div class="ci-target-head">
+              <span>Student</span><span>BOY pre-test</span><span>End-of-year target</span><span>Growth</span>
+            </div>
+            <div id="targetRows"></div>
+          </section>
+
+          <!-- appraiser approval + lock -->
+          <section class="ci-card" style="margin-top:22px;">
+            <header><div><div class="ci-eyebrow">Review &amp; lock</div><h2>Finalize your SLO</h2></div></header>
+            <p class="sub">Once locked, your skill statement, percentage bands, descriptors, plan, and growth targets are fixed for the year so growth is measured consistently.</p>
+            <label class="ci-approve">
+              <input type="checkbox" id="adminApproved">
+              <span class="box"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <span>My SLO has been reviewed and approved by my appraiser.</span>
+            </label>
+            <div class="ci-actions" style="margin-top:20px;">
+              <button class="btn btn-ghost" data-goto="boydata">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to data
+              </button>
+              <button class="btn btn-primary" id="lockBtn" disabled>Accept &amp; Lock SLO
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8h-1V6a5 5 0 00-10 0v2H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2zM9 8V6a3 3 0 016 0v2z" fill="currentColor" stroke="none"/></svg>
+              </button>
+              <span class="ci-lockhint" id="lockHint" style="color:var(--ink-faint);font-size:12.5px;">Check appraiser approval to enable locking.</span>
+            </div>
+          </section>
+
+          <!-- locked confirmation -->
+          <div class="ci-locked-banner" id="lockedBanner" hidden>
+            <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <div class="txt"><b>SLO locked for 2026–27.</b> Your targets and rubric are set. You'll add evidence and monitor progress all year — this baseline stays fixed.</div>
+            <button class="btn btn-ghost" id="unlockBtn">Unlock to edit</button>
+          </div>
+        </div>
 
       </div><!-- /view-targets -->
 
@@ -976,7 +1064,7 @@
     });
   }
   function applyDataState(){
-    if(hasData) buildGrid();
+    if(hasData){ buildGrid(); buildTargets(); applyLockState(); }
     var choose=document.getElementById('boyChoose'), dash=document.getElementById('boyDashboard');
     if(choose&&dash){ choose.hidden=hasData; dash.hidden=!hasData; }
     var tl=document.getElementById('targetsLocked'), tr=document.getElementById('targetsReady');
@@ -995,6 +1083,61 @@
   if(changeSrc) changeSrc.addEventListener('click',function(){
     document.getElementById('boyChoose').hidden=false; document.getElementById('boyDashboard').hidden=true;
   });
+
+  // --- Growth Targets: per-student pre-test → target sliders ---
+  var sloLocked=false;
+  function pretestOf(r){ return Math.round((r[1]+r[2]+r[3]+r[4])/4); }
+  function updateRow(row){
+    var s=row.querySelector('input[type=range]');
+    var pre=+s.getAttribute('data-pre'), tgt=+s.value, bk=classifyBand(tgt);
+    var tchip=row.querySelector('.ci-target-chip');
+    tchip.style.background='var('+BANDVAR[bk]+')'; tchip.textContent=tgt+'% · '+BANDNAME[bk];
+    var g=tgt-pre, gc=row.querySelector('.ci-growth');
+    gc.textContent=(g>0?'+':'')+g+' pts'; gc.className='ci-growth '+(g>0?'up':'flat');
+  }
+  function updateSummary(){
+    var rows=document.querySelectorAll('#targetRows .ci-target-row'); if(!rows.length) return;
+    var total=0; rows.forEach(function(row){var s=row.querySelector('input[type=range]'); total+=(+s.value)-(+s.getAttribute('data-pre'));});
+    var el=document.getElementById('targetSummary');
+    if(el) el.textContent='Avg. target growth +'+Math.round(total/rows.length)+' pts · '+rows.length+' students';
+  }
+  function buildTargets(){
+    var wrap=document.getElementById('targetRows'); if(!wrap || wrap.dataset.built) return;
+    boyStudents.forEach(function(r){
+      var pre=pretestOf(r), tgt=Math.min(100,pre+15), preBk=classifyBand(pre);
+      var row=document.createElement('div'); row.className='ci-target-row';
+      row.innerHTML=
+        '<span class="name">'+r[0]+'</span>'+
+        '<span class="ci-scorechip" style="background:var('+BANDVAR[preBk]+')">'+pre+'% · '+BANDNAME[preBk]+'</span>'+
+        '<span class="ci-slidercell"><input type="range" class="ci-range" min="'+pre+'" max="100" value="'+tgt+'" data-pre="'+pre+'" data-name="'+r[0]+'" aria-label="End-of-year target for '+r[0]+'"><span class="ci-scorechip ci-target-chip"></span></span>'+
+        '<span class="ci-growth"></span>';
+      wrap.appendChild(row);
+      row.querySelector('input[type=range]').addEventListener('input',function(){updateRow(row);updateSummary();scheduleSave();});
+      updateRow(row);
+    });
+    wrap.dataset.built='1';
+    updateSummary();
+  }
+  function applyLockState(){
+    var approve=document.getElementById('adminApproved'), lockBtn=document.getElementById('lockBtn');
+    document.querySelectorAll('#targetRows input[type=range]').forEach(function(s){s.disabled=sloLocked;});
+    if(approve) approve.disabled=sloLocked;
+    var banner=document.getElementById('lockedBanner'); if(banner) banner.hidden=!sloLocked;
+    if(lockBtn) lockBtn.disabled = sloLocked || !(approve&&approve.checked);
+    var hint=document.getElementById('lockHint');
+    if(hint) hint.textContent = sloLocked ? 'SLO locked — unlock below to make changes.'
+      : ((approve&&approve.checked) ? 'Ready to lock for the year.' : 'Check appraiser approval to enable locking.');
+  }
+  var approveEl=document.getElementById('adminApproved');
+  if(approveEl) approveEl.addEventListener('change',function(){applyLockState();scheduleSave();});
+  var lockBtnEl=document.getElementById('lockBtn');
+  if(lockBtnEl) lockBtnEl.addEventListener('click',function(){
+    if(approveEl&&approveEl.checked){ sloLocked=true; applyLockState(); scheduleSave();
+      document.getElementById('lockedBanner').scrollIntoView({behavior:'smooth',block:'center'}); }
+  });
+  var unlockBtnEl=document.getElementById('unlockBtn');
+  if(unlockBtnEl) unlockBtnEl.addEventListener('click',function(){ sloLocked=false; applyLockState(); scheduleSave(); });
+
   // step-nav tabs
   subtabs.forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-view'));});});
   // any button with data-goto advances/returns
@@ -1070,6 +1213,9 @@
         support:(document.querySelector('#view-personal .ci-input')||{}).value||''
       },
       hasData:hasData, boySource:boySource,
+      targets:(function(){var t={};document.querySelectorAll('#targetRows input[type=range]').forEach(function(s){t[s.getAttribute('data-name')]=s.value;});return t;})(),
+      approved:(document.getElementById('adminApproved')||{}).checked||false,
+      locked:sloLocked,
       step:currentStep
     };
   }
@@ -1100,8 +1246,15 @@
       var cb=s.querySelector('input'), name=s.textContent.trim();
       if(d.sources[name]!=null){ cb.checked=d.sources[name]; s.classList.toggle('sel',cb.checked); } }); }
     hasData=!!d.hasData; boySource=d.boySource||'';
+    sloLocked=!!d.locked;
     bandsShownOnce=true;              // don't re-prompt the bands modal on resume
     if(d.step) show(d.step); else applyDataState();
+    // restore growth targets (rows are built by applyDataState when hasData)
+    if(d.targets){ Object.keys(d.targets).forEach(function(name){
+      var s=document.querySelector('#targetRows input[data-name="'+name+'"]');
+      if(s){ s.value=d.targets[name]; updateRow(s.closest('.ci-target-row')); } }); updateSummary(); }
+    if(d.approved){ var ap=document.getElementById('adminApproved'); if(ap) ap.checked=true; }
+    applyLockState();
     setStatus('saved','✓ All changes saved');
     return true;
   }
