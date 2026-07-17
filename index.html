@@ -443,6 +443,17 @@
   .ci-plan-row b{color:var(--ink);font-weight:800;flex:none;min-width:110px;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;padding-top:1px;}
   .ci-plan.empty{opacity:.6;}
 
+  /* ---------- EOY report ---------- */
+  .ci-result{font-weight:800;font-size:11.5px;padding:4px 11px;border-radius:999px;width:max-content;}
+  .ci-result.met{background:#E6F4EC;color:#2E7D5B;}
+  .ci-result.miss{background:#FDF1E3;color:#9A6212;}
+  .ci-report-banner{background:var(--ci-grad);color:#fff;border-radius:var(--r-lg);padding:24px 26px;box-shadow:var(--shadow-lift);}
+  .ci-report-banner .eyebrow{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.85);}
+  .ci-report-banner h2{font-size:22px;font-weight:800;margin-top:6px;color:#fff;}
+  .ci-report-banner small{display:block;margin-top:8px;color:rgba(255,255,255,.9);font-size:12.5px;font-weight:600;}
+  .ci-report-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px;}
+  @media(max-width:680px){.ci-report-stats{grid-template-columns:1fr;}}
+
   /* ---------- Placeholder / locked states ---------- */
   .ci-soon{text-align:center;padding:48px 30px;}
   .ci-soon-badge{display:inline-block;background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;
@@ -654,7 +665,7 @@
         <button role="tab" data-panel="ttess">T-TESS Rubric</button>
         <button role="tab" data-panel="moy">MOY</button>
         <button role="tab" data-panel="progress">Progress</button>
-        <button role="tab" data-panel="soon" data-label="EOY">EOY</button>
+        <button role="tab" data-panel="eoy">EOY</button>
       </div>
 
       <!-- ============ PANEL: BOY SETUP ============ -->
@@ -1197,6 +1208,48 @@
         </div>
       </div><!-- /panel-progress -->
 
+      <!-- ============ PANEL: EOY (end-of-year · Phase 3) ============ -->
+      <div id="panel-eoy" hidden>
+        <section class="ci-card ci-soon" id="eoyNoData" hidden>
+          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+          <h2>End-of-year results unlock with your SLO</h2>
+          <p>Set up your BOY data and growth targets first, then record post-assessment scores here to close out the year.</p>
+          <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup</button>
+        </section>
+        <div id="eoyMain">
+          <section class="ci-card">
+            <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div><div class="ci-eyebrow">Phase 3 · Body of Evidence</div><h2>End-of-Year Post-Assessment</h2></div>
+              <div class="ci-target-summary" id="eoySummary">—</div>
+            </header>
+            <p class="sub">Record post-assessment scores to see each student's full-year growth and whether they met their target.</p>
+            <div class="ci-actions" style="margin-bottom:16px;">
+              <button type="button" class="btn btn-ghost" id="eoyFill">Fill with sample results</button>
+            </div>
+            <div class="ci-tablewrap">
+              <table class="ci-grid" id="eoyGrid"></table>
+            </div>
+            <div class="ci-legend" style="margin-top:12px;">
+              <span><i style="background:var(--band-wb)"></i>Well Below</span><span><i style="background:var(--band-b)"></i>Below</span>
+              <span><i style="background:var(--band-t)"></i>Typical</span><span><i style="background:var(--band-a)"></i>Above</span><span><i style="background:var(--band-wa)"></i>Well Above</span>
+            </div>
+          </section>
+
+          <section class="ci-card" style="margin-top:22px;">
+            <header><div><div class="ci-eyebrow">Close out the year</div><h2>SLO Analysis Report</h2></div></header>
+            <p class="sub">Combine your student growth results with your Domains 2 &amp; 3 standing into one report for your appraiser.</p>
+            <div class="ci-actions">
+              <button type="button" class="btn btn-primary" id="genReport">Generate Analysis Report for T-TESS
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </button>
+              <span class="ci-lockhint" id="eoyHint" style="color:var(--ink-faint);font-size:12.5px;">Record post-assessment scores, then generate your report.</span>
+            </div>
+          </section>
+
+          <div id="eoyReport" hidden></div>
+        </div>
+      </div><!-- /panel-eoy -->
+
       <!-- ============ PANEL: other tabs (next builds) ============ -->
       <div id="panel-soon" hidden>
         <section class="ci-card ci-soon">
@@ -1561,7 +1614,7 @@
   }
   // phase stepper reflects lock state (Phase 1 → Phase 2 on lock)
   function updatePhase(){
-    var n = sloLocked ? 2 : 1;
+    var n = eoyDone ? 3 : (sloLocked ? 2 : 1);
     document.querySelectorAll('.ci-stepper .ci-step').forEach(function(st,i){
       var idx=i+1, small=st.querySelector('.lbl small');
       st.classList.toggle('current',idx===n);
@@ -1587,7 +1640,7 @@
   });
 
   // --- top-level panel switching (Overview / BOY Setup / Evidence Lockers / …) ---
-  var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', ttess:'panel-ttess', moy:'panel-moy', progress:'panel-progress', soon:'panel-soon'};
+  var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', ttess:'panel-ttess', moy:'panel-moy', progress:'panel-progress', eoy:'panel-eoy', soon:'panel-soon'};
   function showPanel(p,label){
     Object.keys(PANELS).forEach(function(k){ var el=document.getElementById(PANELS[k]); if(el) el.hidden=(k!==p); });
     document.querySelectorAll('.ci-tabs button').forEach(function(b){
@@ -1600,6 +1653,7 @@
     if(p==='ttess'){ renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); }
     if(p==='moy'){ renderMoy(); }
     if(p==='progress'){ renderProgress(); }
+    if(p==='eoy'){ renderEoy(); }
     if(p==='soon'){ var t=document.getElementById('soonTitle'), x=document.getElementById('soonText');
       if(t) t.textContent=label||'Coming next';
       if(x) x.textContent=(label||'This section')+' is on the roadmap — BOY Setup and the Evidence Locker are built out first.'; }
@@ -1842,6 +1896,85 @@
     });
   }
 
+  // --- EOY (end-of-year post-assessment · Phase 3) ---
+  var eoyScores={}, eoyDone=false;
+  function eoyToggle(){ var ready=progressReady();
+    var nd=document.getElementById('eoyNoData'), mn=document.getElementById('eoyMain');
+    if(nd) nd.hidden=ready; if(mn) mn.hidden=!ready; }
+  function buildEoyGrid(){
+    var grid=document.getElementById('eoyGrid'); if(!grid) return; var u=scoreUnit();
+    var html='<thead><tr><th style="text-align:left;">Student</th><th>BOY</th><th>MOY</th><th>EOY score</th><th>Growth</th><th>Target</th><th>Result</th></tr></thead><tbody>';
+    studentList().forEach(function(st){
+      var pre=st.pre, moy=moyScores[st.name], eoy=eoyScores[st.name], tgt=targetOf(st.name);
+      var eoyBk=(eoy!=null&&eoy!=='')?classifyBand(eoy):null;
+      var growth=(eoy!=null&&eoy!=='')?(+eoy-pre):null;
+      var met=(eoy!=null&&eoy!==''&&tgt!=null)?(+eoy>=tgt):null;
+      html+='<tr><th>'+st.name+'</th>'+
+        '<td>'+pre+u+'</td>'+
+        '<td>'+((moy!=null&&moy!=='')?moy+u:'—')+'</td>'+
+        '<td><input type="number" class="ci-scoreinput eoy-in" data-name="'+st.name+'" value="'+(eoy==null?'':eoy)+'" placeholder="—"></td>'+
+        '<td class="ci-chg">'+(growth==null?'—':((growth>0?'+':'')+growth))+'</td>'+
+        '<td>'+(tgt!=null?tgt+u:'—')+'</td>'+
+        '<td>'+(met==null?'—':'<span class="ci-result '+(met?'met':'miss')+'">'+(met?'Met':'Not yet')+'</span>')+'</td></tr>';
+    });
+    grid.innerHTML=html+'</tbody>';
+    grid.querySelectorAll('.eoy-in').forEach(function(inp){
+      inp.addEventListener('input',function(){ var v=inp.value; if(v==='') delete eoyScores[inp.getAttribute('data-name')]; else eoyScores[inp.getAttribute('data-name')]=v; buildEoyGrid(); updateEoySummary(); scheduleSave(); });
+    });
+  }
+  function eoyMetCount(){ var m=0; studentList().forEach(function(st){ var e=eoyScores[st.name], t=targetOf(st.name); if(e!=null&&e!==''&&t!=null&&+e>=t) m++; }); return m; }
+  function updateEoySummary(){ var el=document.getElementById('eoySummary'); if(!el) return;
+    var n=studentList().length, done=studentList().filter(function(st){return eoyScores[st.name]!=null&&eoyScores[st.name]!=='';}).length;
+    el.textContent = done? (eoyMetCount()+' of '+n+' met target') : ('0 of '+n+' recorded'); }
+  function renderEoy(){ eoyToggle(); if(progressReady()){ buildEoyGrid(); updateEoySummary(); document.getElementById('eoyReport').hidden=!eoyDone; if(eoyDone) renderReport(); } }
+  var eoyFillBtn=document.getElementById('eoyFill');
+  if(eoyFillBtn) eoyFillBtn.addEventListener('click',function(){
+    studentList().forEach(function(st,i){ var t=targetOf(st.name); if(t==null) t=st.pre;
+      var e=Math.round(t + ((i%4)-1)*4); e=Math.max(st.pre, Math.min(targetMax(), e)); eoyScores[st.name]=String(e); });
+    buildEoyGrid(); updateEoySummary(); scheduleSave();
+  });
+  function renderReport(){
+    var wrap=document.getElementById('eoyReport'); if(!wrap) return;
+    var list=studentList(), n=list.length, u=scoreUnit();
+    var met=eoyMetCount(), tot=0, dist={wb:0,b:0,t:0,a:0,wa:0}, recorded=0;
+    list.forEach(function(st){ var e=eoyScores[st.name]; if(e!=null&&e!==''){ recorded++; tot+=(+e-st.pre); dist[classifyBand(+e)]++; } });
+    var avg=recorded?Math.round(tot/recorded):0;
+    var tavg=ttessAvg();
+    var evStu=0; ROSTER.forEach(function(nm){evStu+=eviTotal(nm);});
+    var evDim=0; Object.keys(evidenceByDim).forEach(function(k){evDim+=evidenceByDim[k].length;});
+    var distHTML=['wa','a','t','b','wb'].map(function(k){ return dist[k]?'<span class="ov-pill" style="background:var('+BANDVAR[k]+')">'+dist[k]+' '+BANDNAME[k]+'</span>':''; }).join('')||'—';
+    wrap.innerHTML=
+      '<div class="ci-report-banner" style="margin-top:22px;">'+
+        '<span class="eyebrow">SLO Analysis Report · 2026–27</span>'+
+        '<h2>'+(currentGoal()?currentGoal().title:'SLO')+' · Grade '+currentGrade+' '+currentSubject+'</h2>'+
+        '<small>Generated for appraiser review. Crystal Instruction data supports your Body of Evidence; district-approved assessments determine TIA.</small>'+
+        '<div class="ci-report-stats">'+
+          '<div><div class="ov-stat" style="color:#fff">'+met+' / '+n+'</div><div class="ov-label" style="color:rgba(255,255,255,.85)">Students met target</div></div>'+
+          '<div><div class="ov-stat" style="color:#fff">+'+avg+u+'</div><div class="ov-label" style="color:rgba(255,255,255,.85)">Avg full-year growth</div></div>'+
+          '<div><div class="ov-stat" style="color:#fff">'+(tavg==null?'—':tavg.toFixed(2))+'</div><div class="ov-label" style="color:rgba(255,255,255,.85)">Domains 2 &amp; 3 avg (of 3.75)</div></div>'+
+        '</div></div>'+
+      '<div class="ci-grid2" style="margin-top:22px;">'+
+        '<section class="ci-card"><header><div><div class="ci-eyebrow">Student growth</div><h2>Final performance levels</h2></div></header>'+
+          '<div style="margin-bottom:6px;">'+distHTML+'</div></section>'+
+        '<section class="ci-card"><header><div><div class="ci-eyebrow">Body of Evidence</div><h2>What you collected</h2></div></header>'+
+          '<div class="ov-stats"><div><div class="ov-stat">'+evStu+'</div><div class="ov-label">Student evidence pieces</div></div>'+
+          '<div><div class="ov-stat">'+evDim+'</div><div class="ov-label">T-TESS dimension artifacts</div></div></div></section>'+
+      '</div>'+
+      '<div class="ci-actions" style="margin-top:20px;">'+
+        '<button type="button" class="btn btn-primary" onclick="window.print()">Print / export report</button>'+
+        '<button type="button" class="btn btn-ghost" data-panel-go="overview">Back to Overview</button>'+
+      '</div>';
+  }
+  var genReportBtn=document.getElementById('genReport');
+  if(genReportBtn) genReportBtn.addEventListener('click',function(){
+    var hint=document.getElementById('eoyHint');
+    var recorded=studentList().filter(function(st){return eoyScores[st.name]!=null&&eoyScores[st.name]!=='';}).length;
+    if(!recorded){ if(hint){hint.textContent='Record at least one post-assessment score first.'; hint.style.color='var(--band-wb)';} return; }
+    eoyDone=true; if(hint){hint.textContent='';}
+    document.getElementById('eoyReport').hidden=false; renderReport(); updatePhase(); scheduleSave();
+    document.getElementById('eoyReport').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
   // --- Evidence Locker (per student) ---
   var EVI_TYPES=[
     {v:'ClearLesson Exit Ticket',c:'--ci-magenta'},{v:'ClearSheet',c:'--ci-purple'},
@@ -1998,7 +2131,7 @@
       locked:sloLocked,
       evidence:evidenceByStudent, eviStudent:currentEviStudent,
       ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim,
-      moyScores:moyScores,
+      moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone,
       step:currentStep
     };
   }
@@ -2054,6 +2187,8 @@
     if(d.ttessEvidence) evidenceByDim=d.ttessEvidence;
     if(d.ttessDim) currentDim=d.ttessDim;
     if(d.moyScores) moyScores=d.moyScores;
+    if(d.eoyScores) eoyScores=d.eoyScores;
+    eoyDone=!!d.eoyDone;
     setStatus('saved','✓ All changes saved');
     return true;
   }
