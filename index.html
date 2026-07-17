@@ -416,6 +416,33 @@
     display:grid;place-items:center;flex:none;}
   .ci-dim-section{margin-top:22px;}
 
+  /* ---------- Progress (Monitor Progress) ---------- */
+  .ci-prog-head,.ci-prog-row{display:grid;grid-template-columns:130px 1fr 140px 130px;gap:16px;align-items:center;}
+  .ci-prog-head{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);padding:0 4px 10px;border-bottom:1px solid var(--line);}
+  .ci-prog-row{padding:14px 4px;border-bottom:1px solid var(--line);}
+  .ci-prog-row .name{font-weight:700;color:var(--ink);}
+  .ci-prog-flow{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .ci-prog-flow .chip{color:#fff;font-weight:800;font-size:11.5px;padding:3px 9px;border-radius:999px;font-variant-numeric:tabular-nums;}
+  .ci-prog-flow .arrow{color:var(--ink-faint);}
+  .ci-prog-bar{position:relative;height:8px;border-radius:5px;background:var(--line);overflow:hidden;}
+  .ci-prog-bar span{position:absolute;left:0;top:0;height:100%;border-radius:5px;background:var(--ci-grad);}
+  .ci-status{font-weight:800;font-size:12px;padding:5px 12px;border-radius:999px;width:max-content;}
+  .ci-status.met,.ci-status.on{background:#E6F4EC;color:#2E7D5B;}
+  .ci-status.near{background:#FDF1E3;color:#9A6212;}
+  .ci-status.low{background:#FBE9E7;color:#B23A2B;}
+  @media(max-width:760px){
+    .ci-prog-head{display:none;}
+    .ci-prog-row{grid-template-columns:1fr 1fr;gap:8px 16px;}
+    .ci-prog-row .ci-prog-bar{grid-column:1/-1;}
+  }
+  .ci-plan{border:1px solid var(--line);border-radius:var(--r-md);padding:16px;margin-bottom:12px;}
+  .ci-plan-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .ci-plan-head .chip{color:#fff;font-family:var(--font-display);font-weight:800;font-size:12.5px;padding:4px 12px;border-radius:999px;}
+  .ci-plan-head .cnt{font-size:12px;color:var(--ink-faint);font-weight:700;}
+  .ci-plan-row{display:flex;gap:10px;margin-bottom:7px;font-size:13px;color:var(--ink-soft);line-height:1.45;}
+  .ci-plan-row b{color:var(--ink);font-weight:800;flex:none;min-width:110px;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;padding-top:1px;}
+  .ci-plan.empty{opacity:.6;}
+
   /* ---------- Placeholder / locked states ---------- */
   .ci-soon{text-align:center;padding:48px 30px;}
   .ci-soon-badge{display:inline-block;background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;
@@ -625,8 +652,8 @@
         <button role="tab" class="active" data-panel="boysetup">BOY Setup</button>
         <button role="tab" data-panel="evidence">Evidence Lockers</button>
         <button role="tab" data-panel="ttess">T-TESS Rubric</button>
-        <button role="tab" data-panel="soon" data-label="MOY">MOY</button>
-        <button role="tab" data-panel="soon" data-label="Progress">Progress</button>
+        <button role="tab" data-panel="moy">MOY</button>
+        <button role="tab" data-panel="progress">Progress</button>
         <button role="tab" data-panel="soon" data-label="EOY">EOY</button>
       </div>
 
@@ -1110,6 +1137,66 @@
         </section>
       </div><!-- /panel-ttess -->
 
+      <!-- ============ PANEL: MOY (mid-year check) ============ -->
+      <div id="panel-moy" hidden>
+        <section class="ci-card ci-soon" id="moyNoData" hidden>
+          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+          <h2>Mid-year check unlocks with your SLO</h2>
+          <p>Set up your BOY data and growth targets first, then record mid-year scores here to track movement.</p>
+          <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup</button>
+        </section>
+        <div id="moyMain">
+          <section class="ci-card">
+            <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2>Middle-of-Year Check</h2></div>
+              <div class="ci-target-summary" id="moySummary">—</div>
+            </header>
+            <p class="sub">Record your mid-year scores to see how far each student has moved from their BOY baseline toward their target. Same scale as your BOY data.</p>
+            <div class="ci-actions" style="margin-bottom:16px;">
+              <button type="button" class="btn btn-ghost" id="moyFill">Fill with sample progress</button>
+            </div>
+            <div class="ci-tablewrap">
+              <table class="ci-grid" id="moyGrid"></table>
+            </div>
+            <div class="ci-legend" style="margin-top:12px;">
+              <span><i style="background:var(--band-wb)"></i>Well Below</span><span><i style="background:var(--band-b)"></i>Below</span>
+              <span><i style="background:var(--band-t)"></i>Typical</span><span><i style="background:var(--band-a)"></i>Above</span><span><i style="background:var(--band-wa)"></i>Well Above</span>
+            </div>
+          </section>
+          <div class="ci-actions" style="margin-top:20px;">
+            <button type="button" class="btn btn-primary" data-panel-go="progress">View progress
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div><!-- /panel-moy -->
+
+      <!-- ============ PANEL: PROGRESS (Monitor Progress) ============ -->
+      <div id="panel-progress" hidden>
+        <section class="ci-card ci-soon" id="progNoData" hidden>
+          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+          <h2>Progress unlocks with your SLO</h2>
+          <p>Once your BOY data and growth targets are set, this shows each student's movement toward their target.</p>
+          <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup</button>
+        </section>
+        <div id="progMain">
+          <section class="ci-card">
+            <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2>Progress toward targets</h2></div>
+              <div class="ci-target-summary" id="progSummary">—</div>
+            </header>
+            <p class="sub">Each student's movement from BOY toward their end-of-year target. Current = mid-year score where recorded, otherwise the BOY baseline.</p>
+            <div class="ci-prog-head"><span>Student</span><span>BOY → Current → Target</span><span>Progress</span><span>Status</span></div>
+            <div id="progRows"></div>
+          </section>
+          <section class="ci-card" style="margin-top:22px;">
+            <header><div><div class="ci-eyebrow">Targeted support</div><h2>Suggested learning plans by group</h2></div></header>
+            <p class="sub">Grouped by where students currently sit. Each plan pulls Crystal Instruction resources matched to the need.</p>
+            <div id="planGroups"></div>
+          </section>
+        </div>
+      </div><!-- /panel-progress -->
+
       <!-- ============ PANEL: other tabs (next builds) ============ -->
       <div id="panel-soon" hidden>
         <section class="ci-card ci-soon">
@@ -1500,7 +1587,7 @@
   });
 
   // --- top-level panel switching (Overview / BOY Setup / Evidence Lockers / …) ---
-  var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', ttess:'panel-ttess', soon:'panel-soon'};
+  var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', ttess:'panel-ttess', moy:'panel-moy', progress:'panel-progress', soon:'panel-soon'};
   function showPanel(p,label){
     Object.keys(PANELS).forEach(function(k){ var el=document.getElementById(PANELS[k]); if(el) el.hidden=(k!==p); });
     document.querySelectorAll('.ci-tabs button').forEach(function(b){
@@ -1511,6 +1598,8 @@
       if(ol) ol.hidden=sloLocked; if(orr){ orr.hidden=!sloLocked; if(sloLocked) renderOverview(); } }
     if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
     if(p==='ttess'){ renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); }
+    if(p==='moy'){ renderMoy(); }
+    if(p==='progress'){ renderProgress(); }
     if(p==='soon'){ var t=document.getElementById('soonTitle'), x=document.getElementById('soonText');
       if(t) t.textContent=label||'Coming next';
       if(x) x.textContent=(label||'This section')+' is on the roadmap — BOY Setup and the Evidence Locker are built out first.'; }
@@ -1650,6 +1739,107 @@
     var up=addRow.querySelector('.upload'), fi=up.querySelector('input[type=file]');
     up.addEventListener('click',function(e){ e.preventDefault(); fi.click(); });
     fi.addEventListener('change',function(){ if(fi.files&&fi.files[0]){ evidenceByDim[id].push({type:'Artifact',label:fi.files[0].name}); renderDimDetail(id); scheduleSave(); } });
+  }
+
+  // --- MOY (mid-year check) + Progress (Monitor Progress) ---
+  var moyScores={};
+  function targetOf(name){ var s=document.querySelector('#targetRows input[data-name="'+name+'"]'); return s?+s.value:null; }
+  function progressReady(){ return hasData && document.querySelectorAll('#targetRows .ci-target-row').length>0; }
+  var PLANS={
+    wa:{instr:'Enrich with open-ended, multi-step problems and peer-teaching roles.',prac:'Advanced learning paths and ClassCade Showdown challenge rounds.'},
+    a:{instr:'Extend with application tasks that stretch beyond grade level.',prac:'Higher-rigor ClearSheets and ClassCade Showdown.'},
+    t:{instr:'Solidify the grade-level skill with ClearLessons and quick checks.',prac:'Independent ClearSheets with checkpoints to confirm mastery.'},
+    b:{instr:'Close targeted gaps with Snap Lessons on the missed sub-skills.',prac:'Guided ClearSheets with worked examples and models.'},
+    wb:{instr:'Reteach prerequisites in small groups with Snap Lessons + ClearLessons.',prac:'Heavily scaffolded ClearSheets and manipulatives.'}
+  };
+  function moyToggle(){
+    var ready=progressReady();
+    var nd=document.getElementById('moyNoData'), mn=document.getElementById('moyMain');
+    if(nd) nd.hidden=ready; if(mn) mn.hidden=!ready;
+  }
+  function moyLevel(v){ return (v===''||v==null)?null:classifyBand(v); }
+  function buildMoyGrid(){
+    var grid=document.getElementById('moyGrid'); if(!grid) return;
+    var u=scoreUnit();
+    var html='<thead><tr><th style="text-align:left;">Student</th><th>BOY</th><th>MOY score</th><th>Change</th><th>Level</th></tr></thead><tbody>';
+    studentList().forEach(function(st){
+      var pre=st.pre, moy=moyScores[st.name];
+      var preBk=classifyBand(pre);
+      var chg = (moy!=null&&moy!=='') ? (+moy-pre) : null;
+      var bk = (moy!=null&&moy!=='') ? classifyBand(moy) : null;
+      html+='<tr><th>'+st.name+'</th>'+
+        '<td class="score" style="background:var('+BANDVAR[preBk]+')">'+pre+u+'</td>'+
+        '<td><input type="number" class="ci-scoreinput moy-in" data-name="'+st.name+'" value="'+(moy==null?'':moy)+'" placeholder="—"></td>'+
+        '<td class="ci-chg">'+(chg==null?'—':((chg>0?'+':'')+chg)) +'</td>'+
+        '<td class="level" style="'+(bk?'color:var('+BANDVAR[bk]+')':'')+'">'+(bk?BANDNAME[bk]:'—')+'</td></tr>';
+    });
+    grid.innerHTML=html+'</tbody>';
+    grid.querySelectorAll('.moy-in').forEach(function(inp){
+      inp.addEventListener('input',function(){ var v=inp.value; if(v==='') delete moyScores[inp.getAttribute('data-name')]; else moyScores[inp.getAttribute('data-name')]=v; buildMoyGrid(); updateMoySummary(); scheduleSave(); });
+    });
+  }
+  function updateMoySummary(){
+    var el=document.getElementById('moySummary'); if(!el) return;
+    var done=studentList().filter(function(st){return moyScores[st.name]!=null&&moyScores[st.name]!=='';}).length;
+    var n=studentList().length;
+    el.textContent = done+' of '+n+' students recorded';
+  }
+  function renderMoy(){ moyToggle(); if(progressReady()){ buildMoyGrid(); updateMoySummary(); } }
+  var moyFillBtn=document.getElementById('moyFill');
+  if(moyFillBtn) moyFillBtn.addEventListener('click',function(){
+    studentList().forEach(function(st,i){
+      var t=targetOf(st.name); if(t==null) t=st.pre;
+      var moy=Math.round(st.pre + 0.55*(t-st.pre) + ((i%3)-1)*3);
+      moy=Math.max(st.pre, Math.min(t, moy));
+      moyScores[st.name]=String(moy);
+    });
+    buildMoyGrid(); updateMoySummary(); scheduleSave();
+  });
+
+  function statusFor(pre,cur,tgt){
+    if(tgt==null || tgt<=pre) return {cls:'on',txt:'On track'};
+    if(cur>=tgt) return {cls:'met',txt:'Target met'};
+    var frac=(cur-pre)/(tgt-pre);
+    if(frac>=0.5) return {cls:'on',txt:'On track'};
+    if(frac>=0.25) return {cls:'near',txt:'Approaching'};
+    return {cls:'low',txt:'Needs support'};
+  }
+  function renderProgress(){
+    var ready=progressReady();
+    var nd=document.getElementById('progNoData'), mn=document.getElementById('progMain');
+    if(nd) nd.hidden=ready; if(mn) mn.hidden=!ready;
+    if(!ready) return;
+    var u=scoreUnit(), rows=document.getElementById('progRows'); rows.innerHTML='';
+    var onCount=0, dist={wb:0,b:0,t:0,a:0,wa:0};
+    studentList().forEach(function(st){
+      var pre=st.pre, tgt=targetOf(st.name);
+      var moy=moyScores[st.name]; var cur=(moy!=null&&moy!=='')?+moy:pre;
+      var s=statusFor(pre,cur,tgt); if(s.cls==='on'||s.cls==='met') onCount++;
+      dist[classifyBand(cur)]++;
+      var frac = (tgt!=null&&tgt>pre) ? Math.max(0,Math.min(100,Math.round((cur-pre)/(tgt-pre)*100))) : 100;
+      var row=document.createElement('div'); row.className='ci-prog-row';
+      row.innerHTML='<span class="name">'+st.name+'</span>'+
+        '<span class="ci-prog-flow">'+
+          '<span class="chip" style="background:var('+BANDVAR[classifyBand(pre)]+')">'+pre+u+'</span><span class="arrow">→</span>'+
+          '<span class="chip" style="background:var('+BANDVAR[classifyBand(cur)]+')">'+cur+u+'</span><span class="arrow">→</span>'+
+          '<span class="chip" style="background:'+(tgt!=null?'var('+BANDVAR[classifyBand(tgt)]+')':'var(--ink-faint)')+'">'+(tgt!=null?tgt+u:'—')+'</span>'+
+        '</span>'+
+        '<span class="ci-prog-bar"><span style="width:'+frac+'%"></span></span>'+
+        '<span class="ci-status '+s.cls+'">'+s.txt+'</span>';
+      rows.appendChild(row);
+    });
+    var el=document.getElementById('progSummary'); if(el) el.textContent=onCount+' of '+studentList().length+' on track or better';
+    // suggested plans by band (only groups with students)
+    var pg=document.getElementById('planGroups'); pg.innerHTML='';
+    ['wb','b','t','a','wa'].forEach(function(bk){
+      if(!dist[bk]) return;
+      var p=PLANS[bk];
+      var el2=document.createElement('div'); el2.className='ci-plan';
+      el2.innerHTML='<div class="ci-plan-head"><span class="chip" style="background:var('+BANDVAR[bk]+')">'+BANDNAME[bk]+'</span><span class="cnt">'+dist[bk]+' student'+(dist[bk]===1?'':'s')+'</span></div>'+
+        '<div class="ci-plan-row"><b>Suggested instruction</b><span>'+p.instr+'</span></div>'+
+        '<div class="ci-plan-row"><b>Suggested practice</b><span>'+p.prac+'</span></div>';
+      pg.appendChild(el2);
+    });
   }
 
   // --- Evidence Locker (per student) ---
@@ -1808,6 +1998,7 @@
       locked:sloLocked,
       evidence:evidenceByStudent, eviStudent:currentEviStudent,
       ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim,
+      moyScores:moyScores,
       step:currentStep
     };
   }
@@ -1862,6 +2053,7 @@
     if(d.ttessRatings) ratingByDim=d.ttessRatings;
     if(d.ttessEvidence) evidenceByDim=d.ttessEvidence;
     if(d.ttessDim) currentDim=d.ttessDim;
+    if(d.moyScores) moyScores=d.moyScores;
     setStatus('saved','✓ All changes saved');
     return true;
   }
