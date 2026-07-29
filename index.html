@@ -545,15 +545,42 @@
     .ci-ladder{grid-template-columns:minmax(0,1.5fr) minmax(240px,1fr);}
     .ci-ladder-side{position:sticky;top:92px;}
   }
-  .ci-ladder-main{display:flex;align-items:stretch;gap:8px;min-width:0;}
-  .lad-arrow{flex:none;width:34px;border:1.5px solid var(--line);background:#fff;border-radius:12px;
-    font-size:22px;line-height:1;color:var(--ci-magenta-deep);cursor:pointer;font-family:var(--font-display);}
-  .lad-arrow:hover:not(:disabled){background:var(--pink-soft);border-color:var(--ci-magenta);}
-  .lad-arrow:disabled{opacity:.3;cursor:default;color:var(--ink-faint);}
-  .ci-ladder-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px;flex:1;min-width:0;}
-  .lvcard{flex:0 0 288px;scroll-snap-align:center;border:2px solid var(--line);border-radius:var(--r-md);
-    background:#fff;padding:14px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,opacity .15s;opacity:.72;}
-  .lvcard.focus{opacity:1;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
+  .ci-ladder-main{min-width:0;}
+
+  /* level stepper across the top */
+  .ci-stepper-lv{display:flex;align-items:flex-start;margin-bottom:14px;}
+  .ci-stepper-lv .stp{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;
+    border:0;background:transparent;cursor:pointer;padding:0;font-family:var(--font-body);min-width:0;}
+  .stp-dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:#fff;
+    display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:12px;
+    color:var(--ink-faint);flex:none;position:relative;z-index:1;transition:transform .15s;}
+  .stp.here .stp-dot{transform:scale(1.15);box-shadow:0 0 0 4px rgba(227,19,196,.14);}
+  .stp-lb{font-size:10px;font-weight:700;color:var(--ink-faint);text-align:center;line-height:1.25;}
+  .stp.here .stp-lb{color:var(--ink);font-weight:800;}
+  .stp-bar{position:absolute;top:13px;left:50%;width:100%;height:2px;background:var(--line);z-index:0;}
+  .stp-bar.done{background:var(--band-a);}
+
+  /* stage: focused card centred, neighbours peeking */
+  .ci-ladder-stage{position:relative;min-width:0;}
+  .lad-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:36px;height:36px;border-radius:50%;
+    border:1px solid var(--line);background:#fff;box-shadow:0 3px 10px rgba(27,27,58,.16);
+    font-size:20px;line-height:1;color:var(--ink);cursor:pointer;font-family:var(--font-display);display:grid;place-items:center;}
+  .lad-arrow.prev{left:-6px;} .lad-arrow.next{right:-6px;}
+  .lad-arrow:hover:not(:disabled){background:var(--pink-soft);color:var(--ci-magenta-deep);}
+  .lad-arrow:disabled{opacity:.35;cursor:default;}
+
+  /* dots */
+  .lad-dots{display:flex;justify-content:center;gap:7px;margin-top:12px;}
+  .lad-dot{width:7px;height:7px;border-radius:50%;border:0;background:var(--line);cursor:pointer;padding:0;transition:all .15s;}
+  .lad-dot.on{background:var(--ci-magenta);width:20px;border-radius:4px;}
+
+  .ci-ladder-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 26px;min-width:0;
+    scrollbar-width:none;}
+  .ci-ladder-track::-webkit-scrollbar{display:none;}
+  .lvcard{flex:0 0 300px;scroll-snap-align:center;border:2px solid var(--line);border-radius:var(--r-md);
+    background:#fff;padding:14px 16px;cursor:pointer;opacity:.45;transform:scale(.95);
+    transition:opacity .18s,transform .18s,border-color .18s,box-shadow .18s;}
+  .lvcard.focus{opacity:1;transform:scale(1);border-color:var(--ci-magenta);box-shadow:0 4px 18px rgba(27,27,58,.10);}
   .lvcard.cleared{background:#F8FCFA;border-color:#BEE3CC;}
   .lvcard.cleared.focus{border-color:var(--ci-magenta);}
   .lvcard-badge{display:inline-block;color:#fff;font-family:var(--font-display);font-weight:800;font-size:14px;
@@ -2296,13 +2323,30 @@
       ? 'Mark off the indicators you can evidence. Your rating updates as you go.'
       : 'Your rating: <b class="lvl" style="color:var('+RATEBAND[sug]+')">'+sug+' · '+RATENAME[sug]+'</b>';
 
+    // level stepper across the top: where you are, what you've cleared
+    var steps=[1,2,3,4,5].filter(function(L){return set[L];}).map(function(L,i,arr){
+      var done=levelCleared(id,L), here=(L===F);
+      return '<button type="button" class="stp'+(done?' done':'')+(here?' here':'')+'" data-l="'+L+'">'+
+        '<span class="stp-dot" style="'+(here||done?'background:var('+RATEBAND[L]+');border-color:var('+RATEBAND[L]+');color:#fff':'')+'">'+(done&&!here?'✓':L)+'</span>'+
+        '<span class="stp-lb">'+RATENAME[L]+'</span>'+
+        (i<arr.length-1?'<span class="stp-bar'+(done?' done':'')+'"></span>':'')+
+      '</button>';
+    }).join('');
+    var dots=[1,2,3,4,5].filter(function(L){return set[L];}).map(function(L){
+      return '<button type="button" class="lad-dot'+(L===F?' on':'')+'" data-l="'+L+'" aria-label="'+RATENAME[L]+'"></button>';
+    }).join('');
+
     return '<div class="ci-dim-section"><h4>Rubric indicators — check what you can evidence</h4>'+
       '<div class="ci-desc-banner">'+status+'</div>'+
       '<div class="ci-ladder">'+
         '<div class="ci-ladder-main">'+
-          '<button type="button" class="lad-arrow prev" id="ladPrev" aria-label="Lower rating"'+(F<=1?' disabled':'')+'>‹</button>'+
-          '<div class="ci-ladder-track" id="ladTrack">'+cards+'</div>'+
-          '<button type="button" class="lad-arrow next" id="ladNext" aria-label="Higher rating"'+(F>=5?' disabled':'')+'>›</button>'+
+          '<div class="ci-stepper-lv">'+steps+'</div>'+
+          '<div class="ci-ladder-stage">'+
+            '<button type="button" class="lad-arrow prev" id="ladPrev" aria-label="Lower rating"'+(F<=1?' disabled':'')+'>‹</button>'+
+            '<div class="ci-ladder-track" id="ladTrack">'+cards+'</div>'+
+            '<button type="button" class="lad-arrow next" id="ladNext" aria-label="Higher rating"'+(F>=5?' disabled':'')+'>›</button>'+
+          '</div>'+
+          '<div class="lad-dots">'+dots+'</div>'+
         '</div>'+
         '<aside class="ci-ladder-side">'+
           '<div class="lv-help">'+help+'</div>'+
@@ -2375,6 +2419,9 @@
     var pv=wrap.querySelector('#ladPrev'), nx=wrap.querySelector('#ladNext');
     if(pv) pv.addEventListener('click',function(){ setFocus(curLevel(id)-1); });   // ‹ = lower rating
     if(nx) nx.addEventListener('click',function(){ setFocus(curLevel(id)+1); });   // › = higher rating
+    wrap.querySelectorAll('.stp, .lad-dot').forEach(function(b){
+      b.addEventListener('click',function(){ setFocus(+b.getAttribute('data-l')); });
+    });
     wrap.querySelectorAll('.lvcard').forEach(function(c){
       c.addEventListener('click',function(e){
         if(e.target.closest('label')) return;      // don't steal checkbox clicks
