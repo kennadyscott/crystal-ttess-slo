@@ -895,6 +895,31 @@
   .ci-crumb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 
   /* tab bar gets an explicit swipe affordance: edge fades + scroll cue */
+  /* ---------- Dimension coverage map ---------- */
+  .ci-cover{background:#FAFBFD;border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px;margin-bottom:16px;}
+  .cv-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:11px;}
+  .cv-head b{font-size:12.5px;color:var(--ink);}
+  .cv-stat{font-size:11.5px;color:var(--ink-soft);}
+  .cv-stat b{color:var(--ink);font-variant-numeric:tabular-nums;}
+  .cv-stat.alt{margin-left:auto;color:#2E7D5B;font-weight:700;}
+  .cv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:7px;}
+  .cv{position:relative;border:1.5px solid var(--line);background:#fff;border-radius:9px;padding:7px 4px 5px;
+    cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:var(--font-body);}
+  .cv:hover{border-color:var(--ci-magenta);}
+  .cv-id{font-family:var(--font-display);font-weight:800;font-size:11.5px;color:var(--ink-faint);}
+  .cv.rated .cv-id,.cv.ev .cv-id{color:var(--ink);}
+  .cv-bar{width:100%;height:5px;border-radius:3px;background:#E7EBF1;}
+  .cv.ev .cv-bar{background:repeating-linear-gradient(45deg,#C5DFEF 0 4px,#EEF6FB 4px 8px);}
+  .cv.tia{border-color:#E9C7E0;background:#FFFCFE;}
+  .cv.tia .cv-id{text-decoration:underline;text-decoration-color:var(--ci-magenta);text-underline-offset:2px;}
+  .cv-ev{position:absolute;top:-5px;right:-4px;min-width:15px;height:15px;border-radius:999px;
+    background:var(--ci-dark);color:#fff;font-size:9px;font-weight:800;display:grid;place-items:center;padding:0 3px;}
+  .cv-key{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:10.5px;color:var(--ink-faint);font-weight:600;}
+  .cv-key span{display:inline-flex;align-items:center;gap:5px;}
+  .cv-key i{width:12px;height:6px;border-radius:3px;display:inline-block;}
+  .k-rated{background:var(--band-t);} .k-ev{background:repeating-linear-gradient(45deg,#C5DFEF 0 4px,#EEF6FB 4px 8px);}
+  .k-empty{background:#E7EBF1;} .k-tia{background:#fff;border:1.5px solid #E9C7E0;}
+
   /* BOY entry: validation, count, paste import */
   .ci-otherbox-label .req{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
     color:var(--ci-magenta-deep);background:var(--pink-soft);padding:2px 7px;border-radius:999px;margin-left:6px;}
@@ -1562,6 +1587,9 @@
             </div>
             <div class="ci-ttess-summary" id="ttessSummary">—</div>
           </header>
+          <!-- coverage map: rated + evidenced at a glance, TIA dimensions highlighted -->
+          <div class="ci-cover" id="coverMap"></div>
+
           <div class="ci-dim-scope" id="dimScope">
             <button type="button" class="active" data-scope="tia">TIA focus · Domains 2–3</button>
             <button type="button" data-scope="all">Full rubric · all 16</button>
@@ -2265,7 +2293,7 @@
     if(p==='overview'){ var ol=document.getElementById('overviewLocked'), orr=document.getElementById('overviewReady');
       if(ol) ol.hidden=sloLocked; if(orr){ orr.hidden=!sloLocked; if(sloLocked) renderOverview(); } }
     if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
-    if(p==='ttess'){ bindDimScope(); bindRubricPick(); applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary();
+    if(p==='ttess'){ bindDimScope(); bindRubricPick(); applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); renderCoverage();
       if(!rubricSetupDone) openRubricSetup(); }
     if(p==='moy'){ renderMoy(); }
     if(p==='progress'){ renderProgress(); }
@@ -2412,6 +2440,7 @@
   }
   function ratedCount(list){ var n=0; list.forEach(function(d){ if(ratingByDim[d.id]) n++; }); return n; }
   function updateTtessSummary(){
+    renderCoverage();
     var el=document.getElementById('ttessSummary'); if(!el) return;
     var a=ttessAvg(), tiaRated=ratedCount(tiaDims()), allRated=ratedCount(activeDims());
     var tia=(a==null)
@@ -2419,6 +2448,44 @@
       : '<b>TIA · Domains 2–3</b> '+a.toFixed(2)+' / 3.75 · '+tiaRated+' of '+tiaDims().length;
     el.innerHTML=tia+'<span class="sep"></span><span class="all">'+allRated+' of '+activeDims().length+' dimensions rated</span>';
     el.className='ci-ttess-summary'+(a!=null&&a>=3.75?' met':'');
+  }
+  // Coverage map — connects evidence collected anywhere to the rubric's dimensions.
+  function renderCoverage(){
+    var wrap=document.getElementById('coverMap'); if(!wrap) return;
+    var dims=activeDims();
+    // evidence attached per dimension: level evidence + student items tagged T-TESS
+    var taggedStudentEvidence=0;
+    ROSTER.forEach(function(n){ (evidenceByStudent[n]||[]).forEach(function(it){ if(it.ttess) taggedStudentEvidence++; }); });
+    var ratedTia=0, evidencedTia=0, tiaTotal=0;
+    var cells=dims.map(function(d){
+      var r=ratingByDim[d.id]||0;
+      var ev=0; var le=levelEvidence[d.id]||{};
+      Object.keys(le).forEach(function(k){ ev+=le[k].length; });
+      if(d.tia){ tiaTotal++; if(r) ratedTia++; if(ev) evidencedTia++; }
+      var state = r ? 'rated' : (ev ? 'ev' : 'empty');
+      var tip = d.id+' '+d.title+' — '+(r?RATENAME[r]:'not rated')+' · '+ev+' evidence item'+(ev===1?'':'s');
+      return '<button type="button" class="cv '+state+(d.tia?' tia':'')+'" data-dim="'+d.id+'" title="'+esc(tip)+'">'+
+        '<span class="cv-id">'+d.id+'</span>'+
+        '<span class="cv-bar" style="'+(r?'background:var('+RATEBAND[r]+')':'')+'"></span>'+
+        (ev?'<span class="cv-ev">'+ev+'</span>':'')+
+      '</button>';
+    }).join('');
+    wrap.innerHTML=
+      '<div class="cv-head"><b>Coverage map</b>'+
+        '<span class="cv-stat">TIA dimensions: <b>'+ratedTia+'/'+tiaTotal+'</b> rated · <b>'+evidencedTia+'/'+tiaTotal+'</b> with evidence</span>'+
+        (taggedStudentEvidence?'<span class="cv-stat alt">'+taggedStudentEvidence+' locker items tagged for T-TESS</span>':'')+
+      '</div>'+
+      '<div class="cv-grid">'+cells+'</div>'+
+      '<div class="cv-key"><span><i class="k-rated"></i>Rated</span><span><i class="k-ev"></i>Evidence only</span>'+
+      '<span><i class="k-empty"></i>Nothing yet</span><span><i class="k-tia"></i>Counts toward TIA</span></div>';
+    wrap.querySelectorAll('.cv').forEach(function(b){
+      b.addEventListener('click',function(){ currentDim=b.getAttribute('data-dim');
+        if(!scopedDims().some(function(x){return x.id===currentDim;})){ dimScope='all'; bindDimScope();
+          document.querySelectorAll('#dimScope button').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-scope')==='all');}); }
+        renderDimNav(); renderDimDetail(currentDim); scheduleSave();
+        document.getElementById('dimDetail').scrollIntoView({behavior:'smooth',block:'start'});
+      });
+    });
   }
   function renderDimNav(){
     var nav=document.getElementById('dimNav'); if(!nav) return; nav.innerHTML='';
