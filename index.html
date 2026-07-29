@@ -521,14 +521,8 @@
 
   .ci-dim-detail .dim-head{font-family:var(--font-display);font-weight:800;color:var(--ink);font-size:19px;margin-bottom:4px;}
   .ci-dim-detail .dim-eyebrow{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ci-magenta-deep);}
-  .ci-dim-detail .desc-box{background:var(--ci-grad-soft);border:1px solid #F0D9EC;border-radius:var(--r-md);
-    padding:15px 17px;color:var(--ink);font-size:14px;line-height:1.55;margin:14px 0 20px;}
+  .ci-dim-detail .dim-desc{color:var(--ink-soft);font-size:13.5px;line-height:1.5;margin:4px 0 18px;max-width:70ch;}
   .ci-dim-detail h4{font-family:var(--font-display);font-size:13px;color:var(--ink);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px;}
-  .ci-rate-row{display:flex;flex-wrap:wrap;gap:8px;}
-  .ci-rate{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px 7px 7px;cursor:pointer;
-    font-weight:700;font-size:12.5px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:8px;}
-  .ci-rate .pt{width:22px;height:22px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;font-family:var(--font-display);}
-  .ci-rate.sel{border-color:var(--ink);color:var(--ink);box-shadow:0 0 0 3px rgba(27,27,58,.08);}
   .ci-rate-note{font-size:12px;color:var(--ink-faint);margin-top:10px;}
   .ci-help{list-style:none;display:flex;flex-direction:column;gap:9px;}
   .ci-help li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink-soft);line-height:1.45;}
@@ -570,9 +564,6 @@
   .lad-arrow:disabled{opacity:.35;cursor:default;}
 
   /* dots */
-  .lad-dots{display:flex;justify-content:center;gap:7px;margin-top:12px;}
-  .lad-dot{width:7px;height:7px;border-radius:50%;border:0;background:var(--line);cursor:pointer;padding:0;transition:all .15s;}
-  .lad-dot.on{background:var(--ci-magenta);width:20px;border-radius:4px;}
 
   .ci-ladder-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 26px;min-width:0;
     scrollbar-width:none;}
@@ -608,6 +599,20 @@
   .lv-help li{font-size:12.5px;color:var(--ink-soft);line-height:1.45;padding-left:13px;position:relative;}
   .lv-help li::before{content:"•";position:absolute;left:0;color:var(--ci-magenta);font-weight:800;}
   .lv-help .muted{font-size:12.5px;color:var(--ink-faint);line-height:1.45;margin-bottom:16px;}
+  /* alignment-driven side panel */
+  .vsum{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 14px;}
+  .vs{font-size:10px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:3px 9px;border-radius:999px;}
+  .vs-p{background:#E6F4EC;color:#1F6B47;} .vs-s{background:#EEF6FB;color:#2C6485;}
+  .vs-n{background:#F1F3F7;color:#7A7A85;} .vs-r{background:#FDF1E3;color:#9A6212;}
+  .vgrp{margin-bottom:13px;}
+  .vgrp-h{display:block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+  .g-p .vgrp-h{color:#1F6B47;} .g-s .vgrp-h{color:#2C6485;}
+  .g-n .vgrp-h{color:#7A7A85;} .g-r .vgrp-h{color:#9A6212;}
+  .vgrp ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+  .vgrp li{font-size:11.5px;color:var(--ink-faint);line-height:1.45;padding-left:11px;border-left:2px solid var(--line);}
+  .g-p li{border-left-color:#BEE3CC;} .g-s li{border-left-color:#C5DFEF;}
+  .g-r li{border-left-color:#F3DDBE;}
+  .vgrp li em{display:block;font-style:normal;font-weight:700;color:var(--ink);font-size:12px;margin-bottom:2px;}
   .lv-ev .forlv{font-family:var(--font-display);}
   .lv-ev-item{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px 10px;margin-bottom:6px;}
   .lv-ev-item .dot{width:22px;height:22px;border-radius:6px;flex:none;display:grid;place-items:center;color:#fff;font-size:11px;}
@@ -2325,10 +2330,36 @@
       '</div>';
     }).join('');
 
-    var help=(d.ci&&d.ci.length)
-      ? '<b>Crystal Instruction helps teachers meet this expectation by:</b><ul>'+
-        d.ci.map(function(c){return '<li>'+c+'</li>';}).join('')+'</ul>'
-      : '<b>Crystal Instruction &amp; this dimension</b><p class="muted">'+(d.note||'No verified Crystal Instruction support here — attach your own evidence.')+'</p>';
+    // Side panel is driven by the descriptor-level alignment for the FOCUSED level,
+    // not generic dimension blurbs: exactly which indicators CI can evidence for you,
+    // which it only helps with, and which you must bring yourself.
+    var help=(function(){
+      var vs=(CI_VERDICT[id]&&CI_VERDICT[id][F])||null, items=set[F]||[];
+      if(!vs){
+        return '<b>Crystal Instruction &amp; this level</b><p class="muted">'+
+          (d.note||'No verified Crystal Instruction alignment for this level — attach your own evidence.')+'</p>';
+      }
+      var g={PROVES:[],SUP:[],NO:[],RISK:[]};
+      items.forEach(function(txt,i){ var v=vs[i]; if(v) g[v[0]].push({t:txt,why:v[1]}); });
+      var h='<b>At '+RATENAME[F]+', Crystal Instruction…</b>';
+      h+='<div class="vsum">'+
+        '<span class="vs vs-p">'+g.PROVES.length+' proves</span>'+
+        '<span class="vs vs-s">'+g.SUP.length+' helps</span>'+
+        '<span class="vs vs-n">'+g.NO.length+' on you</span>'+
+        (g.RISK.length?'<span class="vs vs-r">'+g.RISK.length+' careful</span>':'')+
+      '</div>';
+      function block(list,cls,label){
+        if(!list.length) return '';
+        return '<div class="vgrp '+cls+'"><span class="vgrp-h">'+label+'</span><ul>'+
+          list.map(function(x){return '<li><em>'+esc(x.t.replace(/\.$/,''))+'</em>'+esc(x.why)+'</li>';}).join('')+
+        '</ul></div>';
+      }
+      h+=block(g.PROVES,'g-p','Evidence CI produces for you');
+      h+=block(g.SUP,'g-s','CI contributes — you finish it');
+      h+=block(g.RISK,'g-r','Careful how you cite this');
+      h+=block(g.NO,'g-n','Bring your own evidence');
+      return h;
+    })();
 
     var ev=levEv(id,F);
     var evHTML = ev.length
@@ -2348,9 +2379,6 @@
         (i<arr.length-1?'<span class="stp-bar'+(done?' done':'')+'"></span>':'')+
       '</button>';
     }).join('');
-    var dots=[1,2,3,4,5].filter(function(L){return set[L];}).map(function(L){
-      return '<button type="button" class="lad-dot'+(L===F?' on':'')+'" data-l="'+L+'" aria-label="'+RATENAME[L]+'"></button>';
-    }).join('');
 
     return '<div class="ci-dim-section"><h4>Rubric indicators — check what you can evidence</h4>'+
       '<div class="ci-desc-banner">'+status+'</div>'+
@@ -2362,7 +2390,6 @@
             '<div class="ci-ladder-track" id="ladTrack">'+cards+'</div>'+
             '<button type="button" class="lad-arrow next" id="ladNext" aria-label="Higher rating"'+(F>=5?' disabled':'')+'>›</button>'+
           '</div>'+
-          '<div class="lad-dots">'+dots+'</div>'+
         '</div>'+
         '<aside class="ci-ladder-side">'+
           '<div class="lv-help">'+help+'</div>'+
@@ -2375,13 +2402,11 @@
         '</aside>'+
       '</div></div>';
   }
-  function renderDimDetail(id){
+  function renderDimDetail(id,opts){
+    opts=opts||{};
     var wrap=document.getElementById('dimDetail'); if(!wrap) return;
     var d=findDim(id); var r=ratingByDim[id];
     var esc=function(v){return (v||'').replace(/</g,'&lt;');};
-    var rates=[5,4,3,2,1].map(function(p){
-      return '<button type="button" class="ci-rate'+(r===p?' sel':'')+'" data-pt="'+p+'"><span class="pt" style="background:var('+RATEBAND[p]+')">'+p+'</span>'+RATENAME[p]+'</button>';
-    }).join('');
     var help=d.ci.map(function(c){ return '<li><span class="dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><span>'+c+'</span></li>'; }).join('');
     // Help bullets are gated on verified platform coverage. Where CI has no honest claim
     // (3.1, 3.2, 4.1, 4.3) we show the caveat instead of filler.
@@ -2401,11 +2426,9 @@
     wrap.innerHTML=
       '<div class="dim-eyebrow">'+d.domain+'</div>'+
       '<div class="dim-head">'+d.id+' · '+d.title+'</div>'+
-      '<div class="desc-box">'+d.desc+'</div>'+
+      '<p class="dim-desc">'+d.desc+'</p>'+
       unobs+
-      '<h4>Your rating</h4><div class="ci-rate-row">'+rates+'</div>'+
-      '<div class="ci-rate-note">Proficient (3) is the expected level. Accomplished and Distinguished require students to drive their own learning.'+
-        (d.tia?'':' <b>This dimension is not part of the TIA 35%</b> — it counts toward your T-TESS appraisal only.')+'</div>'+
+      (d.tia?'':'<div class="ci-rate-note"><b>Not part of the TIA 35%</b> — this dimension counts toward your T-TESS appraisal only.</div>')+
       descriptorHTML(id)+
       helpHTML+
       '<div class="ci-dim-section"><h4>Evidence I\'ve collected</h4>'+
@@ -2416,15 +2439,16 @@
           '<button type="button" class="ci-evi-btn add">Add</button>'+
           '<button type="button" class="ci-evi-btn upload">Upload artifact<input type="file" hidden></button>'+
         '</div></div>';
-    wrap.querySelectorAll('.ci-rate').forEach(function(b){ b.addEventListener('click',function(){
-      ratingByDim[id]=+b.getAttribute('data-pt'); renderDimNav(); renderDimDetail(id); updateTtessSummary(); scheduleSave(); }); });
     // descriptor check-off — the system moves the rating automatically
     wrap.querySelectorAll('.lv-list input[type=checkbox]').forEach(function(cb){
       cb.addEventListener('change',function(){
         toggleDesc(id, +cb.getAttribute('data-l'), +cb.getAttribute('data-i'));
         var s=suggestedLevel(id);
         if(s) ratingByDim[id]=s; else delete ratingByDim[id];
-        renderDimNav(); renderDimDetail(id); updateTtessSummary(); scheduleSave();
+        // keep the carousel exactly where it is — re-rendering resets scroll and
+        // makes the card appear to jump, so preserve and restore it.
+        var tr=document.getElementById('ladTrack'), keep=tr?tr.scrollLeft:0;
+        renderDimNav(); renderDimDetail(id, {keepScroll:keep}); updateTtessSummary(); scheduleSave();
       });
     });
     // carousel: arrows move focus, clicking a card focuses it
@@ -2435,7 +2459,8 @@
     var pv=wrap.querySelector('#ladPrev'), nx=wrap.querySelector('#ladNext');
     if(pv) pv.addEventListener('click',function(){ setFocus(curLevel(id)-1); });   // ‹ = lower rating
     if(nx) nx.addEventListener('click',function(){ setFocus(curLevel(id)+1); });   // › = higher rating
-    wrap.querySelectorAll('.stp, .lad-dot').forEach(function(b){
+    if(opts.keepScroll!=null){ var _t=document.getElementById('ladTrack'); if(_t) _t.scrollLeft=opts.keepScroll; }
+    wrap.querySelectorAll('.stp').forEach(function(b){
       b.addEventListener('click',function(){ setFocus(+b.getAttribute('data-l')); });
     });
     wrap.querySelectorAll('.lvcard').forEach(function(c){
