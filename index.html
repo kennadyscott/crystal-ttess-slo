@@ -136,16 +136,6 @@
   .ci-save-status.saving{color:var(--ink-faint);background:#EEF1F6;}
   .ci-save-status.saved{color:#2E7D5B;background:#E6F4EC;}
 
-  .ci-resume{display:flex;align-items:center;gap:14px;background:var(--ci-grad-soft);border:1px solid #F0D9EC;
-    border-radius:var(--r-md);padding:14px 16px 14px 18px;}
-  .ci-resume[hidden]{display:none;}
-  .ci-resume .ic{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--ci-magenta-deep);
-    display:grid;place-items:center;flex:none;box-shadow:var(--shadow);}
-  .ci-resume .txt{flex:1;color:var(--ink);font-size:13.5px;line-height:1.45;}
-  .ci-resume .btn{padding:10px 18px;font-size:13px;flex:none;}
-  .ci-resume-x{border:0;background:transparent;color:var(--ink-faint);cursor:pointer;flex:none;padding:6px;border-radius:8px;display:grid;place-items:center;}
-  .ci-resume-x:hover{background:rgba(27,27,58,.08);color:var(--ink);}
-  @media(max-width:720px){.ci-resume{flex-wrap:wrap;}.ci-resume .btn{order:3;}}
 
   /* ---------- Page body ---------- */
   .ci-page{padding:28px 32px 60px;display:flex;flex-direction:column;gap:22px;max-width:1180px;width:100%;}
@@ -359,16 +349,16 @@
   .ci-evi-pick{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;color:var(--ink);}
   .ci-evi-pick .ci-select{min-width:170px;}
 
-  /* goal strip — quiet reference, not the focus of the page */
-  .ci-goalbar{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
-    background:var(--pink-soft);border:1px solid #F0D9EC;border-radius:var(--r-md);
-    padding:9px 14px;margin-bottom:16px;}
-  .ci-goalbar .eyebrow{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+  /* goal strip — thin, quiet reference line */
+  .ci-goalbar{display:flex;align-items:center;gap:8px;
+    background:var(--pink-soft);border-radius:8px;padding:5px 12px;margin:-12px 0 -6px;
+    font-size:12px;line-height:1.3;white-space:nowrap;overflow:hidden;}
+  .ci-goalbar[hidden]{display:none;}
+  .ci-goalbar .eyebrow{font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;
     color:var(--ci-magenta-deep);flex:none;}
-  .ci-goalbar p{font-weight:800;font-size:13px;color:var(--ink);flex:none;}
-  .ci-goalbar small{color:var(--ink-soft);font-size:12px;line-height:1.4;flex:1;min-width:180px;
-    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  @media(max-width:700px){.ci-goalbar small{white-space:normal;}}
+  .ci-goalbar p{font-weight:800;font-size:12px;color:var(--ink);flex:none;}
+  .ci-goalbar small{color:var(--ink-faint);font-size:11.5px;flex:1;min-width:0;
+    overflow:hidden;text-overflow:ellipsis;}
 
   /* filter bar */
   .ci-evi-filters{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 20px;}
@@ -696,18 +686,6 @@
         <div class="ci-yeartag"><i></i>2026–27 School Year</div>
       </div>
 
-      <!-- Resume banner (shown when a saved draft is restored on return) -->
-      <div class="ci-resume" id="resumeBanner" hidden>
-        <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 4v4h4"/><path d="M12 7v5l3 2"/></svg></span>
-        <div class="txt" id="resumeText"><b>Welcome back —</b> your SLO setup is saved. When your BOY data is in, pick up where you left off. Nothing to redo.</div>
-        <button class="btn btn-primary" id="resumeBtn" data-goto="targets">Continue setup
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </button>
-        <button class="ci-resume-x" id="resumeDismiss" aria-label="Dismiss">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-      </div>
-
       <!-- Phase stepper -->
       <div class="ci-stepper" aria-label="SLO progress">
         <div class="ci-step current">
@@ -724,6 +702,13 @@
           <span class="num">3</span>
           <span class="lbl"><small>End of year</small><b>Body of Evidence</b></span>
         </div>
+      </div>
+
+      <!-- SLO goal — persistent context under the progress stepper -->
+      <div class="ci-goalbar" id="goalBar" hidden>
+        <span class="eyebrow">SLO Goal</span>
+        <p id="eviGoalTitle">—</p>
+        <small id="eviGoalStmt">—</small>
       </div>
 
       <!-- Sub tabs -->
@@ -1148,13 +1133,6 @@
 
       <!-- ============ PANEL: EVIDENCE LOCKERS (Phase 2 · slide 15) ============ -->
       <div id="panel-evidence" hidden>
-        <!-- the goal you're collecting evidence for -->
-        <div class="ci-goalbar">
-          <span class="eyebrow">Collecting evidence for</span>
-          <p id="eviGoalTitle">—</p>
-          <small id="eviGoalStmt">—</small>
-        </div>
-
         <!-- filter bar -->
         <section class="ci-card ci-evi-filters">
           <div class="f">
@@ -1456,6 +1434,15 @@
     var stmt = g ? (g.key==='own' ? ((ownBox.querySelector('textarea')||{}).value || g.stmt) : g.stmt) : '';
     var sp=document.getElementById('sloStatement'); if(sp && stmt) sp.textContent=stmt;
     var ey=document.getElementById('skillProfileEyebrow'); if(ey) ey.textContent='Skill Profile · Grade '+currentGrade+' '+currentSubject;
+    // keep the persistent goal bar (under the phase stepper) in sync
+    var gb=document.getElementById('goalBar'),
+        gt=document.getElementById('eviGoalTitle'), gs=document.getElementById('eviGoalStmt');
+    if(gb){
+      var show = !!(g && g.key!=='own' ? g.title : (stmt||'').trim());
+      gb.hidden=!show;
+      if(gt) gt.textContent = g ? (g.key==='own' ? 'Custom goal' : g.title) : '';
+      if(gs) gs.textContent = stmt || '';
+    }
   }
   function selectGoal(g){
     var wrap=document.getElementById('goals');
@@ -2126,12 +2113,7 @@
       b.addEventListener('click',function(){ renderEvidence(b.getAttribute('data-name')); scheduleSave(); });
     });
   }
-  function renderGoalBar(){
-    var g=currentGoal();
-    var t=document.getElementById('eviGoalTitle'), s=document.getElementById('eviGoalStmt');
-    if(t) t.textContent = g ? g.title : 'Your SLO';
-    if(s) s.textContent = (document.getElementById('sloStatement')||{}).textContent || '';
-  }
+  function renderGoalBar(){ syncSkillProfile(); } // goal bar lives under the phase stepper
   function renderGrowthLine(name){
     var el=document.getElementById('eviGrowthLine'); if(!el) return;
     var st=null; studentList().forEach(function(x){if(x.name===name)st=x;});
@@ -2347,14 +2329,9 @@
   renderGoals('Math','3');
   var _ownTa=document.querySelector('#ownBox textarea'); if(_ownTa) _ownTa.addEventListener('input',syncSkillProfile);
   if(loadDraft()){
-    if(sloLocked){
-      // Setup complete → land straight in the Evidence Locker. No resume prompt needed.
-      showPanel('evidence');
-    } else {
-      // Setup still in progress → offer to pick up where they left off.
-      var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
-      var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
-    }
+    // Setup complete → land straight in the Evidence Locker; otherwise resume mid-setup
+    // at the saved step (handled by loadDraft). Autosave means no prompt is needed.
+    if(sloLocked) showPanel('evidence');
   } else {
     applyDataState(); // fresh start: reflect the locked Growth Targets tab
   }
