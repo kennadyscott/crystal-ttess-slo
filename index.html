@@ -897,6 +897,32 @@
   .ci-crumb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 
   /* tab bar gets an explicit swipe affordance: edge fades + scroll cue */
+  /* per-indicator selection */
+  .lv-list li.ind{border-radius:8px;padding:5px 7px;margin:-5px -7px;transition:background .15s;}
+  .lv-list li.ind .v-txt{cursor:pointer;}
+  .lv-list li.ind:hover{background:rgba(227,19,196,.05);}
+  .lv-list li.ind.sel{background:var(--pink-soft);box-shadow:inset 3px 0 0 var(--ci-magenta);}
+  .ind-ev{display:inline-block;margin-top:4px;font-size:9.5px;font-weight:800;letter-spacing:.3px;
+    text-transform:uppercase;background:var(--ci-dark);color:#fff;padding:2px 7px;border-radius:999px;}
+  .ind-focus{margin-bottom:14px;}
+  .ind-back{border:0;background:transparent;color:var(--ci-magenta-deep);font-family:var(--font-body);
+    font-weight:800;font-size:11.5px;cursor:pointer;padding:0 0 8px;}
+  .ind-back:hover{text-decoration:underline;}
+  .ind-quote{font-size:13px;color:var(--ink);font-weight:700;line-height:1.45;
+    border-left:3px solid var(--ci-magenta);padding-left:11px;margin-bottom:12px;}
+  .ind-why{font-size:12px;color:var(--ink-soft);line-height:1.5;}
+  .ind-why.muted{color:var(--ink-faint);}
+
+  /* TIA average — the number teachers care about */
+  .ci-ttess-summary{flex-direction:column;align-items:flex-start;gap:6px;padding:10px 15px;}
+  .ci-ttess-summary .avg{display:flex;align-items:baseline;gap:7px;}
+  .ci-ttess-summary .avg .n{font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1;}
+  .ci-ttess-summary .avg .of{font-size:11px;font-weight:700;opacity:.8;}
+  .ci-ttess-summary .meter{width:100%;min-width:150px;height:5px;border-radius:3px;background:rgba(0,0,0,.09);overflow:hidden;}
+  .ci-ttess-summary .meter span{display:block;height:100%;border-radius:3px;background:var(--ci-magenta);}
+  .ci-ttess-summary.met .meter span{background:var(--band-wa);}
+  .ci-ttess-summary .sub2{font-size:10.5px;font-weight:700;opacity:.85;}
+
   /* ---------- Dimension coverage map ---------- */
   .ci-cover{background:#FAFBFD;border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px;margin-bottom:16px;}
   .cv-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:11px;}
@@ -1005,6 +1031,32 @@
     .ci-ttess-summary{font-size:11px;padding:6px 10px;}
     .lvcard{flex:0 0 86%;}
   }
+
+  /* ---------- Accessibility pass ---------- */
+  /* WCAG AA: lift the lightest greys. --ink-faint was #8C8C93 (3.4:1 on white) -> 4.6:1 */
+  :root{ --ink-faint:#6E6E78; }
+  /* magenta text on white: #E313C4 is 3.6:1, too low for body text.
+     Text uses the deeper --ci-magenta-deep (#B80FA0, 5.3:1); the bright hue stays for fills. */
+  .ci-eyebrow{color:var(--ci-magenta-deep);}
+  .lv-help li::before{color:var(--ci-magenta-deep);}
+
+  /* visible keyboard focus everywhere interactive, including the pill tabs */
+  .ci-tabs button:focus-visible,
+  .ci-subtabs button:focus-visible,
+  .stp:focus-visible,
+  .lvcard:focus-visible,
+  .cv:focus-visible,
+  .rs-opt:focus-visible,
+  .ci-evi-stu:focus-visible,
+  .ci-ttess-toggle:focus-visible,
+  .lad-arrow:focus-visible,
+  .btn:focus-visible,
+  .ci-note-btn:focus-visible,
+  .rm:focus-visible{outline:3px solid var(--ci-magenta);outline-offset:2px;border-radius:8px;}
+  .ci-tabs button:focus-visible{outline-offset:-2px;}
+  /* checkboxes need a visible ring too */
+  .lv-list input:focus-visible,.ci-approve input:focus-visible+.box{outline:3px solid var(--ci-magenta);outline-offset:2px;}
+  /* never rely on colour alone: every band chip already carries its level name — keep it */
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
   @media(max-width:820px){.ci-app{grid-template-columns:1fr;}.ci-side{display:none;}}
@@ -1269,7 +1321,7 @@
               </label>
               <label class="ci-q">
                 <span class="q-label">Who else provides student support for this goal?</span>
-                <input class="ci-input" type="text" placeholder="e.g. Interventionist, co-teacher, tutor, family…">
+                <input class="ci-input" type="text" aria-label="Who else supports these students?" placeholder="e.g. Interventionist, co-teacher, tutor, family…">
               </label>
             </div>
           </div>
@@ -1337,15 +1389,15 @@
             <p class="sub" style="margin-bottom:14px;">Decide what score range each level covers — this color-codes your data using the same levels as your Skill Profile. Enter whatever scale your data uses (percent, RIT, raw points…).</p>
             <div class="ci-bands" id="entryBands">
               <div class="ci-bandrow"><span class="chip" style="background:var(--band-wb)">Well Below Typical</span>
-                <div class="rng"><input type="number" value="0" data-eband="wb" data-edge="lo" aria-label="Well Below low"><span>–</span><input type="number" value="54" data-eband="wb" data-edge="hi" aria-label="Well Below high"></div></div>
+                <div class="rng"><input type="number" value="0" data-eband="wb" data-edge="lo" aria-label="Well Below Typical low score"><span>–</span><input type="number" value="54" data-eband="wb" data-edge="hi" aria-label="Well Below Typical high score"></div></div>
               <div class="ci-bandrow"><span class="chip" style="background:var(--band-b)">Below Typical</span>
-                <div class="rng"><input type="number" value="55" data-eband="b" data-edge="lo"><span>–</span><input type="number" value="69" data-eband="b" data-edge="hi"></div></div>
+                <div class="rng"><input type="number" value="55" data-eband="b" data-edge="lo" aria-label="Below Typical low score"><span>–</span><input type="number" value="69" data-eband="b" data-edge="hi" aria-label="Below Typical high score"></div></div>
               <div class="ci-bandrow"><span class="chip" style="background:var(--band-t)">Typical</span>
-                <div class="rng"><input type="number" value="70" data-eband="t" data-edge="lo"><span>–</span><input type="number" value="84" data-eband="t" data-edge="hi"></div></div>
+                <div class="rng"><input type="number" value="70" data-eband="t" data-edge="lo" aria-label="Typical low score"><span>–</span><input type="number" value="84" data-eband="t" data-edge="hi" aria-label="Typical high score"></div></div>
               <div class="ci-bandrow"><span class="chip" style="background:var(--band-a)">Above Typical</span>
-                <div class="rng"><input type="number" value="85" data-eband="a" data-edge="lo"><span>–</span><input type="number" value="94" data-eband="a" data-edge="hi"></div></div>
+                <div class="rng"><input type="number" value="85" data-eband="a" data-edge="lo" aria-label="Above Typical low score"><span>–</span><input type="number" value="94" data-eband="a" data-edge="hi" aria-label="Above Typical high score"></div></div>
               <div class="ci-bandrow"><span class="chip" style="background:var(--band-wa)">Well Above Typical</span>
-                <div class="rng"><input type="number" value="95" data-eband="wa" data-edge="lo"><span>–</span><input type="number" value="100" data-eband="wa" data-edge="hi"></div></div>
+                <div class="rng"><input type="number" value="95" data-eband="wa" data-edge="lo" aria-label="Well Above Typical low score"><span>–</span><input type="number" value="100" data-eband="wa" data-edge="hi" aria-label="Well Above Typical high score"></div></div>
             </div>
 
             <div class="ci-entry-head">
@@ -1434,7 +1486,7 @@
 
         <!-- Locked: no BOY data yet -->
         <section class="ci-card ci-soon" id="targetsLocked">
-          <div class="ci-lock-badge">
+          <div class="ci-lock-badge" role="img" aria-label="Locked">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
           </div>
           <h2>Growth targets unlock with your data</h2>
@@ -1503,7 +1555,7 @@
         <section class="ci-card ci-locked" id="overviewLocked">
           <div class="lk-skel lk-overview" aria-hidden="true"></div>
           <div class="lk-body">
-            <div class="ci-lock-badge">
+            <div class="ci-lock-badge" role="img" aria-label="Locked">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
             </div>
             <h2>Your SLO overview appears here</h2>
@@ -1606,7 +1658,7 @@
       <!-- ============ PANEL: MOY (mid-year check) ============ -->
       <div id="panel-moy" hidden>
         <section class="ci-card ci-soon" id="moyNoData" hidden>
-          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+          <div class="ci-lock-badge" role="img" aria-label="Locked"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
           <h2>Mid-year check unlocks with your SLO</h2>
           <p>Set up your BOY data and growth targets first, then record mid-year scores here to track movement.</p>
           <button class="btn btn-secondary" data-panel-go="boysetup">Go to BOY Setup</button>
@@ -1614,7 +1666,7 @@
         <section class="ci-card ci-locked" id="moyGate" hidden>
           <div class="lk-skel lk-moy" aria-hidden="true"></div>
           <div class="lk-body">
-          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+          <div class="ci-lock-badge" role="img" aria-label="Locked"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
           <div class="ci-soon-badge">Opens <span class="gate-when">—</span></div>
           <h2>Mid-year check opens in December</h2>
           <p>Your MOY window is not open yet. When it opens you'll record mid-year scores here and see how far each student has moved toward target.</p>
@@ -1653,7 +1705,7 @@
         <section class="ci-card ci-locked" id="progNoData" hidden>
           <div class="lk-skel lk-progress" aria-hidden="true"></div>
           <div class="lk-body">
-            <div class="ci-lock-badge">
+            <div class="ci-lock-badge" role="img" aria-label="Locked">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
             </div>
             <h2>Progress unlocks with your data</h2>
@@ -1707,7 +1759,7 @@
       <!-- ============ PANEL: EOY (end-of-year · Phase 3) ============ -->
       <div id="panel-eoy" hidden>
         <section class="ci-card ci-soon" id="eoyNoData" hidden>
-          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+          <div class="ci-lock-badge" role="img" aria-label="Locked"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
           <h2>End-of-year results unlock with your SLO</h2>
           <p>Set up your BOY data and growth targets first, then record post-assessment scores here to close out the year.</p>
           <button class="btn btn-secondary" data-panel-go="boysetup">Go to BOY Setup</button>
@@ -1715,7 +1767,7 @@
         <section class="ci-card ci-locked" id="eoyGate" hidden>
           <div class="lk-skel lk-eoy" aria-hidden="true"></div>
           <div class="lk-body">
-          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+          <div class="ci-lock-badge" role="img" aria-label="Locked"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
           <div class="ci-soon-badge">Opens <span class="gate-when">—</span></div>
           <h2>End-of-year results open in April</h2>
           <p>Your EOY window is not open yet. When it opens you'll record post-assessment scores and generate your full evaluation report.</p>
@@ -1829,15 +1881,15 @@
           <p class="ci-modal-sub">These cut points decide which performance level each score falls into. Set them for your class, then review how they map to your descriptors. You can adjust until you lock your SLO.</p>
           <div class="ci-bands" id="modalBands">
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-wb)">Well Below Typical</span>
-              <div class="rng"><input type="number" value="0" data-band="wb" data-edge="lo" aria-label="Well Below low"><span>–</span><input type="number" value="54" data-band="wb" data-edge="hi" aria-label="Well Below high"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="0" data-band="wb" data-edge="lo" aria-label="Well Below Typical low score"><span>–</span><input type="number" value="54" data-band="wb" data-edge="hi" aria-label="Well Below Typical high score"><span class="pct">%</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-b)">Below Typical</span>
-              <div class="rng"><input type="number" value="55" data-band="b" data-edge="lo"><span>–</span><input type="number" value="69" data-band="b" data-edge="hi"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="55" data-band="b" data-edge="lo" aria-label="Below Typical low percent"><span>–</span><input type="number" value="69" data-band="b" data-edge="hi" aria-label="Below Typical high percent"><span class="pct">%</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-t)">Typical</span>
-              <div class="rng"><input type="number" value="70" data-band="t" data-edge="lo"><span>–</span><input type="number" value="84" data-band="t" data-edge="hi"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="70" data-band="t" data-edge="lo" aria-label="Typical low percent"><span>–</span><input type="number" value="84" data-band="t" data-edge="hi" aria-label="Typical high percent"><span class="pct">%</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-a)">Above Typical</span>
-              <div class="rng"><input type="number" value="85" data-band="a" data-edge="lo"><span>–</span><input type="number" value="94" data-band="a" data-edge="hi"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="85" data-band="a" data-edge="lo" aria-label="Above Typical low percent"><span>–</span><input type="number" value="94" data-band="a" data-edge="hi" aria-label="Above Typical high percent"><span class="pct">%</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-wa)">Well Above Typical</span>
-              <div class="rng"><input type="number" value="95" data-band="wa" data-edge="lo"><span>–</span><input type="number" value="100" data-band="wa" data-edge="hi"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="95" data-band="wa" data-edge="lo" aria-label="Well Above Typical low percent"><span>–</span><input type="number" value="100" data-band="wa" data-edge="hi" aria-label="Well Above Typical high percent"><span class="pct">%</span></div></div>
           </div>
           <div class="ci-modal-foot">
             <button class="btn btn-ghost" data-close>Cancel</button>
@@ -2075,7 +2127,7 @@
     var tb=document.getElementById('entryRows'); if(!tb||tb.dataset.built) return;
     ROSTER.forEach(function(name){
       var tr=document.createElement('tr');
-      tr.innerHTML='<th>'+name+'</th><td><input type="number" class="ci-scoreinput" data-name="'+name+'" placeholder="—"></td><td class="level">—</td>';
+      tr.innerHTML='<th>'+name+'</th><td><input type="number" class="ci-scoreinput" data-name="'+name+'" aria-label="BOY score for '+escA(name)+'" placeholder="—"></td><td class="level">—</td>';
       tb.appendChild(tr);
       tr.querySelector('input').addEventListener('input',function(){updateEntryRow(tr);updateEntryCount();validateEntry();scheduleSave();});
     });
@@ -2445,10 +2497,15 @@
     renderCoverage();
     var el=document.getElementById('ttessSummary'); if(!el) return;
     var a=ttessAvg(), tiaRated=ratedCount(tiaDims()), allRated=ratedCount(activeDims());
-    var tia=(a==null)
-      ? '<b>TIA · Domains 2–3</b> not yet rated'
-      : '<b>TIA · Domains 2–3</b> '+a.toFixed(2)+' / 3.75 · '+tiaRated+' of '+tiaDims().length;
-    el.innerHTML=tia+'<span class="sep"></span><span class="all">'+allRated+' of '+activeDims().length+' dimensions rated</span>';
+    var pct = a==null ? 0 : Math.max(0,Math.min(100,Math.round(a/3.75*100)));
+    el.innerHTML = (a==null)
+      ? '<div class="avg"><span class="n">—</span><span class="of">TIA average · target 3.75</span></div>'+
+        '<div class="meter"><span style="width:0"></span></div>'+
+        '<div class="sub2">Rate a Domain 2–3 dimension to start your average</div>'
+      : '<div class="avg"><span class="n">'+a.toFixed(2)+'</span><span class="of">/ 3.75 TIA average</span></div>'+
+        '<div class="meter"><span style="width:'+pct+'%"></span></div>'+
+        '<div class="sub2">'+tiaRated+' of '+tiaDims().length+' TIA dimensions · '+allRated+' of '+activeDims().length+' overall'+
+          (a>=3.75?' · threshold met':'')+'</div>';
     el.className='ci-ttess-summary'+(a!=null&&a>=3.75?' met':'');
   }
   // Coverage map — connects evidence collected anywhere to the rubric's dimensions.
@@ -2466,7 +2523,7 @@
       if(d.tia){ tiaTotal++; if(r) ratedTia++; if(ev) evidencedTia++; }
       var state = r ? 'rated' : (ev ? 'ev' : 'empty');
       var tip = d.id+' '+d.title+' — '+(r?RATENAME[r]:'not rated')+' · '+ev+' evidence item'+(ev===1?'':'s');
-      return '<button type="button" class="cv '+state+(d.tia?' tia':'')+'" data-dim="'+d.id+'" title="'+esc(tip)+'">'+
+      return '<button type="button" class="cv '+state+(d.tia?' tia':'')+'" data-dim="'+d.id+'" title="'+escA(tip)+'">'+
         '<span class="cv-id">'+d.id+'</span>'+
         '<span class="cv-bar" style="'+(r?'background:var('+RATEBAND[r]+')':'')+'"></span>'+
         (ev?'<span class="cv-ev">'+ev+'</span>':'')+
@@ -2597,6 +2654,10 @@
   function levEv(id,L){ levelEvidence[id]=levelEvidence[id]||{}; levelEvidence[id][L]=levelEvidence[id][L]||[]; return levelEvidence[id][L]; }
   var openLevel={};   // which level is expanded per dimension
 
+  var itemEvidence={};      // evidence keyed to a single indicator: 'dim|level|index'
+  var selIndicator={};      // which indicator is selected per dimension
+  function ivKey(id,L,i){ return id+'|'+L+'|'+i; }
+  function itemEv(id,L,i){ var k=ivKey(id,L,i); return (itemEvidence[k]=itemEvidence[k]||[]); }
   var focusLevel={};   // which level card is in focus per dimension (defaults to Proficient)
   function curLevel(id){ return focusLevel[id]||3; }
 
@@ -2604,7 +2665,7 @@
     var set=descFor(id);
     if(!set) return '<div class="ci-dim-section"><h4>Rubric indicators</h4>'+
       '<div class="ci-evi-empty">T-TESS 2 indicator text isn\'t loaded yet — rate yourself above and attach evidence below.</div></div>';
-    var sug=suggestedLevel(id), F=curLevel(id), d=findDim(id);
+    var sug=suggestedLevel(id), F=curLevel(id), d=findDim(id), sel=selIndicator[id]||null;
 
     // Improvement Needed → Distinguished, left to right: left arrow lowers, right raises.
     var cards=[1,2,3,4,5].filter(function(L){return set[L];}).map(function(L){
@@ -2619,10 +2680,15 @@
           if(v){
             var cls={PROVES:'v-proves',SUP:'v-sup',NO:'v-no',RISK:'v-risk'}[v[0]];
             var lab={PROVES:'CI proves this',SUP:'CI helps',NO:'Not from CI',RISK:'Careful'}[v[0]];
-            tag='<span class="v-tag '+cls+'" title="'+esc(v[1])+'">'+lab+'</span><span class="v-why">'+esc(v[1])+'</span>';
+            tag='<span class="v-tag '+cls+'" title="'+escA(v[1])+'">'+lab+'</span><span class="v-why">'+esc(v[1])+'</span>';
           }
-          return '<li><label><input type="checkbox" data-l="'+L+'" data-i="'+i+'"'+(isChecked(id,L,i)?' checked':'')+'>'+
-            '<span class="v-txt">'+esc(txt)+tag+'</span></label></li>';
+          var selHere=(sel && sel.L===L && sel.i===i);
+          var nEv=itemEv(id,L,i).length;
+          return '<li class="ind'+(selHere?' sel':'')+'" data-l="'+L+'" data-i="'+i+'">'+
+            '<label><input type="checkbox" data-l="'+L+'" data-i="'+i+'"'+(isChecked(id,L,i)?' checked':'')+'>'+
+            '<span class="v-txt">'+esc(txt)+tag+
+              (nEv?'<span class="ind-ev">'+nEv+' evidence</span>':'')+
+            '</span></label></li>';
         }).join('')+'</ul>'+
         '<div class="lv-tally'+(cleared?' ok':'')+'">'+got+' of '+items.length+' checked</div>'+
       '</div>';
@@ -2631,7 +2697,22 @@
     // Side panel is driven by the descriptor-level alignment for the FOCUSED level,
     // not generic dimension blurbs: exactly which indicators CI can evidence for you,
     // which it only helps with, and which you must bring yourself.
+    // If an indicator is selected, the panel is about THAT indicator.
     var help=(function(){
+      if(sel && set[sel.L] && set[sel.L][sel.i]!=null){
+        var txt=set[sel.L][sel.i];
+        var v=(CI_VERDICT[id]&&CI_VERDICT[id][sel.L]&&CI_VERDICT[id][sel.L][sel.i])||null;
+        var lab={PROVES:'Crystal Instruction proves this',SUP:'Crystal Instruction helps',
+                 NO:'Not evidenced by Crystal Instruction',RISK:'Cite this carefully'};
+        var cls={PROVES:'g-p',SUP:'g-s',NO:'g-n',RISK:'g-r'};
+        return '<div class="ind-focus">'+
+          '<button type="button" class="ind-back" id="indBack">‹ All of '+RATENAME[sel.L]+'</button>'+
+          '<div class="ind-quote">'+esc(txt)+'</div>'+
+          (v ? '<div class="vgrp '+cls[v[0]]+'"><span class="vgrp-h">'+lab[v[0]]+'</span>'+
+                 '<p class="ind-why">'+esc(v[1])+'</p></div>'
+             : '<p class="ind-why muted">No Crystal Instruction alignment recorded for this indicator.</p>')+
+        '</div>';
+      }
       var vs=(CI_VERDICT[id]&&CI_VERDICT[id][F])||null, items=set[F]||[];
       if(!vs){
         return '<b>Crystal Instruction &amp; this level</b><p class="muted">'+
@@ -2659,9 +2740,11 @@
       return h;
     })();
 
-    var ev=levEv(id,F);
+    var evScope = sel ? {list:itemEv(id,sel.L,sel.i), label:'this indicator', L:sel.L, i:sel.i}
+                      : {list:levEv(id,F), label:RATENAME[F], L:F, i:null};
+    var ev=evScope.list;
     var evHTML = ev.length
-      ? ev.map(function(it,i){return '<div class="lv-ev-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span><span class="lab">'+esc(it.label)+'<small>'+esc(it.type)+'</small></span><button class="rm" data-l="'+F+'" data-i="'+i+'" aria-label="Remove">✕</button></div>';}).join('')
+      ? ev.map(function(it,i){return '<div class="lv-ev-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span><span class="lab">'+esc(it.label)+'<small>'+esc(it.type)+'</small></span><button class="rm" data-l="'+F+'" data-i="'+i+'" aria-label="Remove evidence: '+escA(it.label)+'" title="Remove this evidence">✕</button></div>';}).join('')
       : '<div class="ci-evi-empty">No evidence attached to '+RATENAME[F]+' yet.</div>';
 
     var status = sug==null
@@ -2691,11 +2774,11 @@
         '</div>'+
         '<aside class="ci-ladder-side">'+
           '<div class="lv-help">'+help+'</div>'+
-          '<div class="lv-ev"><b>Evidence I have collected <span class="forlv" style="color:var('+RATEBAND[F]+')">('+RATENAME[F]+')</span>:</b>'+evHTML+
-            '<div class="lv-add" data-l="'+F+'">'+
+          '<div class="lv-ev"><b>Evidence I have collected <span class="forlv" style="color:var('+RATEBAND[evScope.L]+')">('+esc(evScope.label)+')</span>:</b>'+evHTML+
+            '<div class="lv-add" data-l="'+evScope.L+'"'+(evScope.i!=null?' data-i="'+evScope.i+'"':'')+'>'+
               '<select class="ci-evi-type">'+EVI_TYPES.map(function(t){return '<option>'+t.v+'</option>';}).join('')+'</select>'+
-              '<input class="lbl-in" placeholder="What is the evidence?">'+
-              '<button type="button" class="ci-evi-btn add" title="Add evidence">+</button>'+
+              '<input class="lbl-in" aria-label="What is the evidence?" placeholder="What is the evidence?">'+
+              '<button type="button" class="ci-evi-btn add" title="Add evidence" aria-label="Add evidence">+</button>'+
             '</div></div>'+
         '</aside>'+
       '</div></div>';
@@ -2719,7 +2802,7 @@
     var itemsHTML=items.length ? items.map(function(it,idx){
       return '<div class="ci-evi-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span>'+
         '<span class="lab">'+esc(it.label)+'<small>'+it.type+'</small></span>'+
-        '<button class="rm" data-idx="'+idx+'" aria-label="Remove">✕</button></div>';
+        '<button class="rm" data-idx="'+idx+'" aria-label="Remove evidence: '+escA(it.label)+'" title="Remove this evidence">✕</button></div>';
     }).join('') : '<div class="ci-evi-empty">No evidence yet for this dimension.</div>';
     wrap.innerHTML=
       '<div class="dim-eyebrow">'+d.domain+'</div>'+
@@ -2733,7 +2816,7 @@
         '<div class="ci-evi-items">'+itemsHTML+'</div>'+
         '<div class="ci-evi-add" id="dimAdd">'+
           '<select class="ci-evi-type">'+EVI_TYPES.map(function(t){return '<option>'+t.v+'</option>';}).join('')+'</select>'+
-          '<input class="lbl-in" placeholder="Label (e.g. Walkthrough note, exit-ticket data)">'+
+          '<input class="lbl-in" aria-label="Evidence label" placeholder="Label (e.g. Walkthrough note, exit-ticket data)">'+
           '<button type="button" class="ci-evi-btn add">Add</button>'+
           '<button type="button" class="ci-evi-btn upload">Upload artifact<input type="file" hidden></button>'+
         '</div></div>';
@@ -2767,21 +2850,48 @@
         setFocus(+c.getAttribute('data-l'));
       });
     });
-    // per-level evidence: add / remove
+    // select an indicator (click its text, not the checkbox) to work on it directly
+    wrap.querySelectorAll('.ind .v-txt').forEach(function(t){
+      t.addEventListener('click',function(e){
+        e.preventDefault(); e.stopPropagation();
+        var li=t.closest('.ind'), L=+li.getAttribute('data-l'), i=+li.getAttribute('data-i');
+        var cur=selIndicator[id];
+        if(cur && cur.L===L && cur.i===i) delete selIndicator[id];   // toggle off
+        else { selIndicator[id]={L:L,i:i}; focusLevel[id]=L; }
+        var tr=document.getElementById('ladTrack');
+        renderDimDetail(id,{keepScroll:tr?tr.scrollLeft:null}); scheduleSave();
+      });
+    });
+    var back=wrap.querySelector('#indBack');
+    if(back) back.addEventListener('click',function(){
+      delete selIndicator[id];
+      var tr=document.getElementById('ladTrack');
+      renderDimDetail(id,{keepScroll:tr?tr.scrollLeft:null}); scheduleSave();
+    });
+    // evidence add / remove — scoped to the selected indicator, else the level
     wrap.querySelectorAll('.lv-add').forEach(function(row){
       var L=+row.getAttribute('data-l');
+      var hasI=row.getAttribute('data-i');
       row.querySelector('.add').addEventListener('click',function(){
         var type=row.querySelector('.ci-evi-type').value;
         var label=(row.querySelector('.lbl-in').value||'').trim();
         if(!label) { row.querySelector('.lbl-in').focus(); return; }
-        levEv(id,L).push({type:type,label:label});
-        openLevel[id]=L; renderDimDetail(id); scheduleSave();
+        (hasI!=null ? itemEv(id,L,+hasI) : levEv(id,L)).push({type:type,label:label});
+        openLevel[id]=L;
+        var tr=document.getElementById('ladTrack');
+        renderDimDetail(id,{keepScroll:tr?tr.scrollLeft:null}); scheduleSave();
       });
     });
     wrap.querySelectorAll('.lv-ev-item .rm').forEach(function(b){
       b.addEventListener('click',function(){
-        levEv(id,+b.getAttribute('data-l')).splice(+b.getAttribute('data-i'),1);
-        renderDimDetail(id); scheduleSave();
+        var L=+b.getAttribute('data-l'), ei=+b.getAttribute('data-ei');
+        var scope=selIndicator[id] ? itemEv(id,selIndicator[id].L,selIndicator[id].i) : levEv(id,L);
+        var removed=scope[ei]; scope.splice(ei,1);
+        var tr=document.getElementById('ladTrack');
+        renderDimDetail(id,{keepScroll:tr?tr.scrollLeft:null}); scheduleSave();
+        showUndo('Removed "'+(removed&&removed.label||'evidence')+'"', function(){
+          scope.splice(ei,0,removed); renderDimDetail(id); scheduleSave();
+        });
       });
     });
     wrap.querySelectorAll('.rm').forEach(function(b){ b.addEventListener('click',function(){
@@ -2825,7 +2935,7 @@
       var bk = (moy!=null&&moy!=='') ? classifyBand(moy) : null;
       html+='<tr><th>'+st.name+'</th>'+
         '<td class="score" style="background:var('+BANDVAR[preBk]+')">'+pre+u+'</td>'+
-        '<td><input type="number" class="ci-scoreinput moy-in" data-name="'+st.name+'" value="'+(moy==null?'':moy)+'" placeholder="—"></td>'+
+        '<td><input type="number" class="ci-scoreinput moy-in" data-name="'+st.name+'" aria-label="Middle-of-year score for '+escA(st.name)+'" value="'+(moy==null?'':moy)+'" placeholder="—"></td>'+
         '<td class="ci-chg">'+(chg==null?'—':((chg>0?'+':'')+chg)) +'</td>'+
         '<td class="level" style="'+(bk?'color:var('+BANDVAR[bk]+')':'')+'">'+(bk?BANDNAME[bk]:'—')+'</td></tr>';
     });
@@ -3059,7 +3169,7 @@
       html+='<tr><th>'+st.name+'</th>'+
         '<td>'+pre+u+'</td>'+
         '<td>'+((moy!=null&&moy!=='')?moy+u:'—')+'</td>'+
-        '<td><input type="number" class="ci-scoreinput eoy-in" data-name="'+st.name+'" value="'+(eoy==null?'':eoy)+'" placeholder="—"></td>'+
+        '<td><input type="number" class="ci-scoreinput eoy-in" data-name="'+st.name+'" aria-label="End-of-year score for '+escA(st.name)+'" value="'+(eoy==null?'':eoy)+'" placeholder="—"></td>'+
         '<td class="ci-chg">'+(growth==null?'—':((growth>0?'+':'')+growth))+'</td>'+
         '<td>'+(tgt!=null?tgt+u:'—')+'</td>'+
         '<td>'+(met==null?'—':'<span class="ci-result '+(met?'met':'miss')+'">'+(met?'Met':'Not yet')+'</span>')+'</td></tr>';
@@ -3139,6 +3249,8 @@
   }
   function eviGlyph(type){ return /Artifact/.test(type)?'📎':(/Note/.test(type)?'✎':'✓'); }
   function esc(v){ return (''+(v==null?'':v)).replace(/</g,'&lt;'); }
+  // attribute-safe: teacher-typed labels can contain quotes, which would break the tag
+  function escA(v){ return (''+(v==null?'':v)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
   // evidence is now a flat list per student: {type,title,standard,ttess,score}
   var evidenceByStudent={ 'Kennady':[
     {type:'ClearLesson',title:'Solve One-Step Multiplication',standard:'3.4K',ttess:true,score:'95%'},
@@ -3267,7 +3379,7 @@
           '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 5h16M4 11h16M4 17h9"/></svg>'+(hasNote?'Note':'Note')+'</button>'+
         '<button type="button" class="ci-ttess-toggle'+(it.ttess?' on':'')+'" data-idx="'+idx+'" title="'+(it.ttess?'Counts toward your Domains 2 & 3 evidence — click to untag':'Not counting toward T-TESS yet — click to tag')+'">'+
           (it.ttess?'<span class="tk">✓</span>Counts for T-TESS':'+ Tag for T-TESS')+'</button>'+
-        '<button class="rm" data-idx="'+idx+'" aria-label="Remove">✕</button></div>'+
+        '<button class="rm" data-idx="'+idx+'" aria-label="Remove evidence: '+escA(it.title||it.label||'')+'" title="Remove this evidence">✕</button></div>'+
         '<div class="ci-evi-note" data-idx="'+idx+'"'+(hasNote?'':' hidden')+'>'+
           '<textarea data-idx="'+idx+'" placeholder="Note about this evidence — what it shows, how the student did, next step…">'+esc(it.note||'')+'</textarea>'+
         '</div></div>';
@@ -3394,17 +3506,21 @@
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
       evidence:evidenceByStudent, notes:notesByStudent, eviStudent:currentEviStudent,
-      levelEvidence:levelEvidence, checkedDesc:checkedDesc, focusLevel:focusLevel, rubricSetupDone:rubricSetupDone, rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
+      levelEvidence:levelEvidence, itemEvidence:itemEvidence, selIndicator:selIndicator, checkedDesc:checkedDesc, focusLevel:focusLevel, rubricSetupDone:rubricSetupDone, rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
       moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone, progView:progView,
       step:currentStep
     };
   }
   function setStatus(cls,text){ if(!statusEl)return; statusEl.className='ci-save-status '+cls; statusEl.textContent=text; }
   function save(){
-    try{ localStorage.setItem(KEY,JSON.stringify(collect())); setStatus('saved','✓ All changes saved'); }
+    try{ localStorage.setItem(KEY,JSON.stringify(collect()));
+      var t=new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+      setStatus('saved','✓ All changes saved');
+      if(statusEl) statusEl.title='Last saved '+t;
+    }
     catch(e){ /* storage unavailable — production API would handle this */ }
   }
-  function scheduleSave(){ setStatus('saving','Saving…'); clearTimeout(saveTimer); saveTimer=setTimeout(save,500); }
+  function scheduleSave(){ setStatus('saving','Saving…'); if(statusEl) statusEl.title='Saving your changes…'; clearTimeout(saveTimer); saveTimer=setTimeout(save,500); }
 
   function loadDraft(){
     var raw; try{ raw=localStorage.getItem(KEY); }catch(e){ return false; }
@@ -3453,6 +3569,8 @@
     if(d.rubricVer) rubricVer=d.rubricVer;
     if(d.checkedDesc) checkedDesc=d.checkedDesc;
     if(d.levelEvidence) levelEvidence=d.levelEvidence;
+    if(d.itemEvidence) itemEvidence=d.itemEvidence;
+    if(d.selIndicator) selIndicator=d.selIndicator;
     if(d.ttessRatings) ratingByDim=d.ttessRatings;
     if(d.ttessEvidence) evidenceByDim=d.ttessEvidence;
     if(d.ttessDim) currentDim=d.ttessDim;
