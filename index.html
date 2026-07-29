@@ -277,13 +277,23 @@
   a:focus-visible,button:focus-visible,textarea:focus-visible{outline:2px solid var(--ci-magenta);outline-offset:2px;}
 
   /* ---------- BOY sub-tabs (Personal Plan / Targeted Skill Profile) ---------- */
-  .ci-subtabs{display:flex;gap:26px;border-bottom:1px solid var(--line);padding:0 4px;margin-top:-4px;}
-  .ci-subtabs button{border:0;background:none;font-family:var(--font-display);font-weight:800;font-size:15px;
-    color:var(--ink-faint);padding:10px 2px 12px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;}
-  .ci-subtabs button:hover{color:var(--ink);}
-  .ci-subtabs button.active{color:var(--ci-magenta-deep);border-color:var(--ci-magenta);}
-  .ci-subtabs button i{font-style:normal;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;
-    background:#E1E7F0;color:var(--ink-faint);font-size:11px;font-weight:800;margin-right:8px;vertical-align:-3px;font-family:var(--font-display);}
+  /* File-folder tabs: the active step is a tab ON the card below it, not a bar
+     floating above it. Side padding keeps tabs clear of the card's 20px corners. */
+  .ci-subtabs{display:flex;gap:3px;align-items:flex-end;padding:0 20px;margin:-4px 0 0;border-bottom:0;}
+  .ci-subtabs button{position:relative;top:1px;display:inline-flex;align-items:center;gap:8px;
+    border:1px solid transparent;border-bottom:0;background:none;
+    font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink-faint);
+    padding:10px 15px 11px;cursor:pointer;border-radius:12px 12px 0 0;white-space:nowrap;
+    transition:background .15s,color .15s;}
+  .ci-subtabs button:hover:not(.active){color:var(--ink);background:rgba(255,255,255,.6);}
+  .ci-subtabs button.active{background-color:var(--card);border-color:var(--line);color:var(--ci-magenta-deep);
+    box-shadow:0 -4px 12px rgba(27,27,58,.05);}
+  /* hide the card's top border where the tab meets it, so they read as one shape */
+  .ci-subtabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:3px;background-color:var(--card);}
+  /* the folder body must touch the tabs */
+  #panel-boysetup > div[id^="view-"]{margin-top:0;}
+  .ci-subtabs button i{font-style:normal;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;flex:none;
+    background:#E1E7F0;color:var(--ink-faint);font-size:11px;font-weight:800;font-family:var(--font-display);}
   .ci-subtabs button.active i{background:var(--ci-grad);color:#fff;}
   .ci-subtabs button.done i{background:var(--band-a);color:#fff;}
 
@@ -492,9 +502,11 @@
   .ci-ttess-summary .all{font-weight:700;opacity:.72;}
   @media(max-width:640px){.ci-ttess-summary{white-space:normal;}}
   /* version tag + T-TESS 2 readiness band */
-  .ci-vtag{display:inline-flex;flex-direction:column;vertical-align:middle;margin-left:10px;background:var(--pink-soft);
-    color:var(--ci-magenta-deep);font-family:var(--font-body);font-size:10.5px;font-weight:800;line-height:1.25;
-    padding:5px 11px;border-radius:9px;text-transform:uppercase;letter-spacing:.4px;}
+  .ci-vtag{display:inline-flex;flex-direction:column;align-items:flex-start;vertical-align:middle;margin-left:10px;
+    background:var(--pink-soft);color:var(--ci-magenta-deep);font-family:var(--font-body);font-size:10.5px;
+    font-weight:800;line-height:1.25;padding:5px 11px;border-radius:9px;text-transform:uppercase;letter-spacing:.4px;
+    border:1px solid transparent;cursor:pointer;text-align:left;transition:background .15s,border-color .15s;}
+  .ci-vtag:hover{background:#F9D9F0;border-color:var(--ci-magenta);}
   .ci-vtag-sub{font-weight:700;opacity:.7;letter-spacing:.2px;}
   .ci-rubricpick{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 16px;}
   .ci-rubricpick .lb{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);}
@@ -1712,8 +1724,9 @@
           <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
             <div>
               <div class="ci-eyebrow">Teacher performance · your T-TESS year</div>
-              <h2>T-TESS Rubric <span class="ci-vtag" id="rubricTag">2026–27 rubric<span class="ci-vtag-sub">16 dimensions</span></span>
-                <button type="button" class="ci-linkbtn" id="openRubricSetup">Change</button>
+              <h2>T-TESS Rubric <button type="button" class="ci-vtag" id="rubricTag"
+                    title="Change which rubric your district is using"
+                    aria-label="2026–27 rubric, 16 dimensions — change rubric">2026–27 rubric<span class="ci-vtag-sub">16 dimensions</span></button>
               </h2>
             </div>
             <div class="ci-ttess-summary" id="ttessSummary">—</div>
@@ -1936,6 +1949,7 @@
           </details>
 
           <div class="ci-modal-foot">
+            <button class="btn btn-ghost" id="rsCancel" data-rsclose hidden>Cancel</button>
             <button class="btn btn-primary" id="rsStart">Start my rubric
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
@@ -2803,7 +2817,11 @@
   function applyRubricVer(){
     var t2=(rubricVer==='t2');
     var tag=document.getElementById('rubricTag');
-    if(tag) tag.innerHTML=(t2?'T-TESS 2 · pilot':'2026–27 rubric')+'<span class="ci-vtag-sub">'+activeDims().length+' dimensions</span>';
+    if(tag){
+      var nm=(t2?'T-TESS 2 · pilot':'2026–27 rubric'), n=activeDims().length;
+      tag.innerHTML=nm+'<span class="ci-vtag-sub">'+n+' dimensions</span>';
+      tag.setAttribute('aria-label',nm+', '+n+' dimensions — change rubric');
+    }
     var hint=document.getElementById('rubricHint');
     if(hint) hint.innerHTML=t2
       ? 'Pilot rubric for the 15 systems in 2026–27; TEA recommends adoption in 2027–28. Crystal Instruction alignment for T-TESS 2 is still being mapped, so rate yourself and attach your own evidence.'
@@ -2818,9 +2836,21 @@
     }
   }
   var rubricSetupDone=false;
-  function openRubricSetup(){
+  var rsChanging=false;
+  function openRubricSetup(opts){
     var m=document.getElementById('rubricSetup'); if(!m) return;
     m.querySelectorAll('.rs-opt').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-rs-rubric')===rubricVer); });
+    // reopened from the rubric capsule, this is a change dialog, not first-run setup
+    var changing = (opts && opts.changing) || rubricSetupDone; rsChanging=changing;
+    var eb=m.querySelector('.ci-eyebrow'), ti=document.getElementById('rsTitle'),
+        go=document.getElementById('rsStart'), more=m.querySelector('.rs-more'),
+        cx=document.getElementById('rsCancel');
+    if(eb) eb.textContent = changing ? 'Your rubric' : 'One-time setup';
+    if(ti) ti.textContent = changing ? 'Which rubric is your district using?' : "Let's set up your T-TESS rubric";
+    if(go) go.childNodes[0].nodeValue = changing ? 'Save rubric' : 'Start my rubric';
+    if(cx) cx.hidden = !changing;
+    // someone who opened this deliberately wants the T-TESS 2 explanation
+    if(more) more.open = !!changing;
     m.hidden=false; document.body.style.overflow='hidden';
   }
   function closeRubricSetup(){
@@ -2839,15 +2869,16 @@
           : "Not sure? Choose T-TESS — it's what almost every district uses in 2026–27. You can change this any time.";
       });
     });
-    m.querySelectorAll('[data-rsclose]').forEach(function(b){ b.addEventListener('click',function(){ if(rubricSetupDone) closeRubricSetup(); }); });
+    // first run must make a choice; a change dialog can always be dismissed
+    m.querySelectorAll('[data-rsclose]').forEach(function(b){ b.addEventListener('click',function(){ if(rubricSetupDone||rsChanging) closeRubricSetup(); }); });
     document.getElementById('rsStart').addEventListener('click',function(){
       var sel=m.querySelector('.rs-opt.active');
       rubricVer = sel ? sel.getAttribute('data-rs-rubric') : 't1';
       rubricSetupDone=true; closeRubricSetup();
       applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); scheduleSave();
     });
-    var chg=document.getElementById('openRubricSetup');
-    if(chg) chg.addEventListener('click',openRubricSetup);
+    var chg=document.getElementById('rubricTag');   // the capsule itself opens the picker
+    if(chg) chg.addEventListener('click',function(){ openRubricSetup({changing:true}); });
   }
   function bindDimScope(){
     var wrap=document.getElementById('dimScope'); if(!wrap||wrap.dataset.bound) return; wrap.dataset.bound='1';
