@@ -1,0 +1,156 @@
+T-TESS / SLO GROWTH TRACKER — BUILD BRIEF
+Crystal Instruction (ClearK12) · teacher-facing · target 2026–27 school year
+
+WHAT WE'RE BUILDING
+A new module where a teacher builds a Student Learning Objective, collects a
+standards-aligned Body of Evidence against the T-TESS rubric across the year, and
+generates an end-of-year analysis report for their appraiser.
+
+Interactive prototype:  https://kennadyscott.github.io/crystal-ttess-slo/
+Full spec + research:   https://github.com/kennadyscott/crystal-ttess-slo  (read HANDOFF.md)
+
+The prototype is the source of truth for behaviour, copy and layout. It is NOT a
+starting codebase — every screen works, but all data is mocked and all state lives in
+one localStorage key. Click through it before estimating.
+
+RULE ONE — READ THIS BEFORE WRITING COPY
+Teachers earn TIA designations through their district, not through our software.
+No screen may promise, imply or predict a designation. Five rubric dimensions
+(3.1, 3.2, 4.1, 4.3, 4.4) deliberately show NO "how Crystal Instruction helps"
+content because we have no honest claim on them. Do not fill those in.
+
+--------------------------------------------------------------------------
+1. NAV + SHELL
+--------------------------------------------------------------------------
+- New left-nav item: "T-TESS / SLO" (sits under Crystal Reports).
+- Opens a full page, not a modal.
+- Tab row runs in phase order:
+    BOY Setup | Overview | Evidence Lockers | T-TESS Rubric | Progress | MOY | EOY
+- The module is organised around the school year in three phases:
+    Phase 1 Set up (Aug–Sep) · Phase 2 Monitor progress (Oct–Mar) · Phase 3 Body of evidence (Apr–Jun)
+- After a teacher locks their SLO, returning to the module lands them on
+  Evidence Lockers — that's where the daily work happens during Phase 2.
+
+--------------------------------------------------------------------------
+2. DATA MODEL + PERSISTENCE  (do this first, everything depends on it)
+--------------------------------------------------------------------------
+- One SLO object per teacher per school year, server-side.
+- Autosave continuously; the UI shows "Saving…" / "All changes saved" with a
+  hover timestamp. Teachers set this up in August and return in December.
+- Key students by student ID, not name.
+- Key rubric-indicator evidence to stable indicator IDs, not positional indexes,
+  or re-tagging drifts the moment rubric content is versioned.
+- Locking an SLO must snapshot the scale and descriptors, so later edits can't
+  retroactively change how a locked SLO is measured.
+- Sanitise the performance-level descriptors — they come from contenteditable.
+- See HANDOFF.md §6 for the full persisted shape.
+
+--------------------------------------------------------------------------
+3. PHASE 1 — THE BOY SETUP WIZARD
+--------------------------------------------------------------------------
+Five steps, shown as file-folder tabs:
+  1 Skill Statement — grade selector BEFORE subject. Strands are vertically
+    aligned Grades 2–5, so changing grade keeps the same strand and swaps in that
+    grade's statement and TEKS. Math / ELAR / Science, plus "write my own".
+  2 Skill Profile — five editable performance-level descriptors + the scoring scale.
+  3 Personal Plan — differentiation for highest and lowest groups, monitoring
+    cadence, support staff, anticipatory evidence sources.
+  4 BOY Data — teacher names the source and types scores into a table that
+    colour-codes live. Paste-from-spreadsheet import included.
+  5 Growth Targets — per-student slider, minimum = that student's own pre-test.
+
+Then "Accept & Lock SLO" — the commitment point.
+
+THREE RULES HERE THAT ARE EASY TO GET WRONG:
+  a) ONE scoring scale per SLO. Five bands, editable cut points, any scale
+     (percent, NWEA RIT, raw points). It drives the descriptors, BOY/MOY/EOY
+     colour coding, and the target slider max. BOY Data shows it READ-ONLY with an
+     "Edit scale" button. Do not build a second editable copy — we had two and they
+     could silently disagree.
+  b) A step's checkmark means its required fields have content, not that the
+     teacher scrolled past it.
+  c) Accept & Lock requires BOY data saved AND Personal Plan complete AND
+     appraiser approval. If the plan is blank the button stays disabled and names
+     what's missing. Locking opens a confirmation summarising what's being fixed
+     for the year.
+
+--------------------------------------------------------------------------
+4. PHASE 2 — MONITORING
+--------------------------------------------------------------------------
+- Overview: locked SLO at a glance.
+- Evidence Lockers: student list left, class/group filters top, locker right.
+  Per student: evidence items (each taggable "counts for T-TESS", each with a
+  note), artifact upload, and a "connect what you've taught" library built from
+  the SLO's standards.
+- T-TESS Rubric: one rubric level at a time, full width, opening on Proficient.
+  Each indicator row carries a verdict chip (CI proves this / CI helps / On you /
+  Careful) and expands in place to show the proof and attach evidence to that one
+  indicator. Running TIA average against a 3.75 target.
+    · A level is cleared at a majority of its indicators.
+    · The TIA average covers DOMAINS 2 AND 3 ONLY. Ratings on 1.x and 4.x must
+      never enter it.
+- Progress: per-student BOY → Current → Target, plus a per-standard mastery matrix
+  from Crystal Instruction work.
+    · Before any mid-year score exists, show a neutral "Baseline recorded" state.
+      Do NOT score students against their end-of-year target on day one — it flags
+      the whole class as failing when nothing has happened yet.
+- MOY: opens 1 December, computed from the school year, not hardcoded.
+
+--------------------------------------------------------------------------
+5. PHASE 3 — END OF YEAR
+--------------------------------------------------------------------------
+- EOY score capture opens 1 April.
+- Generates the analysis report: growth per student, met/not-met, Domains 2 & 3
+  average, evidence counts, overall summary.
+- NEEDS BUILDING: real PDF export. The prototype renders and prints only. This is
+  the largest known gap.
+
+--------------------------------------------------------------------------
+6. WHAT WE NEED FROM THE PLATFORM
+--------------------------------------------------------------------------
+All of this is mocked in the prototype:
+  1. Roster — students, classes, groups (prototype has 8 hardcoded students)
+  2. Per-standard mastery per student, from ClearLessons / ClearSheets / Snap Lessons
+  3. Recent activity by standard, for the "connect what you've taught" library
+  4. Deep link to the existing Lesson Summary report — it's already the ready-made
+     evidence artifact
+  5. Artifact upload + storage
+  6. Appraiser identity and real approval (currently a self-checked box)
+  7. PDF generation
+
+TWO PLATFORM GAPS THAT LIMIT WHAT THIS MODULE CAN CLAIM — worth scoping separately:
+  - The student record holds only name / ID / grade / credentials / class. No EL
+    status, no ELPS level, no IEP/504/dyslexia, no reading level. This blocks rubric
+    dimension 1.3 outright and caps 2.4. Texas moves to five ELPS proficiency levels
+    in 2026–27 and T-TESS 2 names ELPS directly in its rubric.
+  - Nothing logs what a teacher DID after a data alert. "Monitor & Adjust" is our
+    strongest rubric dimension, and this missing action log is exactly what stops a
+    teacher evidencing its top two levels. Small build, big rubric value.
+
+--------------------------------------------------------------------------
+7. OPEN DECISIONS — NOT ENGINEERING BUGS
+--------------------------------------------------------------------------
+  - Font: the prototype uses Outfit; production teacher.css serves Inter. Adopting
+    the prototype's type means changing production too, or the two diverge.
+  - Small magenta labels use #B80FA0 rather than brand #E313C4, because the brand
+    fuchsia fails WCAG AA for text at that size. Cleaner fix is raising those labels
+    to 14px+ rather than reverting the colour.
+  - T-TESS 2: TEA's letter says 12 dimensions, the published pilot rubric contains
+    11. We follow the rubric. Confirm with TEA before building T-TESS 2 content.
+  - TEKS codes on the authored skill statements need curriculum-team verification.
+  - Should districts be able to shift the December / April windows?
+  - Who may unlock a locked SLO, and should unlocks be audited?
+
+--------------------------------------------------------------------------
+8. SUGGESTED BUILD ORDER
+--------------------------------------------------------------------------
+  1. Data model + server-side persistence
+  2. Phase 1 wizard through Accept & Lock, including the gating and the single scale
+  3. Roster integration — unblocks every table
+  4. Evidence Lockers with real upload + Lesson Summary deep link
+  5. T-TESS Rubric with verbatim indicator text and per-indicator verdicts
+  6. Progress on real per-standard aggregates, including the baseline state
+  7. MOY / EOY with the window logic
+  8. Report + PDF export
+
+Steps 1–2 are the demo-able core. 3–4 make it usable. 5–8 complete the year.
