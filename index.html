@@ -2262,9 +2262,9 @@
       '<div class="ci-evi-empty">T-TESS 2 indicator text isn\'t loaded yet — rate yourself above and attach evidence below.</div></div>';
     var sug=suggestedLevel(id), F=curLevel(id), d=findDim(id);
 
-    // Distinguished → Improvement Needed, left to right. Proficient sits in the middle.
-    var cards=[5,4,3,2,1].filter(function(L){return set[L];}).map(function(L){
-      var items=set[L], need=Math.ceil(items.length/2);
+    // Improvement Needed → Distinguished, left to right: left arrow lowers, right raises.
+    var cards=[1,2,3,4,5].filter(function(L){return set[L];}).map(function(L){
+      var items=set[L];
       var got=(checkedDesc[id]&&checkedDesc[id][L]||[]).length;
       var cleared=levelCleared(id,L);
       return '<div class="lvcard'+(cleared?' cleared':'')+(L===F?' focus':'')+'" data-l="'+L+'">'+
@@ -2280,7 +2280,7 @@
           return '<li><label><input type="checkbox" data-l="'+L+'" data-i="'+i+'"'+(isChecked(id,L,i)?' checked':'')+'>'+
             '<span class="v-txt">'+esc(txt)+tag+'</span></label></li>';
         }).join('')+'</ul>'+
-        '<div class="lv-tally'+(cleared?' ok':'')+'">'+got+' of '+items.length+' · '+need+' clears this level</div>'+
+        '<div class="lv-tally'+(cleared?' ok':'')+'">'+got+' of '+items.length+' checked</div>'+
       '</div>';
     }).join('');
 
@@ -2295,17 +2295,16 @@
       : '<div class="ci-evi-empty">No evidence attached to '+RATENAME[F]+' yet.</div>';
 
     var status = sug==null
-      ? 'Check the indicators you can evidence. A preponderance clears a level and moves you up.'
-      : 'You are at <b class="lvl" style="color:var('+RATEBAND[sug]+')">'+sug+' · '+RATENAME[sug]+'</b>'+
-        (sug<5?' — clear a preponderance of <b>'+RATENAME[sug+1]+'</b> to move up.':' — top of the rubric.');
+      ? 'Mark off the indicators you can evidence. Your rating updates as you go.'
+      : 'Your rating: <b class="lvl" style="color:var('+RATEBAND[sug]+')">'+sug+' · '+RATENAME[sug]+'</b>';
 
     return '<div class="ci-dim-section"><h4>Rubric indicators — check what you can evidence</h4>'+
       '<div class="ci-desc-banner">'+status+'</div>'+
       '<div class="ci-ladder">'+
         '<div class="ci-ladder-main">'+
-          '<button type="button" class="lad-arrow prev" id="ladPrev" aria-label="Higher level"'+(F>=5?' disabled':'')+'>‹</button>'+
+          '<button type="button" class="lad-arrow prev" id="ladPrev" aria-label="Lower rating"'+(F<=1?' disabled':'')+'>‹</button>'+
           '<div class="ci-ladder-track" id="ladTrack">'+cards+'</div>'+
-          '<button type="button" class="lad-arrow next" id="ladNext" aria-label="Lower level"'+(F<=1?' disabled':'')+'>›</button>'+
+          '<button type="button" class="lad-arrow next" id="ladNext" aria-label="Higher rating"'+(F>=5?' disabled':'')+'>›</button>'+
         '</div>'+
         '<aside class="ci-ladder-side">'+
           '<div class="lv-help">'+help+'</div>'+
@@ -2376,8 +2375,8 @@
       if(c&&c.scrollIntoView) c.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
     }
     var pv=wrap.querySelector('#ladPrev'), nx=wrap.querySelector('#ladNext');
-    if(pv) pv.addEventListener('click',function(){ setFocus(curLevel(id)+1); });   // ‹ = higher level
-    if(nx) nx.addEventListener('click',function(){ setFocus(curLevel(id)-1); });
+    if(pv) pv.addEventListener('click',function(){ setFocus(curLevel(id)-1); });   // ‹ = lower rating
+    if(nx) nx.addEventListener('click',function(){ setFocus(curLevel(id)+1); });   // › = higher rating
     wrap.querySelectorAll('.lvcard').forEach(function(c){
       c.addEventListener('click',function(e){
         if(e.target.closest('label')) return;      // don't steal checkbox clicks
