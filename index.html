@@ -876,6 +876,38 @@
   .ci-crumb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 
   /* tab bar gets an explicit swipe affordance: edge fades + scroll cue */
+  /* ---------- Locked states: preview skeleton + requirements checklist ---------- */
+  .ci-locked{position:relative;overflow:hidden;padding:0;min-height:300px;}
+  .lk-skel{position:absolute;inset:0;padding:22px;opacity:.5;filter:blur(1.5px) grayscale(1);pointer-events:none;}
+  .lk-skel::before,.lk-skel::after{content:"";position:absolute;background:#E7EBF1;border-radius:8px;}
+  /* overview: banner + two stat cards */
+  .lk-overview::before{left:22px;right:22px;top:22px;height:66px;border-radius:14px;}
+  .lk-overview::after{left:22px;width:44%;top:104px;bottom:22px;border-radius:14px;}
+  /* progress: a table of rows */
+  .lk-progress::before{left:22px;right:22px;top:22px;height:30px;}
+  .lk-progress::after{left:22px;right:22px;top:64px;bottom:22px;
+    background:repeating-linear-gradient(#E7EBF1 0 26px,transparent 26px 40px);}
+  /* moy / eoy: entry grid */
+  .lk-moy::before,.lk-eoy::before{left:22px;right:22px;top:22px;height:34px;}
+  .lk-moy::after,.lk-eoy::after{left:22px;right:22px;top:70px;bottom:22px;
+    background:repeating-linear-gradient(#E7EBF1 0 22px,transparent 22px 36px);}
+  .lk-body{position:relative;z-index:1;text-align:center;padding:40px 30px;
+    background:linear-gradient(180deg,rgba(231,241,248,.72) 0%,var(--page) 45%);}
+  .lk-body h2{font-size:21px;margin-bottom:8px;}
+  .lk-body p{color:var(--ink-soft);max-width:46ch;margin:0 auto 16px;font-size:14px;}
+  .lk-body .ci-soon-badge{margin-bottom:12px;}
+  /* the "what's left" checklist */
+  .lk-check{display:inline-flex;flex-direction:column;gap:8px;text-align:left;margin:0 auto 18px;
+    background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:13px 16px;box-shadow:var(--shadow);}
+  .lk-item{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-soft);}
+  .lk-item .box{width:17px;height:17px;border-radius:5px;border:2px solid #C9D2DE;flex:none;
+    display:grid;place-items:center;font-size:10px;color:#fff;font-weight:800;}
+  .lk-item.done .box{background:var(--band-wa);border-color:var(--band-wa);}
+  .lk-item.done{color:var(--ink);}
+  .lk-item b{color:var(--ink);font-weight:700;}
+  .lk-item .val{margin-left:auto;padding-left:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink-faint);}
+  .lk-item.done .val{color:#2E7D5B;}
+
   .ci-tabs-wrap{position:relative;min-width:0;}
   .ci-tabs-wrap::after{content:"";position:absolute;top:0;right:0;width:34px;height:100%;
     pointer-events:none;opacity:0;transition:opacity .2s;
@@ -1385,15 +1417,19 @@
 
       <!-- ============ PANEL: OVERVIEW (post-lock SLO summary) ============ -->
       <div id="panel-overview" hidden>
-        <section class="ci-card ci-soon" id="overviewLocked">
-          <div class="ci-lock-badge">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+        <section class="ci-card ci-locked" id="overviewLocked">
+          <div class="lk-skel lk-Continue BOY Setup" aria-hidden="true"></div>
+          <div class="lk-body">
+            <div class="ci-lock-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            </div>
+            <h2>overview</h2>
+            <p>Your SLO overview appears here</p>
+            <div class="lk-check" id="lkOverview"></div>
+            <button class="btn btn-primary" data-panel-go="Once your SLO is locked, this becomes the at-a-glance plan you'll reference all year.">boysetup
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
           </div>
-          <h2>Your SLO overview appears here</h2>
-          <p>Finish BOY Setup and lock your SLO — then this becomes your at-a-glance plan for the year.</p>
-          <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-          </button>
         </section>
         <div id="overviewReady" hidden></div>
       </div><!-- /panel-overview -->
@@ -1489,12 +1525,15 @@
           <p>Set up your BOY data and growth targets first, then record mid-year scores here to track movement.</p>
           <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup</button>
         </section>
-        <section class="ci-card ci-soon" id="moyGate" hidden>
+        <section class="ci-card ci-locked" id="moyGate" hidden>
+          <div class="lk-skel lk-moy" aria-hidden="true"></div>
+          <div class="lk-body">
           <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
           <div class="ci-soon-badge">Opens <span class="gate-when">—</span></div>
           <h2>Mid-year check opens in December</h2>
           <p>Your MOY window is not open yet. When it opens you'll record mid-year scores here and see how far each student has moved toward target.</p>
           <button class="btn btn-ghost" data-window-preview="moy">Preview this window now</button>
+          </div>
         </section>
         <div id="moyMain">
           <div class="ci-preview-note" id="moyPreviewNote" hidden>Previewing early — your MOY window officially opens in December.</div>
@@ -1525,11 +1564,19 @@
 
       <!-- ============ PANEL: PROGRESS (Monitor Progress) ============ -->
       <div id="panel-progress" hidden>
-        <section class="ci-card ci-soon" id="progNoData" hidden>
-          <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
-          <h2>Progress unlocks with your SLO</h2>
-          <p>Once your BOY data and growth targets are set, this shows each student's movement toward their target.</p>
-          <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup</button>
+        <section class="ci-card ci-locked" id="progNoData" hidden>
+          <div class="lk-skel lk-Continue BOY Setup" aria-hidden="true"></div>
+          <div class="lk-body">
+            <div class="ci-lock-badge">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            </div>
+            <h2>progress</h2>
+            <p>Progress unlocks with your data</p>
+            <div class="lk-check" id="lkProgress"></div>
+            <button class="btn btn-primary" data-panel-go="This tracks every student's movement from their baseline toward their target.">boysetup
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
         </section>
         <div id="progMain">
           <section class="ci-card">
@@ -1579,12 +1626,15 @@
           <p>Set up your BOY data and growth targets first, then record post-assessment scores here to close out the year.</p>
           <button class="btn btn-primary" data-panel-go="boysetup">Go to BOY Setup</button>
         </section>
-        <section class="ci-card ci-soon" id="eoyGate" hidden>
+        <section class="ci-card ci-locked" id="eoyGate" hidden>
+          <div class="lk-skel lk-eoy" aria-hidden="true"></div>
+          <div class="lk-body">
           <div class="ci-lock-badge"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
           <div class="ci-soon-badge">Opens <span class="gate-when">—</span></div>
           <h2>End-of-year results open in April</h2>
           <p>Your EOY window is not open yet. When it opens you'll record post-assessment scores and generate your full evaluation report.</p>
           <button class="btn btn-ghost" data-window-preview="eoy">Preview this window now</button>
+          </div>
         </section>
         <div id="eoyMain">
           <div class="ci-preview-note" id="eoyPreviewNote" hidden>Previewing early — your EOY window officially opens in April.</div>
@@ -2049,6 +2099,23 @@
     if(window.ResizeObserver){ new ResizeObserver(sync).observe(t); }
     setTimeout(sync,0);
   })();
+  // Locked screens double as a to-do list: exactly what's still needed to unlock.
+  function renderLockChecklists(){
+    var roster=ROSTER.length;
+    var entered=ROSTER.filter(function(n){return enteredScores[n]!=null && enteredScores[n]!=='';}).length;
+    var targets=document.querySelectorAll('#targetRows .ci-target-row').length;
+    var items=[
+      {done:!!(boySource&&boySource.trim()), label:'Data source named', val:(boySource||'not set')},
+      {done:entered>0, label:'BOY data', val:entered+' of '+roster+' students entered'},
+      {done:hasData&&targets>0, label:'Growth targets', val:(hasData&&targets>0)?(targets+' set'):'not set'},
+      {done:sloLocked, label:'SLO locked with your appraiser', val:sloLocked?'locked':'not yet'}
+    ];
+    var html=items.map(function(it){
+      return '<div class="lk-item'+(it.done?' done':'')+'"><span class="box">'+(it.done?'✓':'')+'</span>'+
+        '<b>'+it.label+'</b><span class="val">'+esc(it.val)+'</span></div>';
+    }).join('');
+    ['lkOverview','lkProgress'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=html; });
+  }
   // --- top-level panel switching (Overview / BOY Setup / Evidence Lockers / …) ---
   var PANELS={overview:'panel-overview', boysetup:'panel-boysetup', evidence:'panel-evidence', ttess:'panel-ttess', moy:'panel-moy', progress:'panel-progress', eoy:'panel-eoy', soon:'panel-soon'};
   function showPanel(p,label){
@@ -2057,6 +2124,7 @@
       var match=(b.getAttribute('data-panel')===p) && (p!=='soon' || b.getAttribute('data-label')===label);
       b.classList.toggle('active',match);
     });
+    if(p==='overview'||p==='progress') renderLockChecklists();
     if(p==='overview'){ var ol=document.getElementById('overviewLocked'), orr=document.getElementById('overviewReady');
       if(ol) ol.hidden=sloLocked; if(orr){ orr.hidden=!sloLocked; if(sloLocked) renderOverview(); } }
     if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
