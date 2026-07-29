@@ -536,6 +536,27 @@
     display:grid;place-items:center;flex:none;}
   .ci-dim-section{margin-top:22px;}
 
+  /* ---------- Rubric descriptor check-off ---------- */
+  .ci-desc-banner{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:#FAFBFD;border:1px solid var(--line);
+    border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--ink);}
+  .ci-desc-banner .muted{color:var(--ink-soft);}
+  .ci-desc-banner .lvl{font-family:var(--font-display);}
+  .ci-desc-banner .ok{color:#2E7D5B;font-weight:800;font-size:12px;}
+  .ci-desc-lv{border:1px solid var(--line);border-radius:var(--r-md);margin-bottom:10px;overflow:hidden;}
+  .ci-desc-lv.cleared{border-color:#BEE3CC;background:#F6FBF8;}
+  .ci-desc-lv.isSug{box-shadow:0 0 0 2px rgba(227,19,196,.18);border-color:var(--ci-magenta);}
+  .ci-desc-lv-head{display:flex;align-items:center;gap:9px;padding:9px 13px;background:#F6F8FB;border-bottom:1px solid var(--line);}
+  .ci-desc-lv.cleared .ci-desc-lv-head{background:#EAF6EF;}
+  .ci-desc-lv-head .pt{width:20px;height:20px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;
+    display:grid;place-items:center;font-family:var(--font-display);flex:none;}
+  .ci-desc-lv-head b{font-family:var(--font-display);font-size:13px;color:var(--ink);}
+  .ci-desc-lv-head .tally{margin-left:auto;font-size:11px;font-weight:700;color:var(--ink-faint);font-variant-numeric:tabular-nums;}
+  .ci-desc-lv-head .ok{font-size:11px;font-weight:800;color:#2E7D5B;}
+  .ci-desc-list{list-style:none;padding:10px 13px;display:flex;flex-direction:column;gap:8px;}
+  .ci-desc-list label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;color:var(--ink-soft);line-height:1.45;}
+  .ci-desc-list input{margin-top:2px;width:15px;height:15px;accent-color:var(--ci-magenta);flex:none;}
+  .ci-desc-list input:checked+span{color:var(--ink);font-weight:600;}
+
   /* ---------- Progress (Monitor Progress) ---------- */
   .ci-prog-head,.ci-prog-row{display:grid;grid-template-columns:130px 1fr 140px 130px;gap:16px;align-items:center;}
   .ci-prog-head{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);padding:0 4px 10px;border-bottom:1px solid var(--line);}
@@ -1969,6 +1990,19 @@
      NOTE: ci:[] everywhere — Crystal Instruction has NOT been mapped to T-TESS 2 yet.
      We show the real rubric and let teachers rate + attach evidence; we do not claim
      product alignment we haven't verified. ---- */
+  /* Official T-TESS descriptors, Domains 2 & 3, parsed from TEA's T-TESS Rubric
+     (teachfortexas.org, rev. 4/22/2024). Keys are levels 1=Improvement Needed
+     ... 5=Distinguished. Used for the check-off rating helper. */
+  var DESCRIPTORS={
+    '2.1':{1:["Sets expectations that challenge few students.","Concludes the lesson even though there is evidence that few students demonstrate mastery of the objective.","Allows student mistakes to go unaddressed or confronts student errors in a way that discourages further effort.","Rarely provides opportunities for students to take initiative of their own learning."],2:["Sets academic expectations that challenge most students.","Persists with the lesson until there is evidence that some students demonstrate mastery of the objective.","Sometimes addresses student mistakes.","Sometimes provides opportunities for students to take initiative of their own learning."],3:["Sets academic expectations that challenge all students.","Persists with the lesson until there is evidence that most students demonstrate mastery of the objective.","Addresses student mistakes and follows through to ensure student mastery.","Provides students opportunities to take initiative of their own learning."],4:["Provides opportunities for students to establish high academic and social-emotional expectations for themselves.","Persists with the lesson until there is evidence that most students demonstrate mastery of the objective.","Anticipates student mistakes and encourages students to avoid common learning pitfalls.","Establishes systems where students take initiative of their own learning and self-monitor."],5:["Provides opportunities for students to establish high academic and social-emotional expectations for themselves.","Persists with the lesson until there is evidence that all students demonstrate mastery of the objective.","Provides opportunities for students to self-monitor and self-correct mistakes.","Systematically enables students to set goals for themselves and monitor their progress over time."]},
+    '2.2':{1:["Conveys inaccurate content knowledge that leads to student confusion.","Rarely integrates learning objectives with other disciplines.","Does not anticipate possible student misunderstandings.","Provides few opportunities for students to use different types of thinking (e.g., analytical, practical, creative and research-based)."],2:["Conveys accurate content knowledge.","Sometimes integrates learning objectives with other disciplines.","Sometimes anticipates possible student misunderstandings.","Sometimes provides opportunities for students to use different types of thinking (e.g., analytical, practical, creative and research-based)."],3:["Conveys accurate content knowledge in multiple contexts.","Integrates learning objectives with other disciplines.","Anticipates possible student misunderstandings.","Provides opportunities for students to use different types of thinking (e.g., analytical, practical, creative and research-based).","Accurately reflects how the lesson fits within the structure of the discipline and the state standards."],4:["Conveys a depth of content knowledge that allows for differentiated explanations.","Integrates learning objectives with other disciplines and realworld experiences.","Anticipates possible student misunderstandings and proactively develops teaching techniques to mitigate concerns.","Regularly provides opportunities for students to use different types of thinking (e.g., analytical, practical, creative and researchbased).","Sequences instruction that allows students to understand how the lesson fits within the structure of the discipline and the state standards."],5:["Displays extensive content knowledge of all the subjects she or he teaches and closely related subjects.","Integrates learning objectives with other disciplines, content areas and real-world experience.","Consistently anticipates possible student misunderstandings and proactively develops teaching techniques to mitigate concerns.","Consistently provides opportunities for students to use different types of thinking (e.g., analytical, practical, creative and research-based).","Sequences instruction that allows students to understand how the lesson fits within the structure of the discipline, the state standards, related content and within realworld scenarios."]},
+    '2.3':{1:["Directs lessons with little opportunity for dialogue, clarification or elaboration.","Is sometimes unaware of or unresponsive to student misunderstandings.","Uses verbal communication that is characterized by inaccurate grammar; written communication that has inaccurate spelling, grammar, punctuation or structure.","Rarely asks questions, or asks questions that do not amplify discussion or align to the objective of the lesson."],2:["Leads lessons with some opportunity for dialogue, clarification or elaboration.","Recognizes student misunderstandings but has a limited ability to respond.","Uses verbal and written communication that is generally clear with minor errors of grammar.","Asks remember and understand level questions that focus on the objective of the lesson but do little to amplify discussion."],3:["Establishes classroom practices that provide opportunities for most students to communicate effectively with the teacher and their peers.","Recognizes student misunderstandings and responds with an array of teaching techniques to clarify concepts.","Provides explanations that are clear and uses verbal and written communication that is clear and correct.","Asks remember, understand and apply level questions that focus on the objective of the lesson and provoke discussion.","Uses probing questions to clarify and elaborate learning."],4:["Establishes classroom practices that encourage all students to communicate effectively, including the use of visual tools and technology, with the teacher and their peers.","Anticipates possible student misunderstandings and proactively develops techniques to address obstacles to learning.","Provides explanations that are clear and coherent and uses verbal and written communication that is clear and correct.","Asks questions at the creative, evaluative and/or analysis levels that focus on the objective of the lesson and provoke thought and discussion.","Skillfully uses probing questions to clarify, elaborate and extend learning.","Provides wait time when questioning students."],5:["Establishes classroom practices that encourage all students to communicate safely and effectively using a variety of tools and methods with the teacher and their peers.","Uses possible student misunderstandings at strategic points in lessons to highlight misconceptions and inspire exploration and discovery.","Provides explanations that are clear and coherent and uses verbal and written communication that is clear and correct.","Asks questions at the creative, evaluative and/or analysis levels that require a deeper learning and broader understanding of the objective of the lesson.","Skillfully balances wait time, questioning techniques and integration of student responses to support student-directed learning.","Skillfully provokes and guides discussion to pique curiosity and inspire student-led learning of meaningful and challenging content."]},
+    '2.4':{1:["Provides one-size-fits-all lessons without meaningful differentiation.","Rarely monitors the quality of student participation and performance.","Rarely provides differentiated instructional methods and content.","Does not recognize when students become confused or disengaged, or does not respond appropriately to student learning or social/ emotional needs."],2:["Adapts lessons to address some student needs.","Sometimes monitors the quality of student participation and performance.","Sometimes provides differentiated instructional methods and content.","Sometimes recognizes when students become confused or disengaged and minimally responds to student learning or social/emotional needs."],3:["Adapts lessons to address individual needs of all students.","Regularly monitors the quality of student participation and performance.","Provides differentiated instructional methods and content to ensure students have the opportunity to master what is being taught.","Recognizes when students become confused or disengaged and responds to student learning or social/emotional needs."],4:["Adapts lessons to address individual needs of all students.","Regularly monitors the quality of student participation and performance.","Regularly provides differentiated instructional methods and content to ensure students have the opportunity to master what is being taught.","Proactively minimizes student confusion or disengagement by addressing learning and/or social/ emotional needs of all students."],5:["Adapts lessons with a wide variety of instructional strategies to address individual needs of all students.","Consistently monitors the quality of student participation and performance.","Always provides differentiated instructional methods and content to ensure students have the opportunity to master what is being taught.","Consistently prevents student confusion or disengagement by addressing learning and/or social/ emotional needs of all students."]},
+    '2.5':{1:["Rarely utilizes input from students in order to monitor and adjust instruction and activities.","Persists with instruction or activities that do not engage students.","Generally does not link student behavior and responses with student engagement and understanding.","Makes no attempts to engage students who appear disengaged or disinterested."],2:["Sometimes utilizes input from students in order to monitor and adjust instruction and activities.","Adjusts some instruction within a limited range.","Sees student behavior but misses some signs of disengagement.","Is aware of most student responses but misses some clues of misunderstanding."],3:["Consistently invites input from students in order to monitor and adjust instruction and activities.","Adjusts instruction and activities to maintain student engagement.","Monitors student behavior and responses for engagement and understanding."],4:["Utilizes input from students in order to monitor and adjust instruction, activities and pacing to respond to differences in student needs.","Adjusts instruction and activities to maintain student engagement.","Continually checks for understanding through purposeful questioning and academic feedback."],5:["Systematically gathers input from students in order to monitor and adjust instruction, activities or pacing to respond to differences in student needs.","Adjusts instruction and activities to maintain student engagement.","Uses discreet and explicit checks for understanding through questioning and academic feedback."]},
+    '3.1':{1:["Few procedures and routines guide student behavior and maximize learning. Transitions are characterized by confusion and inefficiency.","Students often do not understand what is expected of them.","The classroom is unsafe, disorganized and uncomfortable.","Some students are not able to access materials."],2:["Most procedures, routines and transitions provide clear direction but others are unclear and inefficient.","Students depend on the teacher to direct them in managing student groups, supplies and/or equipment.","The classroom is safe and accessible to most students, but is disorganized and cluttered."],3:["All procedures, routines and transitions are clear and efficient.","Students actively participate in groups, manage supplies and equipment with very limited teacher direction.","The classroom is safe and organized to support learning objectives and is accessible to most students."],4:["Establishes and uses effective routines, transitions and procedures that she or he implements effortlessly.","Students take some responsibility for managing student groups, supplies and/or equipment.","The classroom is safe, inviting and organized to support learning objectives and is accessible to all students."],5:["Establishes and uses effective routines, transitions and procedures that primarily rely on student leadership and responsibility.","Students take primary leadership and responsibility for managing student groups, supplies, and/or equipment.","The classroom is safe and thoughtfully designed to engage, challenge and inspire students to participate in high-level learning beyond the learning objectives."]},
+    '3.2':{1:["Rarely or unfairly enforces campus or classroom behavior standards.","Student behavior impedes learning in the classroom."],2:["Inconsistently implements the campus and/or classroom behavior system.","Student failure to meet expected classroom behavior standards interrupts learning."],3:["Consistently implements the campus and/or classroom behavior system proficiently.","Most students meet expected classroom behavior standards."],4:["Consistently encourages and monitors student behavior subtly and responds to misbehavior swiftly.","Most students know, understand and respect classroom behavior standards."],5:["Consistently monitors behavior subtly, reinforces positive behaviors appropriately and intercepts misbehavior fluidly.","Students and the teacher create, adopt and maintain classroom behavior standards."]},
+    '3.3':{1:["Establishes a learning environment where few students are engaged in the curriculum.","Students are disrespectful of each other and of the teacher."],2:["Establishes a learning environment where most students are engaged in the curriculum.","Students are sometimes disrespectful of each other."],3:["Engages all students in relevant, meaningful learning.","Students work respectfully individually and in groups."],4:["Engages all students with relevant, meaningful learning, sometimes adjusting lessons based on student interests and abilities.","Students collaborate positively with each other and the teacher."],5:["Consistently engages all students with relevant, meaningful learning based on their interests and abilities to create a positive rapport amongst students.","Students collaborate positively and encourage each other’s efforts and achievements."]}
+  };
   var DIMENSIONS_T2=[
     {id:'1.A',domain:'Instructional Preparation · Domain 1',title:'Lesson Design',obs:false,desc:"Is instruction based on a skillfully composed, accurate, and appropriately rigorous lesson plan that is fully aligned with state standards?",ci:[],note:"Domain 1 applies only to teachers <b>not</b> using SBOE-approved HQIM materials. Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
     {id:'1.B',domain:'Instructional Preparation · Domain 1',title:'Instructional Internalization',obs:false,desc:"Is the instructional plan skillfully and accurately internalized in a way that sets students up for engaging, rigorous content?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
@@ -2065,6 +2099,59 @@
       });
     });
   }
+  /* ---- Descriptor check-off ------------------------------------------------
+     Teachers tick the indicators they can actually evidence, starting at
+     Improvement Needed. You clear a level by meeting a MAJORITY of its
+     indicators; your suggested rating is the highest level you've cleared
+     without skipping one. Manual rating buttons always win — this only suggests.
+     T-TESS 2 descriptors aren't loaded yet, so the block hides on that rubric. */
+  var checkedDesc={};   // {dimId: {level: [indices]}}
+  function descFor(id){ return (rubricVer==='t2') ? null : DESCRIPTORS[id]; }
+  function isChecked(id,L,i){ return !!(checkedDesc[id]&&checkedDesc[id][L]&&checkedDesc[id][L].indexOf(i)>=0); }
+  function toggleDesc(id,L,i){
+    checkedDesc[id]=checkedDesc[id]||{}; checkedDesc[id][L]=checkedDesc[id][L]||[];
+    var a=checkedDesc[id][L], p=a.indexOf(i);
+    if(p>=0) a.splice(p,1); else a.push(i);
+  }
+  function levelCleared(id,L){
+    var set=descFor(id); if(!set||!set[L]) return false;
+    var n=set[L].length, c=(checkedDesc[id]&&checkedDesc[id][L]||[]).length;
+    return c >= Math.ceil(n/2);          // majority of the indicators
+  }
+  function suggestedLevel(id){
+    var set=descFor(id); if(!set) return null;
+    var earned=null;
+    for(var L=1; L<=5; L++){ if(!set[L]) continue; if(levelCleared(id,L)) earned=L; else break; }
+    return earned;                        // null = hasn't cleared Improvement Needed yet
+  }
+  function descriptorHTML(id){
+    var set=descFor(id);
+    if(!set) return '<div class="ci-dim-section"><h4>Rubric indicators</h4>'+
+      '<div class="ci-evi-empty">T-TESS 2 indicator text isn\'t loaded yet — rate yourself above and attach evidence below.</div></div>';
+    var sug=suggestedLevel(id), cur=ratingByDim[id];
+    var blocks=[1,2,3,4,5].filter(function(L){return set[L];}).map(function(L){
+      var items=set[L], need=Math.ceil(items.length/2);
+      var got=(checkedDesc[id]&&checkedDesc[id][L]||[]).length;
+      var cleared=levelCleared(id,L);
+      return '<div class="ci-desc-lv'+(cleared?' cleared':'')+(sug===L?' isSug':'')+'">'+
+        '<div class="ci-desc-lv-head">'+
+          '<span class="pt" style="background:var('+RATEBAND[L]+')">'+L+'</span>'+
+          '<b>'+RATENAME[L]+'</b>'+
+          '<span class="tally">'+got+' of '+items.length+' · majority = '+need+'</span>'+
+          (cleared?'<span class="ok">✓ cleared</span>':'')+
+        '</div>'+
+        '<ul class="ci-desc-list">'+items.map(function(txt,i){
+          return '<li><label><input type="checkbox" data-l="'+L+'" data-i="'+i+'"'+(isChecked(id,L,i)?' checked':'')+'><span>'+esc(txt)+'</span></label></li>';
+        }).join('')+'</ul></div>';
+    }).join('');
+    var banner = sug==null
+      ? '<span class="muted">Tick the indicators you can evidence. Start at Improvement Needed — clear a majority to move up.</span>'
+      : '<span>Suggested rating: <b class="lvl" style="color:var('+RATEBAND[sug]+')">'+sug+' · '+RATENAME[sug]+'</b></span>'+
+        (cur===sug?'<span class="ok">matches your rating</span>'
+                  :'<button type="button" class="ci-evi-btn add" id="applySug">Apply this rating</button>');
+    return '<div class="ci-dim-section"><h4>Rubric indicators — check what you can evidence</h4>'+
+      '<div class="ci-desc-banner">'+banner+'</div>'+blocks+'</div>';
+  }
   function renderDimDetail(id){
     var wrap=document.getElementById('dimDetail'); if(!wrap) return;
     var d=findDim(id); var r=ratingByDim[id];
@@ -2096,6 +2183,7 @@
       '<h4>Your rating</h4><div class="ci-rate-row">'+rates+'</div>'+
       '<div class="ci-rate-note">Proficient (3) is the expected level. Accomplished and Distinguished require students to drive their own learning.'+
         (d.tia?'':' <b>This dimension is not part of the TIA 35%</b> — it counts toward your T-TESS appraisal only.')+'</div>'+
+      descriptorHTML(id)+
       helpHTML+
       '<div class="ci-dim-section"><h4>Evidence I\'ve collected</h4>'+
         '<div class="ci-evi-items">'+itemsHTML+'</div>'+
@@ -2107,6 +2195,17 @@
         '</div></div>';
     wrap.querySelectorAll('.ci-rate').forEach(function(b){ b.addEventListener('click',function(){
       ratingByDim[id]=+b.getAttribute('data-pt'); renderDimNav(); renderDimDetail(id); updateTtessSummary(); scheduleSave(); }); });
+    // descriptor check-off
+    wrap.querySelectorAll('.ci-desc-list input[type=checkbox]').forEach(function(cb){
+      cb.addEventListener('change',function(){
+        toggleDesc(id, +cb.getAttribute('data-l'), +cb.getAttribute('data-i'));
+        renderDimDetail(id); scheduleSave();
+      });
+    });
+    var apply=wrap.querySelector('#applySug');
+    if(apply) apply.addEventListener('click',function(){
+      var s=suggestedLevel(id); if(s){ ratingByDim[id]=s; renderDimNav(); renderDimDetail(id); updateTtessSummary(); scheduleSave(); }
+    });
     wrap.querySelectorAll('.rm').forEach(function(b){ b.addEventListener('click',function(){
       evidenceByDim[id].splice(+b.getAttribute('data-idx'),1); renderDimDetail(id); scheduleSave(); }); });
     var addRow=wrap.querySelector('#dimAdd');
@@ -2676,7 +2775,7 @@
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
       evidence:evidenceByStudent, notes:notesByStudent, eviStudent:currentEviStudent,
-      rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
+      checkedDesc:checkedDesc, rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
       moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone, progView:progView,
       step:currentStep
     };
@@ -2731,6 +2830,7 @@
     if(d.notes) notesByStudent=d.notes;
     if(d.eviStudent) currentEviStudent=d.eviStudent;
     if(d.rubricVer) rubricVer=d.rubricVer;
+    if(d.checkedDesc) checkedDesc=d.checkedDesc;
     if(d.ttessRatings) ratingByDim=d.ttessRatings;
     if(d.ttessEvidence) evidenceByDim=d.ttessEvidence;
     if(d.ttessDim) currentDim=d.ttessDim;
