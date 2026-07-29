@@ -177,7 +177,7 @@
     color:var(--ink-faint);padding-left:15px;white-space:nowrap;}
   .ci-tabgroup[data-phase="1"] .cap{color:var(--ci-magenta-deep);}
   .ci-tabgroup .pill{display:flex;gap:6px;background:#fff;border:1px solid var(--line);
-    border-radius:999px;padding:6px;box-shadow:var(--shadow);}
+    border-radius:999px;padding:6px;box-shadow:var(--shadow);align-self:flex-start;}
   .ci-tabs button{border:0;background:transparent;font-family:var(--font-body);
     font-weight:700;font-size:13px;color:var(--ink-soft);padding:9px 18px;border-radius:999px;cursor:pointer;white-space:nowrap;}
   .ci-tabs button:hover{background:rgba(27,27,58,.05);}
@@ -1213,13 +1213,13 @@
       <div class="ci-tabs-wrap" id="tabsWrap">
       <div class="ci-tabs" role="tablist">
         <div class="ci-tabgroup" data-phase="1">
-          <span class="cap" aria-hidden="true">Phase 1 · Set up</span>
+          <span class="cap" aria-hidden="true">Phase 1</span>
           <div class="pill">
             <button role="tab" class="active" data-panel="boysetup" aria-label="BOY Setup — Phase 1, set up">BOY Setup</button>
           </div>
         </div>
         <div class="ci-tabgroup" data-phase="2">
-          <span class="cap" aria-hidden="true">Phase 2 · Monitor progress</span>
+          <span class="cap" aria-hidden="true">Phase 2</span>
           <div class="pill">
             <button role="tab" data-panel="overview" aria-label="Overview — Phase 2, monitor progress">Overview</button>
             <button role="tab" data-panel="evidence" aria-label="Evidence Lockers — Phase 2, monitor progress">Evidence Lockers</button>
@@ -1229,7 +1229,7 @@
           </div>
         </div>
         <div class="ci-tabgroup" data-phase="3">
-          <span class="cap" aria-hidden="true">Phase 3 · Body of evidence</span>
+          <span class="cap" aria-hidden="true">Phase 3</span>
           <div class="pill">
             <button role="tab" data-panel="eoy" aria-label="EOY — Phase 3, body of evidence">EOY</button>
           </div>
