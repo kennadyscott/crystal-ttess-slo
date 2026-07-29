@@ -440,10 +440,29 @@
     font-family:var(--font-body);font-size:12.5px;color:var(--ink);resize:vertical;min-height:52px;background:#FAFBFD;}
   .ci-evi-note textarea:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);background:#fff;}
 
-  .ci-ttess-toggle{border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);font-weight:700;font-size:11px;
-    padding:5px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;flex:none;}
-  .ci-ttess-toggle:hover{border-color:#C9D2DE;}
-  .ci-ttess-toggle.on{background:#E6F4EC;border-color:#BEE3CC;color:#2E7D5B;}
+  /* untagged = clearly an invitation; tagged = clearly counted */
+  .ci-ttess-toggle{display:inline-flex;align-items:center;gap:5px;border:1.5px dashed #C9D2DE;background:#fff;
+    color:var(--ink-faint);font-weight:700;font-size:10.5px;padding:5px 11px;border-radius:999px;
+    cursor:pointer;white-space:nowrap;flex:none;}
+  .ci-ttess-toggle:hover{border-color:var(--ci-magenta);color:var(--ci-magenta-deep);background:var(--pink-soft);}
+  .ci-ttess-toggle.on{background:var(--band-wa);border:1.5px solid var(--band-wa);color:#fff;font-weight:800;}
+  .ci-ttess-toggle.on:hover{background:#35875f;border-color:#35875f;color:#fff;}
+  .ci-ttess-toggle .tk{font-size:11px;}
+
+  /* undo toast */
+  .ci-toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);z-index:80;
+    display:flex;align-items:center;gap:14px;background:var(--ci-dark);color:#fff;
+    padding:11px 16px;border-radius:999px;box-shadow:0 8px 26px rgba(27,27,58,.32);
+    font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;}
+  .ci-toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
+  .ci-toast button{border:0;background:transparent;color:#FF9FE8;font-family:var(--font-body);
+    font-weight:800;font-size:13px;cursor:pointer;padding:0;}
+  .ci-toast button:hover{text-decoration:underline;}
+
+  /* goal strip: expandable full statement */
+  .ci-goalbar{cursor:pointer;}
+  .ci-goalbar.open{white-space:normal;align-items:flex-start;}
+  .ci-goalbar.open small{overflow:visible;text-overflow:clip;white-space:normal;}
   #eviTtessCount{color:#2E7D5B;font-weight:800;}
   .ci-lib-item{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
   .ci-lib-item .dot{width:26px;height:26px;border-radius:7px;flex:none;display:grid;place-items:center;color:#fff;font-size:12px;}
@@ -1887,7 +1906,20 @@
       var show = !!(g && g.key!=='own' ? g.title : (stmt||'').trim());
       gb.hidden=!show;
       if(gt) gt.textContent = g ? (g.key==='own' ? 'Custom goal' : g.title) : '';
-      if(gs) gs.textContent = stmt || '';
+      if(gs){
+        var full=stmt||'', cut=full;
+        if(full.length>96){ cut=full.slice(0,96); cut=cut.slice(0,cut.lastIndexOf(' '))+'…'; }
+        gs.textContent=cut; gs.title=full;              // full statement on hover
+        gs.dataset.full=full; gs.dataset.short=cut;
+      }
+      if(gb && !gb.dataset.expandBound){
+        gb.dataset.expandBound='1';
+        gb.addEventListener('click',function(){
+          var e=document.getElementById('eviGoalStmt'); if(!e||!e.dataset.full) return;
+          var open=gb.classList.toggle('open');
+          e.textContent = open ? e.dataset.full : e.dataset.short;
+        });
+      }
     }
   }
   function selectGoal(g){
@@ -3130,6 +3162,17 @@
       chip(tgt)+
       '<span class="goal">+'+(tgt-st.pre)+' pts to target</span>';
   }
+  // Undo toast — removing collected evidence should never be a silent one-way action.
+  var undoTimer=null;
+  function showUndo(msg,undoFn){
+    var t=document.getElementById('undoToast');
+    if(!t){ t=document.createElement('div'); t.id='undoToast'; t.className='ci-toast'; document.body.appendChild(t); }
+    t.innerHTML='<span>'+esc(msg)+'</span><button type="button">Undo</button>';
+    t.classList.add('show');
+    t.querySelector('button').onclick=function(){ undoFn(); hideUndo(); };
+    clearTimeout(undoTimer); undoTimer=setTimeout(hideUndo,6000);
+  }
+  function hideUndo(){ var t=document.getElementById('undoToast'); if(t) t.classList.remove('show'); }
   function renderEvidence(name){
     if(!name) name=filteredRoster()[0]||ROSTER[0];
     currentEviStudent=name;
@@ -3153,14 +3196,22 @@
         (it.score?'<span class="sc">'+esc(it.score)+'</span>':'')+
         '<button type="button" class="ci-note-btn'+(hasNote?' on':'')+'" data-idx="'+idx+'" title="Add a note">'+
           '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 5h16M4 11h16M4 17h9"/></svg>'+(hasNote?'Note':'Note')+'</button>'+
-        '<button type="button" class="ci-ttess-toggle'+(it.ttess?' on':'')+'" data-idx="'+idx+'">'+(it.ttess?'✓ T-TESS':'Tag T-TESS')+'</button>'+
+        '<button type="button" class="ci-ttess-toggle'+(it.ttess?' on':'')+'" data-idx="'+idx+'" title="'+(it.ttess?'Counts toward your Domains 2 & 3 evidence — click to untag':'Not counting toward T-TESS yet — click to tag')+'">'+
+          (it.ttess?'<span class="tk">✓</span>Counts for T-TESS':'+ Tag for T-TESS')+'</button>'+
         '<button class="rm" data-idx="'+idx+'" aria-label="Remove">✕</button></div>'+
         '<div class="ci-evi-note" data-idx="'+idx+'"'+(hasNote?'':' hidden')+'>'+
           '<textarea data-idx="'+idx+'" placeholder="Note about this evidence — what it shows, how the student did, next step…">'+esc(it.note||'')+'</textarea>'+
         '</div></div>';
     }).join('') : '<div class="ci-evi-empty">No evidence yet — connect what you\'ve taught below, or upload your own.</div>';
     coll.querySelectorAll('.ci-ttess-toggle').forEach(function(b){ b.addEventListener('click',function(){ items[+b.getAttribute('data-idx')].ttess=!items[+b.getAttribute('data-idx')].ttess; renderEvidence(name); scheduleSave(); }); });
-    coll.querySelectorAll('.rm').forEach(function(b){ b.addEventListener('click',function(){ items.splice(+b.getAttribute('data-idx'),1); renderEvidence(name); scheduleSave(); }); });
+    coll.querySelectorAll('.rm').forEach(function(b){ b.addEventListener('click',function(){
+      var i=+b.getAttribute('data-idx'), removed=items[i];
+      items.splice(i,1); renderEvidence(name); scheduleSave();
+      showUndo('Removed "'+(removed.title||removed.type)+'"', function(){
+        (evidenceByStudent[name]=evidenceByStudent[name]||[]).splice(i,0,removed);
+        renderEvidence(name); scheduleSave();
+      });
+    }); });
     // per-item notes: toggle without re-rendering so typing keeps focus
     coll.querySelectorAll('.ci-note-btn').forEach(function(b){ b.addEventListener('click',function(){
       var box=coll.querySelector('.ci-evi-note[data-idx="'+b.getAttribute('data-idx')+'"]');
