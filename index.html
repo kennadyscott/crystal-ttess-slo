@@ -2347,14 +2347,13 @@
   renderGoals('Math','3');
   var _ownTa=document.querySelector('#ownBox textarea'); if(_ownTa) _ownTa.addEventListener('input',syncSkillProfile);
   if(loadDraft()){
-    var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
-    var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
-    // Setup done → returning teachers land in the Evidence Locker (Phase 2 work)
     if(sloLocked){
+      // Setup complete → land straight in the Evidence Locker. No resume prompt needed.
       showPanel('evidence');
-      var rt=document.getElementById('resumeText'), rbtn=document.getElementById('resumeBtn');
-      if(rt) rt.innerHTML='<b>Welcome back —</b> your SLO is locked and setup is complete. Keep building each student\'s Body of Evidence.';
-      if(rbtn){ rbtn.firstChild.nodeValue='Go to Evidence Lockers'; rbtn.setAttribute('data-panel-go','evidence'); rbtn.removeAttribute('data-goto'); }
+    } else {
+      // Setup still in progress → offer to pick up where they left off.
+      var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
+      var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
     }
   } else {
     applyDataState(); // fresh start: reflect the locked Growth Targets tab
