@@ -1032,6 +1032,71 @@
     .lvcard{flex:0 0 86%;}
   }
 
+  .ci-ceiling{grid-column:1/-1;margin-top:6px;font-size:12px;font-weight:600;color:#7A4E12;
+    background:#FFF6E8;border:1px solid #F0C98A;border-radius:8px;padding:6px 10px;}
+
+  /* ---------- Baseline-only progress (before any mid-year data) ---------- */
+  .ci-baseline{display:flex;gap:11px;align-items:flex-start;margin-bottom:18px;padding:13px 16px;
+    border-radius:var(--r-md);background:#EEF4FA;border:1px solid #CFE0EE;color:#2B4A63;font-size:13.5px;}
+  .ci-baseline .ic{color:#5A8DAE;font-size:11px;line-height:1.5;}
+  .ci-baseline b{color:#1E3A52;}
+  .ci-status.base{background:#EEF1F5;color:#5A6472;}
+  #progSummary.neutral{color:var(--ink-soft);background:#EEF1F5;}
+  /* nothing to compare yet, so don't draw a fill that reads as "no growth" */
+  .baseline-only .ci-prog-bar span{background:#CBD5E0;}
+
+  /* ---------- Phase-grouped tabs: one "where am I" story ---------- */
+  .ci-tabs{align-items:flex-end;padding:6px 8px 7px;border-radius:22px;}
+  .ci-tabgroup{display:flex;align-items:center;gap:6px;position:relative;padding-top:15px;}
+  .ci-tabgroup .cap{position:absolute;top:1px;left:10px;font-size:9.5px;font-weight:800;
+    letter-spacing:.7px;text-transform:uppercase;color:var(--ink-faint);white-space:nowrap;}
+  .ci-tabgroup[data-phase="1"] .cap{color:var(--ci-magenta-deep);}
+  .ci-tabsep{width:1px;align-self:stretch;background:var(--line);margin:14px 7px 3px;flex:none;}
+  .ci-substep-head{display:flex;align-items:center;gap:9px;margin:2px 4px 6px;font-size:11px;
+    font-weight:800;letter-spacing:.7px;text-transform:uppercase;}
+  .ci-substep-head .ph{color:var(--ci-magenta-deep);}
+  .ci-substep-head .sep,.ci-substep-head .of{color:var(--ink-faint);}
+  @media(max-width:900px){
+    .ci-tabgroup .cap{display:none;}
+    .ci-tabgroup{padding-top:0;}
+    .ci-tabsep{margin:3px 5px;}
+  }
+
+  /* ---------- Canonical scale, shown read-only on BOY Data ---------- */
+  .ci-scale-ref{border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px;margin-bottom:22px;background:#FBFDFF;}
+  .ci-scale-ref .hd{display:flex;gap:14px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px;}
+  .ci-samebadge{display:inline-block;font-size:10px;letter-spacing:.4px;font-weight:800;text-transform:uppercase;
+    background:#EAF6EC;color:#2C6B39;border-radius:5px;padding:2px 7px;margin-left:7px;vertical-align:1px;}
+  .ci-scale-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .sc-chip{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--ink);
+    background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 8px;}
+  .sc-chip i{width:10px;height:10px;border-radius:50%;flex:none;}
+  .sc-chip b{color:var(--ink-faint);font-weight:800;margin-left:2px;}
+
+  /* ---------- Completion state, commit affordance ---------- */
+  .ci-subtabs button.done i{background:var(--band-a);color:#fff;font-size:0;}
+  .ci-subtabs button.done i::after{content:"\2713";font-size:12px;line-height:1;}
+  .ci-subtabs button.partial i{background:#fff;color:var(--ink-faint);box-shadow:inset 0 0 0 2px var(--band-b);}
+  .ci-missing{margin-top:18px;padding:12px 15px;border-radius:var(--r-md);font-size:13.5px;
+    background:#FFF6E8;border:1px solid #F0C98A;color:#7A4E12;}
+  .ci-lockhint.warn{color:#9A5B00!important;}
+  .ci-lockhint.ok{color:#2C6B39!important;font-weight:700;}
+  .ci-linkbtn{border:0;background:none;padding:0;font:inherit;font-weight:800;
+    color:var(--ci-magenta-deep);text-decoration:underline;cursor:pointer;}
+  .opt{font-weight:700;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;
+    color:var(--ink-faint);background:#EEF3F8;border-radius:5px;padding:2px 6px;margin-left:6px;vertical-align:1px;}
+  /* commit = the only deep-magenta, ring-lifted button; navigation never uses it */
+  .btn-commit{background:var(--ci-magenta-deep);color:#fff;border:0;
+    box-shadow:0 0 0 3px rgba(184,15,160,.18),var(--shadow-lift);}
+  .btn-commit:hover:not(:disabled){background:#9E0D89;}
+  .btn-commit:disabled{background:#D8D8DE;color:#8A8A93;box-shadow:none;cursor:not-allowed;}
+  .lc-table{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;}
+  .lc-row{display:flex;gap:14px;justify-content:space-between;padding:10px 14px;font-size:13px;}
+  .lc-row+.lc-row{border-top:1px solid var(--line);}
+  .lc-row span{color:var(--ink-faint);flex:none;}
+  .lc-row b{text-align:right;color:var(--ink);font-weight:700;}
+  .lc-row i{color:var(--ink-faint);font-weight:600;}
+
   /* ---------- Accessibility pass ---------- */
   /* WCAG AA: lift the lightest greys. --ink-faint was #8C8C93 (3.4:1 on white) -> 4.6:1 */
   :root{ --ink-faint:#6E6E78; }
@@ -1129,13 +1194,24 @@
       <!-- Sub tabs -->
       <div class="ci-tabs-wrap" id="tabsWrap">
       <div class="ci-tabs" role="tablist">
-        <button role="tab" data-panel="overview">Overview</button>
-        <button role="tab" class="active" data-panel="boysetup">BOY Setup</button>
-        <button role="tab" data-panel="evidence">Evidence Lockers</button>
-        <button role="tab" data-panel="ttess">T-TESS Rubric</button>
-        <button role="tab" data-panel="progress">Progress</button>
-        <button role="tab" data-panel="moy">MOY</button>
-        <button role="tab" data-panel="eoy">EOY</button>
+        <span class="ci-tabgroup" data-phase="1">
+          <span class="cap">Phase 1 · Set up</span>
+          <button role="tab" class="active" data-panel="boysetup">BOY Setup</button>
+        </span>
+        <span class="ci-tabsep" aria-hidden="true"></span>
+        <span class="ci-tabgroup" data-phase="2">
+          <span class="cap">Phase 2 · Monitor progress</span>
+          <button role="tab" data-panel="overview">Overview</button>
+          <button role="tab" data-panel="evidence">Evidence Lockers</button>
+          <button role="tab" data-panel="ttess">T-TESS Rubric</button>
+          <button role="tab" data-panel="progress">Progress</button>
+          <button role="tab" data-panel="moy">MOY</button>
+        </span>
+        <span class="ci-tabsep" aria-hidden="true"></span>
+        <span class="ci-tabgroup" data-phase="3">
+          <span class="cap">Phase 3 · Body of evidence</span>
+          <button role="tab" data-panel="eoy">EOY</button>
+        </span>
       </div>
       </div>
 
@@ -1143,6 +1219,11 @@
       <div id="panel-boysetup">
 
       <!-- BOY setup step nav (deck order: slides 9 → 10 → 11 → 12) -->
+      <div class="ci-substep-head">
+        <span class="ph">Phase 1 · Set up</span>
+        <span class="sep">›</span>
+        <span class="of" id="stepOf">Step 1 of 5</span>
+      </div>
       <div class="ci-subtabs" role="tablist">
         <button class="active" data-view="skill"><i>1</i>Skill Statement</button>
         <button data-view="tsp"><i>2</i>Skill Profile</button>
@@ -1216,10 +1297,9 @@
 
       <!-- Actions -->
       <div class="ci-actions">
-        <button class="btn btn-secondary" id="toTsp">Next steps
+        <button class="btn btn-secondary" id="toTsp">Continue to Skill Profile
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
-        <button class="btn btn-ghost" id="saveDraftBtn">Save draft</button>
         <span style="color:var(--ink-faint);font-size:12.5px;">Your progress saves automatically — you can leave and finish later.</span>
       </div>
 
@@ -1273,7 +1353,7 @@
         <!-- info + actions -->
         <div class="ci-disclaimer" style="margin-top:22px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-          <div>Your percentage bands and descriptors become the shared scale for this SLO. You'll finalize and <b>lock everything after you build your Personal Plan</b> — so you can still adjust the wording and cut points until then.</div>
+          <div>These cut points and descriptors are the shared scale for this SLO — the same one that colour-codes your BOY, MOY and EOY data. You'll finalize and <b>lock everything after you build your Personal Plan</b> — so you can still adjust the wording and cut points until then.</div>
         </div>
 
         <div class="ci-actions" style="margin-top:20px;">
@@ -1320,7 +1400,7 @@
                 </div>
               </label>
               <label class="ci-q">
-                <span class="q-label">Who else provides student support for this goal?</span>
+                <span class="q-label">Who else provides student support for this goal? <span class="opt">optional</span></span>
                 <input class="ci-input" type="text" aria-label="Who else supports these students?" placeholder="e.g. Interventionist, co-teacher, tutor, family…">
               </label>
             </div>
@@ -1349,6 +1429,7 @@
         </section>
 
         <!-- disclaimer + actions -->
+        <div class="ci-missing" id="planMissing" hidden></div>
         <div class="ci-disclaimer" style="margin-top:22px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.4 1 6.7L12 17l-5.5 3 1-6.7L3 8.9 9 8z"/></svg>
           <div>Your Personal Plan is developed at the beginning of the year. Next you'll bring in your BOY data, then set each student's growth targets and <b>Accept &amp; Lock</b> your SLO with your appraiser.</div>
@@ -1385,19 +1466,15 @@
               <span class="ci-fielderr" id="entrySourceErr" hidden>Name the assessment these scores came from.</span>
             </label>
 
-            <div class="ci-eyebrow" style="margin-bottom:6px;">Set your color bands</div>
-            <p class="sub" style="margin-bottom:14px;">Decide what score range each level covers — this color-codes your data using the same levels as your Skill Profile. Enter whatever scale your data uses (percent, RIT, raw points…).</p>
-            <div class="ci-bands" id="entryBands">
-              <div class="ci-bandrow"><span class="chip" style="background:var(--band-wb)">Well Below Typical</span>
-                <div class="rng"><input type="number" value="0" data-eband="wb" data-edge="lo" aria-label="Well Below Typical low score"><span>–</span><input type="number" value="54" data-eband="wb" data-edge="hi" aria-label="Well Below Typical high score"></div></div>
-              <div class="ci-bandrow"><span class="chip" style="background:var(--band-b)">Below Typical</span>
-                <div class="rng"><input type="number" value="55" data-eband="b" data-edge="lo" aria-label="Below Typical low score"><span>–</span><input type="number" value="69" data-eband="b" data-edge="hi" aria-label="Below Typical high score"></div></div>
-              <div class="ci-bandrow"><span class="chip" style="background:var(--band-t)">Typical</span>
-                <div class="rng"><input type="number" value="70" data-eband="t" data-edge="lo" aria-label="Typical low score"><span>–</span><input type="number" value="84" data-eband="t" data-edge="hi" aria-label="Typical high score"></div></div>
-              <div class="ci-bandrow"><span class="chip" style="background:var(--band-a)">Above Typical</span>
-                <div class="rng"><input type="number" value="85" data-eband="a" data-edge="lo" aria-label="Above Typical low score"><span>–</span><input type="number" value="94" data-eband="a" data-edge="hi" aria-label="Above Typical high score"></div></div>
-              <div class="ci-bandrow"><span class="chip" style="background:var(--band-wa)">Well Above Typical</span>
-                <div class="rng"><input type="number" value="95" data-eband="wa" data-edge="lo" aria-label="Well Above Typical low score"><span>–</span><input type="number" value="100" data-eband="wa" data-edge="hi" aria-label="Well Above Typical high score"></div></div>
+            <div class="ci-scale-ref" id="entryScale">
+              <div class="hd">
+                <div>
+                  <div class="ci-eyebrow" style="margin-bottom:2px;">Your scale <span class="ci-samebadge">same one you set on Skill Profile</span></div>
+                  <p class="sub" style="margin:0;font-size:12.5px;">One scale runs the whole SLO. It colour-codes these scores and defines your performance-level descriptors, so editing it changes both together.</p>
+                </div>
+                <button type="button" class="ci-evi-btn upload" id="editScale">Edit scale</button>
+              </div>
+              <div class="ci-scale-chips" id="entryScaleChips"></div>
             </div>
 
             <div class="ci-entry-head">
@@ -1428,10 +1505,10 @@
             <button class="btn btn-ghost" id="entryBack">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back
             </button>
-            <button class="btn btn-primary" id="saveScores">Save scores
+            <button class="btn btn-primary" id="saveScores">Save scores and continue
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
             </button>
-            <span class="ci-lockhint" id="entryHint" style="color:var(--ink-faint);font-size:12.5px;">Add a source and at least one score to continue.</span>
+            <span class="ci-lockhint" id="entryHint" style="color:var(--ink-faint);font-size:12.5px;">To save: name the data source and enter at least one score.</span>
           </div>
         </div>
 
@@ -1532,7 +1609,7 @@
               <button class="btn btn-ghost" data-goto="boydata">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back to data
               </button>
-              <button class="btn btn-primary" id="lockBtn" disabled>Accept &amp; Lock SLO
+              <button class="btn btn-commit" id="lockBtn" disabled>Accept &amp; Lock SLO
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8h-1V6a5 5 0 00-10 0v2H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2zM9 8V6a3 3 0 016 0v2z" fill="currentColor" stroke="none"/></svg>
               </button>
               <span class="ci-lockhint" id="lockHint" style="color:var(--ink-faint);font-size:12.5px;">Check appraiser approval to enable locking.</span>
@@ -1717,6 +1794,7 @@
           </div>
         </section>
         <div id="progMain">
+            <div class="ci-baseline" id="progBaseline" hidden></div>
           <section class="ci-card">
             <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
               <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2>Progress toward targets</h2></div>
@@ -1866,34 +1944,51 @@
       </div>
 
       <!-- =================== PERCENTAGE-BANDS MODAL (Skill Profile step) =================== -->
+      <div class="ci-modal" id="lockConfirm" hidden>
+        <div class="ci-modal-card" role="dialog" aria-modal="true" aria-labelledby="lockConfirmTitle" style="max-width:560px;">
+          <header>
+            <div><div class="ci-eyebrow">Confirm</div><h3 id="lockConfirmTitle">Lock this SLO for 2026&ndash;27?</h3></div>
+            <button class="ci-modal-x" data-close-confirm aria-label="Close">&times;</button>
+          </header>
+          <p class="sub" style="margin:0 0 14px;">Your skill statement, scale, descriptors, plan and growth targets stop being editable. You&rsquo;ll still add evidence and record MOY and EOY scores all year. You can unlock with your appraiser if something needs to change.</p>
+          <div class="lc-table" id="lockConfirmBody"></div>
+          <div class="ci-actions" style="margin-top:20px;">
+            <button class="btn btn-ghost" data-close-confirm>Keep editing</button>
+            <button class="btn btn-commit" id="lockConfirmGo">Yes, lock it for the year
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8h-1V6a5 5 0 00-10 0v2H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2zM9 8V6a3 3 0 016 0v2z" fill="currentColor" stroke="none"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="ci-modal" id="bandsModal" hidden>
         <div class="ci-modal-backdrop" data-close></div>
         <div class="ci-modal-card" role="dialog" aria-modal="true" aria-labelledby="bandsTitle">
           <div class="ci-modal-head">
             <div>
-              <div class="ci-eyebrow">Skill Profile · set your scale</div>
-              <h2 id="bandsTitle">Set your percentage bands</h2>
+              <div class="ci-eyebrow">One scale for this SLO</div>
+              <h2 id="bandsTitle">Set your scoring scale</h2>
             </div>
             <button class="ci-modal-x" data-close aria-label="Close">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg>
             </button>
           </div>
-          <p class="ci-modal-sub">These cut points decide which performance level each score falls into. Set them for your class, then review how they map to your descriptors. You can adjust until you lock your SLO.</p>
+          <p class="ci-modal-sub">These cut points decide which performance level each score falls into. Use whatever scale your data is on — percent, NWEA RIT, raw points. <b>This is the only scale in your SLO:</b> changing it updates your performance-level descriptors and re-colours your BOY, MOY and EOY scores together. You can adjust until you lock.</p>
           <div class="ci-bands" id="modalBands">
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-wb)">Well Below Typical</span>
-              <div class="rng"><input type="number" value="0" data-band="wb" data-edge="lo" aria-label="Well Below Typical low score"><span>–</span><input type="number" value="54" data-band="wb" data-edge="hi" aria-label="Well Below Typical high score"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="0" data-band="wb" data-edge="lo" aria-label="Well Below Typical low score"><span>–</span><input type="number" value="54" data-band="wb" data-edge="hi" aria-label="Well Below Typical high score"><span class="pct" data-unit>pts</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-b)">Below Typical</span>
-              <div class="rng"><input type="number" value="55" data-band="b" data-edge="lo" aria-label="Below Typical low percent"><span>–</span><input type="number" value="69" data-band="b" data-edge="hi" aria-label="Below Typical high percent"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="55" data-band="b" data-edge="lo" aria-label="Below Typical low percent"><span>–</span><input type="number" value="69" data-band="b" data-edge="hi" aria-label="Below Typical high percent"><span class="pct" data-unit>pts</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-t)">Typical</span>
-              <div class="rng"><input type="number" value="70" data-band="t" data-edge="lo" aria-label="Typical low percent"><span>–</span><input type="number" value="84" data-band="t" data-edge="hi" aria-label="Typical high percent"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="70" data-band="t" data-edge="lo" aria-label="Typical low percent"><span>–</span><input type="number" value="84" data-band="t" data-edge="hi" aria-label="Typical high percent"><span class="pct" data-unit>pts</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-a)">Above Typical</span>
-              <div class="rng"><input type="number" value="85" data-band="a" data-edge="lo" aria-label="Above Typical low percent"><span>–</span><input type="number" value="94" data-band="a" data-edge="hi" aria-label="Above Typical high percent"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="85" data-band="a" data-edge="lo" aria-label="Above Typical low percent"><span>–</span><input type="number" value="94" data-band="a" data-edge="hi" aria-label="Above Typical high percent"><span class="pct" data-unit>pts</span></div></div>
             <div class="ci-bandrow"><span class="chip" style="background:var(--band-wa)">Well Above Typical</span>
-              <div class="rng"><input type="number" value="95" data-band="wa" data-edge="lo" aria-label="Well Above Typical low percent"><span>–</span><input type="number" value="100" data-band="wa" data-edge="hi" aria-label="Well Above Typical high percent"><span class="pct">%</span></div></div>
+              <div class="rng"><input type="number" value="95" data-band="wa" data-edge="lo" aria-label="Well Above Typical low percent"><span>–</span><input type="number" value="100" data-band="wa" data-edge="hi" aria-label="Well Above Typical high percent"><span class="pct" data-unit>pts</span></div></div>
           </div>
           <div class="ci-modal-foot">
             <button class="btn btn-ghost" data-close>Cancel</button>
-            <button class="btn btn-primary" id="saveBands">Save bands &amp; view descriptors</button>
+            <button class="btn btn-secondary" id="saveBands">Save scale &amp; view descriptors</button>
           </div>
         </div>
       </div>
@@ -2061,12 +2156,11 @@
   function show(step){
     currentStep=step; scheduleSave();
     STEPS.forEach(function(s){document.getElementById(VIEW[s]).hidden=(s!==step);});
-    var idx=STEPS.indexOf(step);
-    subtabs.forEach(function(b){
-      var s=b.getAttribute('data-view');
-      b.classList.toggle('active',s===step);
-      b.classList.toggle('done',STEPS.indexOf(s)<idx);
-    });
+    visited[step]=true;
+    subtabs.forEach(function(b){ b.classList.toggle('active',b.getAttribute('data-view')===step); });
+    var so=document.getElementById('stepOf');
+    if(so) so.textContent='Step '+(STEPS.indexOf(step)+1)+' of '+STEPS.length;
+    refreshStepState();
     applyDataState();
     document.querySelector('.ci-page').scrollIntoView({behavior:'smooth',block:'start'});
     // first time the teacher reaches the Skill Profile, prompt them to set bands
@@ -2077,6 +2171,8 @@
   var hasData=false, boySource='', boyMode='input', enteredScores={}; // v1: manual entry only
   var BANDVAR={wb:'--band-wb',b:'--band-b',t:'--band-t',a:'--band-a',wa:'--band-wa'};
   var BANDNAME={wb:'Well Below',b:'Below',t:'Typical',a:'Above',wa:'Well Above'};
+  // BANDNAME.t is already "Typical", so the full labels can't just append the word
+  var BANDFULL={wb:'Well Below Typical',b:'Below Typical',t:'Typical',a:'Above Typical',wa:'Well Above Typical'};
   var boyStudents=[["Kennady",20,35,0,56],["Jeremy",0,25,0,34],["Stacey",14,83,25,31],
     ["Sophie",36,52,76,68],["Rebecca",95,74,14,31],["Lauren",5,92,24,37],
     ["Emily",0,62,89,22],["Erin",0,0,24,74]];
@@ -2084,16 +2180,26 @@
   function classifyWith(v,b){ v=+v; if(isNaN(v)) return null; var order=['wb','b','t','a','wa'];
     for(var k=0;k<order.length;k++){var bk=order[k]; if(b[bk] && v>=(+b[bk].lo) && v<=(+b[bk].hi)) return bk;}
     return (b.wb && v<(+b.wb.lo)) ? 'wb' : 'wa'; }
-  function readEntryBands(){ var o={}; document.querySelectorAll('#entryBands input').forEach(function(i){
-    var b=i.getAttribute('data-eband'); o[b]=o[b]||{}; o[b][i.getAttribute('data-edge')]=i.value; }); return o; }
-  function activeBands(){ return boyMode==='input' ? readEntryBands() : readBands(); }
+  // ONE canonical scale for the whole SLO. It used to be duplicated — an editable
+  // copy lived on BOY Data — so the two could silently disagree. The BOY Data step
+  // now renders this same object read-only with an "Edit scale" button.
+  function activeBands(){ return readBands(); }
+  function renderScaleChips(){
+    var wrap=document.getElementById('entryScaleChips'); if(!wrap) return;
+    var b=readBands();
+    wrap.innerHTML=['wa','a','t','b','wb'].map(function(k){
+      var r=b[k]||{};
+      return '<span class="sc-chip"><i style="background:var('+BANDVAR[k]+')"></i>'+
+        BANDFULL[k]+'<b>'+(r.lo==null?'—':r.lo)+'–'+(r.hi==null?'—':r.hi)+'</b></span>';
+    }).join('');
+  }
   function classifyBand(v){ return classifyWith(v, activeBands()) || 'wb'; }
   function scoreUnit(){ return boyMode==='input' ? '' : '%'; }
 
   function buildGrid(){
     var grid=document.getElementById('boyGrid'); if(!grid) return;
     if(boyMode==='input'){
-      var b=readEntryBands();
+      var b=readBands();
       var html='<thead><tr><th style="text-align:left;">Student</th><th>BOY score</th><th>Level</th></tr></thead><tbody>';
       ROSTER.forEach(function(name){
         var v=enteredScores[name];
@@ -2118,7 +2224,7 @@
   function updateEntryRow(tr){
     var inp=tr.querySelector('input'), lvl=tr.querySelector('.level'), v=inp.value;
     if(v===''){ inp.style.background=''; inp.style.color=''; lvl.textContent='—'; lvl.style.color=''; return; }
-    var bk=classifyWith(v, readEntryBands());
+    var bk=classifyWith(v, readBands());
     inp.style.background='var('+BANDVAR[bk]+')'; inp.style.color='#fff';
     lvl.textContent=BANDNAME[bk]; lvl.style.color='var('+BANDVAR[bk]+')';
   }
@@ -2151,12 +2257,21 @@
     var missing=[];
     if(!okSrc) missing.push('name the data source');
     if(!okScore) missing.push('enter at least one score');
+    var ready=okSrc&&okScore;
     if(btn){
-      btn.disabled = !(okSrc&&okScore);
-      btn.title = btn.disabled ? ('To save: '+missing.join(' and ')+'.') : 'Save these scores and continue';
+      btn.disabled = !ready;
+      btn.title = ready ? 'Save these scores and continue' : ('To save: '+missing.join(' and ')+'.');
     }
-    if(hint) hint.textContent = (okSrc&&okScore) ? '' : ('To save: '+missing.join(' and ')+'.');
-    return okSrc&&okScore;
+    // Three states, not two. The old copy kept saying "add a source and a score"
+    // after both were entered, because the ready-but-unsaved case had no message.
+    if(hint){
+      if(!ready){ hint.textContent='To save: '+missing.join(' and ')+'.'; hint.className='ci-lockhint'; }
+      else if(scored<ROSTER.length){
+        hint.textContent='Ready to save — '+scored+' of '+ROSTER.length+' students entered. You can add the rest later.';
+        hint.className='ci-lockhint ok';
+      } else { hint.textContent='All '+ROSTER.length+' scores entered — save to set growth targets.'; hint.className='ci-lockhint ok'; }
+    }
+    return ready;
   }
   var entryTouched=false;
   function updateEntryCount(){
@@ -2165,12 +2280,18 @@
     el.textContent=n+' of '+ROSTER.length+' entered';
     el.classList.toggle('all', n===ROSTER.length);
   }
-  document.querySelectorAll('#entryBands input').forEach(function(i){ i.addEventListener('input',recolorEntry); });
+  // editing the canonical scale re-colours every dependent view at once
+  document.querySelectorAll('#bandsModal input').forEach(function(i){
+    i.addEventListener('input',function(){ renderScaleChips(); recolorEntry(); if(hasData){ buildGrid(); } });
+  });
+  var editScaleBtn=document.getElementById('editScale');
+  if(editScaleBtn) editScaleBtn.addEventListener('click',function(){ openBands(); });
 
   function applyDataState(){
     if(hasData){ buildGrid(); buildTargets(); applyLockState(); }
     var entry=document.getElementById('boyEntry'), dash=document.getElementById('boyDashboard');
     if(dash) dash.hidden=!hasData;
+    renderScaleChips();   // the read-only scale is shown whenever the entry panel can appear
     if(entry){ entry.hidden=hasData; if(!hasData){ buildEntryTable(); recolorEntry(); updateEntryCount(); validateEntry(); } }
     var tl=document.getElementById('targetsLocked'), tr2=document.getElementById('targetsReady');
     if(tl&&tr2){ tl.hidden=hasData; tr2.hidden=!hasData; }
@@ -2235,6 +2356,7 @@
   if(changeSrc) changeSrc.addEventListener('click',function(){
     document.getElementById('boyDashboard').hidden=true;
     document.getElementById('boyEntry').hidden=false;
+    renderScaleChips(); recolorEntry(); updateEntryCount(); validateEntry();
   });
 
   // --- Growth Targets: per-student pre-test → target sliders ---
@@ -2244,7 +2366,7 @@
       .map(function(n){return {name:n, pre:Math.round(+enteredScores[n])};}); }
     return boyStudents.map(function(r){return {name:r[0], pre:Math.round((r[1]+r[2]+r[3]+r[4])/4)};});
   }
-  function targetMax(){ return boyMode==='input' ? (parseInt(readEntryBands().wa.hi,10)||100) : 100; }
+  function targetMax(){ var wa=readBands().wa||{}; return parseInt(wa.hi,10)||100; }
   function updateRow(row){
     var s=row.querySelector('input[type=range]');
     var pre=+s.getAttribute('data-pre'), tgt=+s.value, bk=classifyBand(tgt), u=scoreUnit();
@@ -2252,6 +2374,17 @@
     tchip.style.background='var('+BANDVAR[bk]+')'; tchip.textContent=tgt+u+' · '+BANDNAME[bk];
     var g=tgt-pre, gc=row.querySelector('.ci-growth');
     gc.textContent=(g>0?'+':'')+g+' pts'; gc.className='ci-growth '+(g>0?'up':'flat');
+    // Ceiling effect: a student who starts near the top of the scale has very little
+    // room left, so a small target isn't low expectations. Say so here, where the
+    // teacher sets it, rather than leaving it to be argued at the EOY conference.
+    var maxV=+s.getAttribute('max'), room=maxV-pre;
+    var note=row.querySelector('.ci-ceiling');
+    if(note){
+      var tight = room <= Math.max(5, Math.round(maxV*0.06));
+      note.hidden=!tight;
+      if(tight) note.textContent='Near the top of the scale — only '+room+' points of room. '+
+        'Growth is structurally limited here; note this for your appraiser.';
+    }
   }
   function updateSummary(){
     var rows=document.querySelectorAll('#targetRows .ci-target-row'); if(!rows.length) return;
@@ -2261,6 +2394,7 @@
   }
   function buildTargets(){
     var wrap=document.getElementById('targetRows'); if(!wrap || wrap.dataset.built) return;
+    wrap.innerHTML='';   // rebuilds append otherwise: re-saving BOY scores doubled the roster
     var maxV=targetMax(), u=scoreUnit();
     studentList().forEach(function(st){
       var pre=st.pre, tgt=Math.min(maxV,pre+15), preBk=classifyBand(pre);
@@ -2269,7 +2403,8 @@
         '<span class="name">'+st.name+'</span>'+
         '<span class="ci-scorechip" style="background:var('+BANDVAR[preBk]+')">'+pre+u+' · '+BANDNAME[preBk]+'</span>'+
         '<span class="ci-slidercell"><input type="range" class="ci-range" min="'+pre+'" max="'+maxV+'" value="'+tgt+'" data-pre="'+pre+'" data-name="'+st.name+'" aria-label="End-of-year target for '+st.name+'"><span class="ci-scorechip ci-target-chip"></span></span>'+
-        '<span class="ci-growth"></span>';
+        '<span class="ci-growth"></span>'+
+        '<span class="ci-ceiling" hidden></span>';
       wrap.appendChild(row);
       row.querySelector('input[type=range]').addEventListener('input',function(){updateRow(row);updateSummary();scheduleSave();});
       updateRow(row);
@@ -2277,15 +2412,75 @@
     wrap.dataset.built='1';
     updateSummary();
   }
+  // ---- Real completion state -------------------------------------------------
+  // A check means the step's required fields actually have content. Previously
+  // `done` was set from position in the list, so steps the teacher had merely
+  // scrolled past showed green — and the lock let a blank plan through.
+  var visited={skill:true};
+  function tval(el){ return el ? (el.value||'').trim() : ''; }
+  function planFields(){
+    var dt=document.querySelectorAll('#view-personal .ci-q textarea');
+    return {
+      highest: tval(dt[0]),
+      lowest:  tval(dt[1]),
+      support: tval(document.querySelector('#view-personal .ci-input')),
+      sources: document.querySelectorAll('#view-personal .ci-source input:checked').length,
+      other:   tval(document.getElementById('otherSources'))
+    };
+  }
+  // "Who else supports this goal" is genuinely optional — a teacher may have no one.
+  function planMissing(){
+    var p=planFields(), m=[];
+    if(!p.highest) m.push('your plan for the highest group');
+    if(!p.lowest)  m.push('your plan for the lowest group');
+    if(!p.sources && !p.other) m.push('at least one source of evidence');
+    return m;
+  }
+  function descriptorsFilled(){
+    var d=document.querySelectorAll('#view-tsp .ci-level .desc');
+    if(!d.length) return false;
+    return [].every.call(d,function(e){ return (e.textContent||'').trim().length>0; });
+  }
+  function stepComplete(st){
+    if(st==='skill')    return !!(((document.getElementById('sloStatement')||{}).textContent)||'').trim();
+    if(st==='tsp')      return descriptorsFilled();
+    if(st==='personal') return planMissing().length===0;
+    if(st==='boydata')  return hasData;
+    if(st==='targets')  return sloLocked;
+    return false;
+  }
+  function refreshStepState(){
+    subtabs.forEach(function(b){
+      var st=b.getAttribute('data-view'), done=stepComplete(st);
+      b.classList.toggle('done', done && st!==currentStep);
+      b.classList.toggle('partial', !done && !!visited[st] && st!==currentStep);
+    });
+    var pm=document.getElementById('planMissing');
+    if(pm){
+      var m=planMissing();
+      pm.hidden = m.length===0;
+      if(m.length) pm.innerHTML='<b>Still to add:</b> '+m.join(', ')+'.';
+    }
+    applyLockState();
+  }
+
   function applyLockState(){
     var approve=document.getElementById('adminApproved'), lockBtn=document.getElementById('lockBtn');
     document.querySelectorAll('#targetRows input[type=range]').forEach(function(s){s.disabled=sloLocked;});
     if(approve) approve.disabled=sloLocked;
     var banner=document.getElementById('lockedBanner'); if(banner) banner.hidden=!sloLocked;
-    if(lockBtn) lockBtn.disabled = sloLocked || !(approve&&approve.checked);
+    var miss=planMissing(), okPlan=miss.length===0, okApprove=!!(approve&&approve.checked);
+    if(lockBtn) lockBtn.disabled = sloLocked || !okApprove || !okPlan || !hasData;
     var hint=document.getElementById('lockHint');
-    if(hint) hint.textContent = sloLocked ? 'SLO locked — unlock below to make changes.'
-      : ((approve&&approve.checked) ? 'Ready to lock for the year.' : 'Check appraiser approval to enable locking.');
+    if(hint){
+      if(sloLocked) hint.innerHTML='SLO locked — unlock below to make changes.';
+      else if(!hasData) hint.innerHTML='Bring in your BOY data first.';
+      else if(!okPlan) hint.innerHTML='Your Personal Plan is incomplete — add '+miss.join(', ')+'. '+
+        '<button type="button" class="ci-linkbtn" data-goto="personal">Finish the plan</button>';
+      else if(!okApprove) hint.innerHTML='Check appraiser approval to enable locking.';
+      else hint.innerHTML='Ready to lock for the year.';
+      hint.classList.toggle('warn', !sloLocked && hasData && !okPlan);
+    }
     updatePhase();
   }
   // phase stepper reflects lock state (Phase 1 → Phase 2 on lock)
@@ -2294,8 +2489,36 @@
   if(approveEl) approveEl.addEventListener('change',function(){applyLockState();scheduleSave();});
   var lockBtnEl=document.getElementById('lockBtn');
   if(lockBtnEl) lockBtnEl.addEventListener('click',function(){
-    if(approveEl&&approveEl.checked){ sloLocked=true; applyLockState(); scheduleSave(); showPanel('overview'); }
+    if(!(approveEl&&approveEl.checked)) return;
+    var miss=planMissing();
+    if(miss.length){ show('personal'); refreshStepState();
+      var pm=document.getElementById('planMissing'); if(pm) pm.scrollIntoView({behavior:'smooth',block:'center'});
+      return; }
+    openConfirm();
   });
+  // Locking is the one irreversible-feeling action in setup, so it gets a
+  // deliberate confirmation rather than sharing the look of a routine "next".
+  function openConfirm(){
+    var m=document.getElementById('lockConfirm'); if(!m) return;
+    var p=planFields(), n=studentList().length;
+    var body=document.getElementById('lockConfirmBody');
+    if(body) body.innerHTML=
+      '<div class="lc-row"><span>Skill statement</span><b>'+escA(strandLabel())+'</b></div>'+
+      '<div class="lc-row"><span>Growth targets</span><b>'+n+' students</b></div>'+
+      '<div class="lc-row"><span>Plan for highest group</span><b>'+escA(p.highest.slice(0,60)+(p.highest.length>60?'…':''))+'</b></div>'+
+      '<div class="lc-row"><span>Plan for lowest group</span><b>'+escA(p.lowest.slice(0,60)+(p.lowest.length>60?'…':''))+'</b></div>'+
+      '<div class="lc-row"><span>Who else supports</span><b>'+(p.support?escA(p.support):'<i>no one listed</i>')+'</b></div>';
+    m.hidden=false; document.body.style.overflow='hidden';
+  }
+  function closeConfirm(){ var m=document.getElementById('lockConfirm'); if(m) m.hidden=true; document.body.style.overflow=''; }
+  (function(){
+    var m=document.getElementById('lockConfirm'); if(!m) return;
+    m.querySelectorAll('[data-close-confirm]').forEach(function(b){ b.addEventListener('click',closeConfirm); });
+    var go=document.getElementById('lockConfirmGo');
+    if(go) go.addEventListener('click',function(){
+      closeConfirm(); sloLocked=true; applyLockState(); refreshStepState(); scheduleSave(); showPanel('overview');
+    });
+  })();
   var unlockBtnEl=document.getElementById('unlockBtn');
   if(unlockBtnEl) unlockBtnEl.addEventListener('click',function(){ sloLocked=false; applyLockState(); scheduleSave(); });
 
@@ -2303,6 +2526,20 @@
   subtabs.forEach(function(b){b.addEventListener('click',function(){show(b.getAttribute('data-view'));});});
   // any button with data-goto advances/returns
   document.getElementById('toTsp').addEventListener('click',function(){show('tsp');});
+  // delegated, so buttons injected into hints/notices later still work
+  document.addEventListener('click',function(e){
+    var b=e.target.closest && e.target.closest('.ci-linkbtn[data-goto]');
+    if(b) show(b.getAttribute('data-goto'));
+  });
+  // keep completion state honest as the teacher types
+  (function(){
+    var scope=document.getElementById('view-personal'); if(!scope) return;
+    scope.addEventListener('input',function(){ refreshStepState(); });
+    scope.addEventListener('change',function(){ refreshStepState(); });
+  })();
+  document.querySelectorAll('#view-tsp .ci-level .desc').forEach(function(d){
+    d.addEventListener('input',function(){ refreshStepState(); });
+  });
   document.querySelectorAll('[data-goto]').forEach(function(b){
     b.addEventListener('click',function(){show(b.getAttribute('data-goto'));});
   });
@@ -3002,7 +3239,8 @@
     buildMoyGrid(); updateMoySummary(); scheduleSave();
   });
 
-  function statusFor(pre,cur,tgt){
+  function statusFor(pre,cur,tgt,baselineOnly){
+    if(baselineOnly) return {cls:'base',txt:'Baseline'};
     if(tgt==null || tgt<=pre) return {cls:'on',txt:'On track'};
     if(cur>=tgt) return {cls:'met',txt:'Target met'};
     var frac=(cur-pre)/(tgt-pre);
@@ -3058,11 +3296,34 @@
     });
     return '<span>'+out+'</span>';
   }
+  // Have we actually observed anything since the baseline? If not, every student's
+  // "current" is just their BOY score, and scoring that against an end-of-year
+  // target flags the whole class "Needs support" on day one. That's arithmetic,
+  // not information — so the view says "baseline recorded" instead.
+  function anyProgressData(){
+    return studentList().some(function(st){
+      var m=moyScores[st.name];
+      return m!=null && m!=='';
+    });
+  }
   function renderProgress(){
     var ready=progressReady();
     var nd=document.getElementById('progNoData'), mn=document.getElementById('progMain');
     if(nd) nd.hidden=ready; if(mn) mn.hidden=!ready;
     if(!ready) return;
+    var baselineOnly=!anyProgressData();
+    var bb=document.getElementById('progBaseline');
+    if(bb){
+      bb.hidden=!baselineOnly;
+      if(baselineOnly) bb.innerHTML=
+        '<span class="ic" aria-hidden="true">&#9679;</span>'+
+        '<div><b>Baseline recorded for '+studentList().length+' students.</b> '+
+        'Nothing to compare against yet — status turns on once you record mid-year scores'+
+        (windowOpen('moy')?'':', and your MOY window opens in '+windowLabel('moy'))+'. '+
+        'Keep collecting evidence in the meantime.</div>';
+    }
+    var mainWrap=document.getElementById('progMain');
+    if(mainWrap) mainWrap.classList.toggle('baseline-only', baselineOnly);
     var u=scoreUnit(), stds=sloStandards(), list=studentList();
     var onCount=0, dist={wb:0,b:0,t:0,a:0,wa:0};
     var rows=document.getElementById('progRows'); if(rows) rows.innerHTML='';
@@ -3076,7 +3337,7 @@
     list.forEach(function(st,i){
       var pre=st.pre, tgt=targetOf(st.name);
       var moy=moyScores[st.name]; var cur=(moy!=null&&moy!=='')?+moy:pre;
-      var s=statusFor(pre,cur,tgt); if(s.cls==='on'||s.cls==='met') onCount++;
+      var s=statusFor(pre,cur,tgt,baselineOnly); if(s.cls==='on'||s.cls==='met') onCount++;
       dist[classifyBand(cur)]++;
       var frac=(tgt!=null&&tgt>pre)?Math.max(0,Math.min(100,Math.round((cur-pre)/(tgt-pre)*100))):100;
 
@@ -3126,7 +3387,11 @@
       });
     });
     applyProgView();
-    var el=document.getElementById('progSummary'); if(el) el.textContent=onCount+' of '+list.length+' on track or better';
+    var el=document.getElementById('progSummary');
+    if(el) el.textContent = baselineOnly
+      ? ('Baseline set for '+list.length+' students')
+      : (onCount+' of '+list.length+' on track or better');
+    if(el) el.classList.toggle('neutral', baselineOnly);
     // suggested plans by band (only groups with students)
     var pg=document.getElementById('planGroups'); pg.innerHTML='';
     // who is in each band, so the teacher sees names not just a count
@@ -3501,7 +3766,6 @@
       otherSources:(document.getElementById('otherSources')||{}).value||'',
       hasData:hasData, boySource:boySource, boyMode:boyMode, enteredScores:enteredScores,
       entrySource:(document.getElementById('entrySource')||{}).value||'',
-      entryBands:readEntryBands(),
       targets:(function(){var t={};document.querySelectorAll('#targetRows input[type=range]').forEach(function(s){t[s.getAttribute('data-name')]=s.value;});return t;})(),
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
@@ -3546,8 +3810,7 @@
       if(d.sources[name]!=null){ cb.checked=d.sources[name]; s.classList.toggle('sel',cb.checked); } }); }
     boyMode=d.boyMode||''; enteredScores=d.enteredScores||{};
     if(d.entrySource){ var es=document.getElementById('entrySource'); if(es) es.value=d.entrySource; }
-    if(d.entryBands){ document.querySelectorAll('#entryBands input').forEach(function(i){
-      var b=i.getAttribute('data-eband'),e=i.getAttribute('data-edge'); if(d.entryBands[b]&&d.entryBands[b][e]!=null) i.value=d.entryBands[b][e]; }); }
+    // (pre-canonical drafts carried a second `entryBands` copy; it is ignored now)
     if(boyMode==='input'){ buildEntryTable();
       Object.keys(enteredScores).forEach(function(n){ var inp=document.querySelector('#entryRows input[data-name="'+n+'"]'); if(inp) inp.value=enteredScores[n]; });
       recolorEntry(); }
@@ -3592,8 +3855,9 @@
   document.addEventListener('change',scheduleSave,true);
 
   // explicit Save draft button
-  var saveDraftBtn=document.getElementById('saveDraftBtn');
-  if(saveDraftBtn) saveDraftBtn.addEventListener('click',function(){ clearTimeout(saveTimer); save(); });
+  // No manual "Save draft" button: it contradicted the autosave message beside it.
+  // Flush pending saves when the teacher leaves instead.
+  window.addEventListener('beforeunload',function(){ clearTimeout(saveTimer); save(); });
 
   // render default subject/grade goals, then restore any saved draft
   renderGoals('Math','3');
