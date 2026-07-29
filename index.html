@@ -515,6 +515,33 @@
   .ci-plan-row b{color:var(--ink);font-weight:800;flex:none;min-width:110px;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;padding-top:1px;}
   .ci-plan.empty{opacity:.6;}
 
+  /* ---------- Standards matrix (Progress) ---------- */
+  .ci-matrix-wrap{overflow-x:auto;border-radius:var(--r-md);}
+  table.ci-matrix{border-collapse:separate;border-spacing:4px;width:100%;font-variant-numeric:tabular-nums;}
+  table.ci-matrix th,table.ci-matrix td{padding:0;}
+  .ci-matrix .strand{background:var(--ci-grad);color:#fff;font-family:var(--font-display);font-weight:800;
+    font-size:13px;letter-spacing:.3px;text-align:center;padding:9px 12px;border-radius:9px;}
+  .ci-matrix .corner{background:transparent;}
+  .ci-matrix .stdh{background:#F6F8FB;border:1px solid var(--line);border-radius:9px;color:var(--ink);
+    font-family:var(--font-display);font-weight:800;font-size:12px;text-align:center;padding:9px 6px;min-width:58px;}
+  .ci-matrix .stu{background:#fff;border:1px solid var(--line);border-radius:9px;text-align:left;
+    padding:0;min-width:150px;}
+  .ci-matrix .stu button{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;
+    padding:11px 12px;cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--ink);border-radius:9px;}
+  .ci-matrix .stu button:hover{background:rgba(27,27,58,.05);}
+  .ci-matrix .stu .chev{margin-left:auto;color:var(--ink-faint);transition:transform .15s;flex:none;}
+  .ci-matrix tr.open .stu .chev{transform:rotate(90deg);}
+  .ci-matrix .cell{color:#fff;font-weight:800;font-size:13px;text-align:center;padding:11px 6px;border-radius:9px;}
+  .ci-matrix .cell.na{background:#EEF1F6;color:var(--ink-faint);font-weight:700;}
+  .ci-matrix tr.detail td{padding:0 2px 6px;}
+  .ci-matrix-detail{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#FAFBFD;
+    border:1px solid var(--line);border-radius:10px;padding:12px 14px;}
+  .ci-matrix-detail .lab{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);}
+  .ci-matrix-detail .chip{color:#fff;font-weight:800;font-size:11.5px;padding:3px 10px;border-radius:999px;}
+  .ci-matrix-detail .arrow{color:var(--ink-faint);}
+  .ci-matrix-detail .track{flex:1;min-width:120px;height:8px;border-radius:5px;background:var(--line);overflow:hidden;}
+  .ci-matrix-detail .track span{display:block;height:100%;border-radius:5px;background:var(--ci-grad);}
+
   /* ---------- EOY report ---------- */
   .ci-result{font-weight:800;font-size:11.5px;padding:4px 11px;border-radius:999px;width:max-content;}
   .ci-result.met{background:#E6F4EC;color:#2E7D5B;}
@@ -1267,9 +1294,16 @@
               <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2>Progress toward targets</h2></div>
               <div class="ci-target-summary" id="progSummary">—</div>
             </header>
-            <p class="sub">Each student's movement from BOY toward their end-of-year target. Current = mid-year score where recorded, otherwise the BOY baseline.</p>
-            <div class="ci-prog-head"><span>Student</span><span>BOY → Current → Target</span><span>Progress</span><span>Status</span></div>
-            <div id="progRows"></div>
+            <p class="sub">Mastery on the standards aligned to your SLO, from work completed in Crystal Instruction. <b>Click any student</b> to see their BOY → current → target progress.</p>
+            <div class="ci-matrix-wrap">
+              <table class="ci-matrix" id="progMatrix"></table>
+            </div>
+            <div class="ci-legend" style="margin-top:14px;">
+              <span><i style="background:var(--band-wb)"></i>Well Below</span><span><i style="background:var(--band-b)"></i>Below</span>
+              <span><i style="background:var(--band-t)"></i>Typical</span><span><i style="background:var(--band-a)"></i>Above</span>
+              <span><i style="background:var(--band-wa)"></i>Well Above</span>
+              <span style="margin-left:8px;color:var(--ink-faint);">— % correct on Crystal Instruction work</span>
+            </div>
           </section>
           <section class="ci-card" style="margin-top:22px;">
             <header><div><div class="ci-eyebrow">Targeted support</div><h2>Suggested learning plans by group</h2></div></header>
@@ -1919,31 +1953,84 @@
     if(frac>=0.25) return {cls:'near',txt:'Approaching'};
     return {cls:'low',txt:'Needs support'};
   }
+  // Per-standard mastery from Crystal Instruction work. Scores are % correct on CI
+  // activities, so they're always banded against the Skill Profile percentage bands.
+  // PRODUCTION: replace with real aggregates from ClearLessons/ClearSheets/Snap Lessons.
+  var ciScores={};
+  function hashInt(s){ // FNV-1a + avalanche, so adjacent codes (3.2A/3.2B) spread apart
+    var h=2166136261;
+    for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); }
+    h^=h>>>13; h=Math.imul(h,1540483477); h^=h>>>15;
+    return Math.abs(h);
+  }
+  function pctBand(v){ return classifyWith(v, readBands()) || 'wb'; }
+  function ciStandardScore(name,std){
+    if(!ciScores[name]) ciScores[name]={};
+    if(ciScores[name][std]==null){
+      var st=null; studentList().forEach(function(x){ if(x.name===name) st=x; });
+      var max=targetMax()||100;
+      var basePct = st ? Math.round(st.pre/max*100) : 50;   // normalize BOY to a %
+      var jitter=(hashInt(name+'|'+std)%45)-18;             // deterministic spread
+      ciScores[name][std]=Math.max(0,Math.min(100,basePct+jitter));
+    }
+    return ciScores[name][std];
+  }
+  function strandLabel(){
+    var g=currentGoal();
+    return (g && g.key!=='own' ? g.title : 'Your SLO standards');
+  }
   function renderProgress(){
     var ready=progressReady();
     var nd=document.getElementById('progNoData'), mn=document.getElementById('progMain');
     if(nd) nd.hidden=ready; if(mn) mn.hidden=!ready;
     if(!ready) return;
-    var u=scoreUnit(), rows=document.getElementById('progRows'); rows.innerHTML='';
+    var u=scoreUnit(), stds=sloStandards(), list=studentList();
     var onCount=0, dist={wb:0,b:0,t:0,a:0,wa:0};
-    studentList().forEach(function(st){
+
+    // strand banner + standard columns
+    var html='<thead>'+
+      '<tr><th class="corner"></th><th class="strand" colspan="'+stds.length+'">'+esc(strandLabel())+'</th></tr>'+
+      '<tr><th class="corner"></th>'+stds.map(function(s){return '<th class="stdh">'+esc(s)+'</th>';}).join('')+'</tr>'+
+      '</thead><tbody>';
+
+    list.forEach(function(st,i){
       var pre=st.pre, tgt=targetOf(st.name);
       var moy=moyScores[st.name]; var cur=(moy!=null&&moy!=='')?+moy:pre;
       var s=statusFor(pre,cur,tgt); if(s.cls==='on'||s.cls==='met') onCount++;
       dist[classifyBand(cur)]++;
-      var frac = (tgt!=null&&tgt>pre) ? Math.max(0,Math.min(100,Math.round((cur-pre)/(tgt-pre)*100))) : 100;
-      var row=document.createElement('div'); row.className='ci-prog-row';
-      row.innerHTML='<span class="name">'+st.name+'</span>'+
-        '<span class="ci-prog-flow">'+
-          '<span class="chip" style="background:var('+BANDVAR[classifyBand(pre)]+')">'+pre+u+'</span><span class="arrow">→</span>'+
-          '<span class="chip" style="background:var('+BANDVAR[classifyBand(cur)]+')">'+cur+u+'</span><span class="arrow">→</span>'+
-          '<span class="chip" style="background:'+(tgt!=null?'var('+BANDVAR[classifyBand(tgt)]+')':'var(--ink-faint)')+'">'+(tgt!=null?tgt+u:'—')+'</span>'+
-        '</span>'+
-        '<span class="ci-prog-bar"><span style="width:'+frac+'%"></span></span>'+
-        '<span class="ci-status '+s.cls+'">'+s.txt+'</span>';
-      rows.appendChild(row);
+      var frac=(tgt!=null&&tgt>pre)?Math.max(0,Math.min(100,Math.round((cur-pre)/(tgt-pre)*100))):100;
+
+      // per-standard mastery from Crystal Instruction work (% correct)
+      var cells=stds.map(function(std){
+        var v=ciStandardScore(st.name,std);
+        if(v==null) return '<td class="cell na">–</td>';
+        return '<td class="cell" style="background:var('+BANDVAR[pctBand(v)]+')">'+v+'</td>';
+      }).join('');
+
+      html+='<tr class="srow" data-i="'+i+'">'+
+        '<th class="stu"><button type="button" data-i="'+i+'">'+esc(st.name)+
+          '<svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>'+
+        '</button></th>'+cells+'</tr>'+
+        '<tr class="detail" data-i="'+i+'" hidden><td colspan="'+(stds.length+1)+'">'+
+          '<div class="ci-matrix-detail">'+
+            '<span class="lab">BOY</span><span class="chip" style="background:var('+BANDVAR[classifyBand(pre)]+')">'+pre+u+'</span><span class="arrow">→</span>'+
+            '<span class="lab">Current</span><span class="chip" style="background:var('+BANDVAR[classifyBand(cur)]+')">'+cur+u+'</span><span class="arrow">→</span>'+
+            '<span class="lab">Target</span><span class="chip" style="background:'+(tgt!=null?'var('+BANDVAR[classifyBand(tgt)]+')':'var(--ink-faint)')+'">'+(tgt!=null?tgt+u:'—')+'</span>'+
+            '<span class="track"><span style="width:'+frac+'%"></span></span>'+
+            '<span class="ci-status '+s.cls+'">'+s.txt+'</span>'+
+          '</div></td></tr>';
     });
-    var el=document.getElementById('progSummary'); if(el) el.textContent=onCount+' of '+studentList().length+' on track or better';
+    var mx=document.getElementById('progMatrix');
+    mx.innerHTML=html+'</tbody>';
+    mx.querySelectorAll('.stu button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var i=b.getAttribute('data-i');
+        var row=mx.querySelector('tr.srow[data-i="'+i+'"]');
+        var det=mx.querySelector('tr.detail[data-i="'+i+'"]');
+        if(det){ det.hidden=!det.hidden; row.classList.toggle('open',!det.hidden); }
+      });
+    });
+    var el=document.getElementById('progSummary'); if(el) el.textContent=onCount+' of '+list.length+' on track or better';
     // suggested plans by band (only groups with students)
     var pg=document.getElementById('planGroups'); pg.innerHTML='';
     ['wb','b','t','a','wa'].forEach(function(bk){
