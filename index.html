@@ -359,11 +359,16 @@
   .ci-evi-pick{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;color:var(--ink);}
   .ci-evi-pick .ci-select{min-width:170px;}
 
-  /* goal bar (what you're collecting evidence for) */
-  .ci-goalbar{background:var(--ci-grad);color:#fff;border-radius:var(--r-lg);padding:18px 22px;box-shadow:var(--shadow-lift);margin-bottom:18px;}
-  .ci-goalbar .eyebrow{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.85);}
-  .ci-goalbar p{font-family:var(--font-display);font-weight:800;font-size:17px;margin-top:5px;}
-  .ci-goalbar small{display:block;margin-top:5px;color:rgba(255,255,255,.92);font-size:12.5px;line-height:1.45;}
+  /* goal strip — quiet reference, not the focus of the page */
+  .ci-goalbar{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+    background:var(--pink-soft);border:1px solid #F0D9EC;border-radius:var(--r-md);
+    padding:9px 14px;margin-bottom:16px;}
+  .ci-goalbar .eyebrow{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
+    color:var(--ci-magenta-deep);flex:none;}
+  .ci-goalbar p{font-weight:800;font-size:13px;color:var(--ink);flex:none;}
+  .ci-goalbar small{color:var(--ink-soft);font-size:12px;line-height:1.4;flex:1;min-width:180px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  @media(max-width:700px){.ci-goalbar small{white-space:normal;}}
 
   /* filter bar */
   .ci-evi-filters{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 20px;}
