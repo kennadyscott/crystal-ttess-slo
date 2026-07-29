@@ -455,12 +455,60 @@
   @media(max-width:640px){.ci-lib-item{flex-wrap:wrap;}.ci-lib-item .lab{flex:1 1 100%;order:-1;}}
 
   /* ---------- T-TESS Rubric ---------- */
-  .ci-ttess-summary{background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;font-size:12.5px;padding:8px 14px;border-radius:999px;white-space:nowrap;}
+  .ci-ttess-summary{background:var(--pink-soft);color:var(--ci-magenta-deep);font-weight:800;font-size:12.5px;padding:8px 14px;border-radius:999px;white-space:nowrap;
+    display:inline-flex;align-items:center;gap:9px;}
   .ci-ttess-summary.met{background:#E6F4EC;color:#2E7D5B;}
+  .ci-ttess-summary .sep{width:1px;height:13px;background:currentColor;opacity:.28;}
+  .ci-ttess-summary .all{font-weight:700;opacity:.72;}
+  @media(max-width:640px){.ci-ttess-summary{white-space:normal;}}
+  /* version tag + T-TESS 2 readiness band */
+  .ci-vtag{display:inline-flex;flex-direction:column;vertical-align:middle;margin-left:10px;background:var(--pink-soft);
+    color:var(--ci-magenta-deep);font-family:var(--font-body);font-size:10.5px;font-weight:800;line-height:1.25;
+    padding:5px 11px;border-radius:9px;text-transform:uppercase;letter-spacing:.4px;}
+  .ci-vtag-sub{font-weight:700;opacity:.7;letter-spacing:.2px;}
+  .ci-rubricpick{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 16px;}
+  .ci-rubricpick .lb{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);}
+  .ci-rubricpick .hint{font-size:12px;color:var(--ink-faint);flex:1;min-width:180px;}
+  #rubricPick button{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;padding:7px 16px;line-height:1.25;}
+  #rubricPick button small{font-size:10px;font-weight:700;opacity:.75;}
+  .ci-t2{border:1px solid rgba(154,47,201,.26);background:linear-gradient(180deg,rgba(227,19,196,.045),rgba(154,47,201,.055));
+    border-radius:14px;margin-bottom:18px;overflow:hidden;}
+  .ci-t2-head{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:transparent;
+    cursor:pointer;padding:13px 16px;font-family:var(--font-body);}
+  .ci-t2-badge{flex:none;background:linear-gradient(135deg,var(--ci-magenta),var(--ci-purple));color:#fff;font-size:10px;
+    font-weight:800;text-transform:uppercase;letter-spacing:.6px;padding:4px 10px;border-radius:999px;}
+  .ci-t2-title{flex:1;font-size:13px;color:var(--ink);line-height:1.5;}
+  .ci-t2-chev{flex:none;color:var(--ci-magenta-deep);display:flex;transition:transform .18s ease;}
+  .ci-t2-head[aria-expanded="true"] .ci-t2-chev{transform:rotate(180deg);}
+  .ci-t2-body{padding:2px 16px 16px;border-top:1px solid rgba(154,47,201,.16);}
+  .ci-t2-time{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+  .ci-t2-step{display:flex;gap:12px;align-items:flex-start;font-size:12.5px;line-height:1.5;color:var(--ink-soft);}
+  .ci-t2-step .yr{flex:none;width:78px;font-weight:800;color:var(--ci-magenta-deep);}
+  .ci-t2-note{font-size:12.5px;line-height:1.6;color:var(--ink-soft);margin:0 0 10px;}
+  .ci-t2-src{font-size:11.5px;line-height:1.5;color:var(--ink-faint);margin:0;}
+  @media(max-width:640px){.ci-t2-step{flex-direction:column;gap:1px;}.ci-t2-step .yr{width:auto;}}
+  /* scope toggle — keeps the default view at 8 dimensions, not a wall of 16 */
+  .ci-dim-scope{display:inline-flex;gap:4px;padding:4px;background:rgba(27,27,58,.055);border-radius:999px;margin-bottom:20px;flex-wrap:wrap;}
+  .ci-dim-scope button{border:0;background:transparent;cursor:pointer;font-family:var(--font-body);font-weight:800;font-size:12.5px;
+    color:var(--ink-soft);padding:8px 16px;border-radius:999px;}
+  .ci-dim-scope button.active{background:#fff;color:var(--ci-magenta-deep);box-shadow:0 1px 3px rgba(27,27,58,.14);}
   .ci-ttess-layout{display:grid;grid-template-columns:236px 1fr;gap:22px;align-items:start;}
   @media(max-width:820px){.ci-ttess-layout{grid-template-columns:1fr;}}
   .ci-dim-nav{display:flex;flex-direction:column;gap:3px;}
-  .ci-dim-domain{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);margin:14px 6px 5px;}
+  .ci-dim-domain{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);margin:14px 6px 5px;
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .ci-dim-unobs{font-size:9.5px;font-weight:800;letter-spacing:.2px;text-transform:none;color:var(--ink-faint);
+    background:rgba(27,27,58,.07);padding:2px 7px;border-radius:999px;}
+  /* honest empty state where CI has no verified claim */
+  .ci-help-none{font-size:13.5px;line-height:1.55;color:var(--ink-soft);background:rgba(27,27,58,.035);
+    border:1px dashed rgba(27,27,58,.16);border-radius:12px;padding:14px 16px;}
+  .ci-help-none .tag{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--ink-faint);margin-bottom:7px;}
+  .ci-dim-note{font-size:12.5px;line-height:1.55;color:var(--ink-soft);background:#FFF8E8;border-left:3px solid #E8A93C;
+    border-radius:0 9px 9px 0;padding:11px 14px;margin-top:12px;}
+  .ci-dim-note b{color:#8A5A05;}
+  .ci-dim-unobs-note{font-size:12.5px;line-height:1.55;color:var(--ink-soft);background:var(--pink-soft);
+    border-radius:11px;padding:12px 15px;margin:2px 0 18px;}
   .ci-dim-nav .ci-dim-domain:first-child{margin-top:0;}
   .ci-dim-nav button{display:flex;align-items:center;gap:10px;text-align:left;border:0;background:transparent;border-radius:10px;
     padding:10px 12px;cursor:pointer;font-family:var(--font-body);font-weight:700;font-size:13px;color:var(--ink);}
@@ -721,7 +769,7 @@
       <div class="ci-pagehead">
         <div>
           <h1>T-TESS / SLO Growth Tracker</h1>
-          <p>Build a Student Learning Objective, then collect a standards-aligned Body of Evidence across the year to support your appraisal in <b>Domains 2 &amp; 3</b>.</p>
+          <p>Build a Student Learning Objective, then collect a standards-aligned Body of Evidence across the year — <b>all 16 T-TESS dimensions</b> for your appraisal, with <b>Domains 2 &amp; 3</b> scored separately for TIA.</p>
         </div>
         <div class="ci-yeartag"><i></i>2026–27 School Year</div>
       </div>
@@ -1235,10 +1283,44 @@
       <div id="panel-ttess" hidden>
         <section class="ci-card">
           <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
-            <div><div class="ci-eyebrow">Teacher performance · your T-TESS year</div><h2>T-TESS Rubric</h2></div>
+            <div>
+              <div class="ci-eyebrow">Teacher performance · your T-TESS year</div>
+              <h2>T-TESS Rubric <span class="ci-vtag" id="rubricTag">2026–27 rubric<span class="ci-vtag-sub">16 dimensions</span></span></h2>
+            </div>
             <div class="ci-ttess-summary" id="ttessSummary">—</div>
           </header>
+
+          <!-- Which rubric does this district use? Chosen up front, persisted. -->
+          <div class="ci-rubricpick">
+            <span class="lb">Your district's rubric</span>
+            <div class="ci-benchtabs" id="rubricPick">
+              <button type="button" class="active" data-rubric="t1">T-TESS <small>16 dimensions</small></button>
+              <button type="button" data-rubric="t2">T-TESS 2 <small>pilot · 11 dimensions</small></button>
+            </div>
+            <span class="hint" id="rubricHint">The current statewide rubric. Switch to T-TESS 2 if your district is in the 2026–27 pilot.</span>
+          </div>
           <p class="sub">Rate yourself and collect evidence across all <b>16 dimensions</b>. Only <b>Domains 2 &amp; 3</b> feed the TIA 35%, and the score above counts those eight alone — Domains 1 and 4 are tracked for your appraisal without touching that number. <b>Proficient</b> is the expected level; <b>Accomplished</b> and <b>Distinguished</b> require students to drive their own learning.</p>
+          <!-- T-TESS 2 readiness. Claims are deliberately limited to what's true today:
+               we know the timeline and your evidence carries forward. We do NOT claim the
+               T-TESS 2 rubric is implemented — that mapping is still to come. -->
+          <div class="ci-t2" id="t2Band">
+            <button type="button" class="ci-t2-head" id="t2Toggle" aria-expanded="false" aria-controls="t2Body">
+              <span class="ci-t2-badge">Heads up</span>
+              <span class="ci-t2-title"><b>T-TESS 2 is coming</b> — 11 dimensions, four domains. We've got you covered: switch your rubric above, and your evidence comes with you.</span>
+              <span class="ci-t2-chev" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+            </button>
+            <div class="ci-t2-body" id="t2Body" hidden>
+              <div class="ci-t2-time">
+                <div class="ci-t2-step"><span class="yr">2026–27</span><span class="lb">Pilot year — 15 school systems. <b>Everyone else stays on the 16-dimension rubric you see here.</b> Appraiser recertification training runs spring/summer.</span></div>
+                <div class="ci-t2-step"><span class="yr">2027–28</span><span class="lb">TEA's recommended adoption year for T-TESS 2.</span></div>
+                <div class="ci-t2-step"><span class="yr">2028–29</span><span class="lb">Fallback adoption year for districts that can't move in 2027–28.</span></div>
+              </div>
+              <p class="ci-t2-note">T-TESS 2 keeps four domains — renamed <b>Instructional Preparation, Instructional Delivery, Learning Environment,</b> and <b>Professional Practices &amp; Responsibilities</b> — and consolidates 16 dimensions into 11, each framed as a guiding question with indicators that look for evidence of student learning at the higher levels. Domain 1 applies only to teachers not using SBOE-approved HQIM. Because the domain structure holds, <b>the evidence you file this year maps forward</b> — you won't restart your body of evidence. Switch your rubric above whenever your district adopts.</p>
+              <p class="ci-t2-src">Source: TEA, <i>T-TESS Refresh: Engagement Update and Pilot</i>. If your district is in the 2026–27 pilot, check with your appraiser before using this tab for your appraisal.</p>
+            </div>
+          </div>
           <div class="ci-dim-scope" id="dimScope">
             <button type="button" class="active" data-scope="tia">TIA focus · Domains 2–3</button>
             <button type="button" data-scope="all">Full rubric · all 16</button>
@@ -1764,7 +1846,7 @@
     if(p==='overview'){ var ol=document.getElementById('overviewLocked'), orr=document.getElementById('overviewReady');
       if(ol) ol.hidden=sloLocked; if(orr){ orr.hidden=!sloLocked; if(sloLocked) renderOverview(); } }
     if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
-    if(p==='ttess'){ renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); }
+    if(p==='ttess'){ bindT2(); bindDimScope(); bindRubricPick(); applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); }
     if(p==='moy'){ renderMoy(); }
     if(p==='progress'){ renderProgress(); }
     if(p==='eoy'){ renderEoy(); }
@@ -1859,9 +1941,31 @@
   var evidenceByDim={ '2.1':[
     {type:'ClearLesson Exit Ticket',label:'Solve 1-Step Multiplication — class avg 95%'},
     {type:'ClearSheet',label:'Solve 1-Step Multiplication — class avg 98%'} ]};
-  function findDim(id){ for(var i=0;i<DIMENSIONS.length;i++){ if(DIMENSIONS[i].id===id) return DIMENSIONS[i]; } return DIMENSIONS[0]; }
-  function tiaDims(){ return DIMENSIONS.filter(function(d){ return d.tia; }); }
-  function scopedDims(){ return dimScope==='tia' ? tiaDims() : DIMENSIONS; }
+  /* ---- T-TESS 2 pilot rubric (verified against TEA's T-TESS 2 Pilot Rubric PDF,
+     teachfortexas.org, retrieved 2026-07-29). 11 dimensions / 4 domains. Levels run
+     1 Improvement Needed → 5 Distinguished, same as T-TESS.
+     NOTE: ci:[] everywhere — Crystal Instruction has NOT been mapped to T-TESS 2 yet.
+     We show the real rubric and let teachers rate + attach evidence; we do not claim
+     product alignment we haven't verified. ---- */
+  var DIMENSIONS_T2=[
+    {id:'1.A',domain:'Instructional Preparation · Domain 1',title:'Lesson Design',obs:false,desc:"Is instruction based on a skillfully composed, accurate, and appropriately rigorous lesson plan that is fully aligned with state standards?",ci:[],note:"Domain 1 applies only to teachers <b>not</b> using SBOE-approved HQIM materials. Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'1.B',domain:'Instructional Preparation · Domain 1',title:'Instructional Internalization',obs:false,desc:"Is the instructional plan skillfully and accurately internalized in a way that sets students up for engaging, rigorous content?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'1.C',domain:'Instructional Preparation · Domain 1',title:'Supporting All Learners',obs:false,desc:"Does the instructional plan reflect knowledge of learner variability in the class, and does it support all learners?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'2.A',domain:'Instructional Delivery · Domain 2',title:'Instructional Alignment',tia:true,obs:true,desc:"Are students engaging in rigorous, well paced learning, aligned to the developed lesson?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'2.B',domain:'Instructional Delivery · Domain 2',title:'Instructional Content',tia:true,obs:true,desc:"Are all students learning accurate content through research and evidence-based instructional strategies?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'2.C',domain:'Instructional Delivery · Domain 2',title:'Monitoring and Responding to Student Learning',tia:true,obs:true,desc:"Are all students able to demonstrate student learning with teacher adjustments through formative assessments?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'3.A',domain:'Learning Environment · Domain 3',title:'Efficient Routines',tia:true,obs:true,desc:"Is the classroom environment structured to support efficient routines, smooth transitions, and maximized instructional time?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'3.B',domain:'Learning Environment · Domain 3',title:'Student Persistence',tia:true,obs:true,desc:"Is the classroom environment designed to encourage student persistence?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'4.A',domain:'Professional Practices · Domain 4',title:'Professional Behavior',obs:false,desc:"Does the teacher meet district expectations for procedural, ethical, legal and statutory responsibilities?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'4.B',domain:'Professional Practices · Domain 4',title:'Goal Setting, Self-Reflection, and Professional Development',obs:false,desc:"Does the teacher reflect on instructional practice and set goals for professional development?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."},
+    {id:'4.C',domain:'Professional Practices · Domain 4',title:'Communication and Partnership',obs:false,desc:"Does the teacher demonstrate leadership with parents and families?",ci:[],note:"Crystal Instruction has not been mapped to T-TESS 2 yet — rate yourself and attach your own evidence."}
+  ];
+  // Which rubric this teacher's district uses. Chosen up front; persisted.
+  var rubricVer='t1';
+  function activeDims(){ return rubricVer==='t2' ? DIMENSIONS_T2 : DIMENSIONS; }
+  function findDim(id){ var L=activeDims(); for(var i=0;i<L.length;i++){ if(L[i].id===id) return L[i]; } return L[0]; }
+  function tiaDims(){ return activeDims().filter(function(d){ return d.tia; }); }
+  function scopedDims(){ return dimScope==='tia' ? tiaDims() : activeDims(); }
   // TIA's 35% is Domains 2 & 3 ONLY. Ratings on 1.x and 4.x must never enter this average.
   function ttessAvg(){
     var t=0,n=0;
@@ -1871,11 +1975,11 @@
   function ratedCount(list){ var n=0; list.forEach(function(d){ if(ratingByDim[d.id]) n++; }); return n; }
   function updateTtessSummary(){
     var el=document.getElementById('ttessSummary'); if(!el) return;
-    var a=ttessAvg(), tiaRated=ratedCount(tiaDims()), allRated=ratedCount(DIMENSIONS);
+    var a=ttessAvg(), tiaRated=ratedCount(tiaDims()), allRated=ratedCount(activeDims());
     var tia=(a==null)
       ? '<b>TIA · Domains 2–3</b> not yet rated'
       : '<b>TIA · Domains 2–3</b> '+a.toFixed(2)+' / 3.75 · '+tiaRated+' of '+tiaDims().length;
-    el.innerHTML=tia+'<span class="sep"></span><span class="all">'+allRated+' of '+DIMENSIONS.length+' dimensions rated</span>';
+    el.innerHTML=tia+'<span class="sep"></span><span class="all">'+allRated+' of '+activeDims().length+' dimensions rated</span>';
     el.className='ci-ttess-summary'+(a!=null&&a>=3.75?' met':'');
   }
   function renderDimNav(){
@@ -1893,6 +1997,40 @@
         (r?'<span class="rate-dot" style="background:var('+RATEBAND[r]+')">'+r+'</span>':'<span class="rate-dot empty">–</span>');
       b.addEventListener('click',function(){ currentDim=d.id; renderDimNav(); renderDimDetail(d.id); scheduleSave(); });
       nav.appendChild(b);
+    });
+  }
+  function bindT2(){
+    var t=document.getElementById('t2Toggle'), b=document.getElementById('t2Body');
+    if(!t||!b||t.dataset.bound) return; t.dataset.bound='1';
+    t.addEventListener('click',function(){
+      var open=t.getAttribute('aria-expanded')==='true';
+      t.setAttribute('aria-expanded',String(!open)); b.hidden=open;
+    });
+  }
+  function applyRubricVer(){
+    var t2=(rubricVer==='t2');
+    var tag=document.getElementById('rubricTag');
+    if(tag) tag.innerHTML=(t2?'T-TESS 2 · pilot':'2026–27 rubric')+'<span class="ci-vtag-sub">'+activeDims().length+' dimensions</span>';
+    var hint=document.getElementById('rubricHint');
+    if(hint) hint.innerHTML=t2
+      ? 'Pilot rubric for the 15 systems in 2026–27; TEA recommends adoption in 2027–28. Crystal Instruction alignment for T-TESS 2 is still being mapped, so rate yourself and attach your own evidence.'
+      : "The current statewide rubric. Switch to T-TESS 2 if your district is in the 2026–27 pilot.";
+    document.querySelectorAll('#rubricPick button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-rubric')===rubricVer); });
+    var all=document.querySelector('#dimScope button[data-scope="all"]');
+    if(all) all.textContent='Full rubric · all '+activeDims().length;
+    // dimension IDs differ between rubrics — land on the first in-scope dimension
+    if(!activeDims().some(function(d){ return d.id===currentDim; })){
+      var s=scopedDims(); currentDim=(s[0]||activeDims()[0]).id;
+    }
+  }
+  function bindRubricPick(){
+    var w=document.getElementById('rubricPick'); if(!w||w.dataset.bound) return; w.dataset.bound='1';
+    w.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        rubricVer=b.getAttribute('data-rubric');
+        applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); scheduleSave();
+      });
     });
   }
   function bindDimScope(){
@@ -2473,7 +2611,7 @@
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
       evidence:evidenceByStudent, notes:notesByStudent, eviStudent:currentEviStudent,
-      ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim,
+      rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
       moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone, progView:progView,
       step:currentStep
     };
@@ -2527,9 +2665,15 @@
     if(d.evidence) evidenceByStudent=d.evidence;
     if(d.notes) notesByStudent=d.notes;
     if(d.eviStudent) currentEviStudent=d.eviStudent;
+    if(d.rubricVer) rubricVer=d.rubricVer;
     if(d.ttessRatings) ratingByDim=d.ttessRatings;
     if(d.ttessEvidence) evidenceByDim=d.ttessEvidence;
     if(d.ttessDim) currentDim=d.ttessDim;
+    if(d.ttessScope) dimScope=d.ttessScope;
+    // A resumed draft may point at a Domain 1/4 dimension while the scope is still TIA — widen it.
+    if(dimScope==='tia' && !tiaDims().some(function(x){ return x.id===currentDim; })) dimScope='all';
+    (function(){ var w=document.getElementById('dimScope'); if(!w) return;
+      w.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-scope')===dimScope); }); })();
     if(d.moyScores) moyScores=d.moyScores;
     if(d.eoyScores) eoyScores=d.eoyScores;
     eoyDone=!!d.eoyDone;
