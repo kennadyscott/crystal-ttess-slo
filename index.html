@@ -757,8 +757,8 @@
         <button role="tab" class="active" data-panel="boysetup">BOY Setup</button>
         <button role="tab" data-panel="evidence">Evidence Lockers</button>
         <button role="tab" data-panel="ttess">T-TESS Rubric</button>
-        <button role="tab" data-panel="moy">MOY</button>
         <button role="tab" data-panel="progress">Progress</button>
+        <button role="tab" data-panel="moy">MOY</button>
         <button role="tab" data-panel="eoy">EOY</button>
       </div>
 
@@ -1235,10 +1235,14 @@
       <div id="panel-ttess" hidden>
         <section class="ci-card">
           <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
-            <div><div class="ci-eyebrow">The 35% · Teacher performance</div><h2>T-TESS Rubric · Domains 2 &amp; 3</h2></div>
+            <div><div class="ci-eyebrow">Teacher performance · your T-TESS year</div><h2>T-TESS Rubric</h2></div>
             <div class="ci-ttess-summary" id="ttessSummary">—</div>
           </header>
-          <p class="sub">Collect evidence and track your standing across the Instruction and Learning Environment dimensions. TIA looks for a cumulative <b>3.75</b> across Domains 2 &amp; 3. <b>Proficient</b> is the expected level; <b>Accomplished</b> and <b>Distinguished</b> require students to drive their own learning.</p>
+          <p class="sub">Rate yourself and collect evidence across all <b>16 dimensions</b>. Only <b>Domains 2 &amp; 3</b> feed the TIA 35%, and the score above counts those eight alone — Domains 1 and 4 are tracked for your appraisal without touching that number. <b>Proficient</b> is the expected level; <b>Accomplished</b> and <b>Distinguished</b> require students to drive their own learning.</p>
+          <div class="ci-dim-scope" id="dimScope">
+            <button type="button" class="active" data-scope="tia">TIA focus · Domains 2–3</button>
+            <button type="button" data-scope="all">Full rubric · all 16</button>
+          </div>
           <div class="ci-ttess-layout">
             <nav class="ci-dim-nav" id="dimNav"></nav>
             <div class="ci-dim-detail" id="dimDetail"></div>
@@ -1294,15 +1298,30 @@
               <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2>Progress toward targets</h2></div>
               <div class="ci-target-summary" id="progSummary">—</div>
             </header>
-            <p class="sub">Mastery on the standards aligned to your SLO, from work completed in Crystal Instruction. <b>Click any student</b> to see their BOY → current → target progress.</p>
-            <div class="ci-matrix-wrap">
-              <table class="ci-matrix" id="progMatrix"></table>
+            <div class="ci-benchtabs" id="progToggle" style="margin-bottom:14px;">
+              <button type="button" class="active" data-progview="growth">Growth toward target</button>
+              <button type="button" data-progview="standards">Standards mastery</button>
             </div>
-            <div class="ci-legend" style="margin-top:14px;">
-              <span><i style="background:var(--band-wb)"></i>Well Below</span><span><i style="background:var(--band-b)"></i>Below</span>
-              <span><i style="background:var(--band-t)"></i>Typical</span><span><i style="background:var(--band-a)"></i>Above</span>
-              <span><i style="background:var(--band-wa)"></i>Well Above</span>
-              <span style="margin-left:8px;color:var(--ink-faint);">— % correct on Crystal Instruction work</span>
+
+            <!-- VIEW A: growth toward target (benchmark status) -->
+            <div id="progGrowthView">
+              <p class="sub">Each student's movement from BOY toward their end-of-year target. Current = mid-year score where recorded, otherwise the BOY baseline.</p>
+              <div class="ci-prog-head"><span>Student</span><span>BOY → Current → Target</span><span>Progress</span><span>Status</span></div>
+              <div id="progRows"></div>
+            </div>
+
+            <!-- VIEW B: standards mastery from Crystal Instruction work -->
+            <div id="progStandardsView" hidden>
+              <p class="sub">Mastery on the standards aligned to your SLO, pulled from work students complete in Crystal Instruction — so you can monitor progress <b>between benchmarks</b>. <b>Click any student</b> to see their BOY → current → target.</p>
+              <div class="ci-matrix-wrap">
+                <table class="ci-matrix" id="progMatrix"></table>
+              </div>
+              <div class="ci-legend" style="margin-top:14px;">
+                <span><i style="background:var(--band-wb)"></i>Well Below</span><span><i style="background:var(--band-b)"></i>Below</span>
+                <span><i style="background:var(--band-t)"></i>Typical</span><span><i style="background:var(--band-a)"></i>Above</span>
+                <span><i style="background:var(--band-wa)"></i>Well Above</span>
+                <span style="margin-left:8px;color:var(--ink-faint);">— % correct on Crystal Instruction work</span>
+              </div>
             </div>
           </section>
           <section class="ci-card" style="margin-top:22px;">
@@ -1807,43 +1826,83 @@
       '</section>';
   }
 
-  // --- T-TESS Rubric (Domains 2 & 3) ---
+  // --- T-TESS Rubric (all 4 domains / 16 dimensions) ---
+  // tia:true  = counts toward the TIA 35% (Domains 2 & 3 only) — never let 1.x/4.x enter that average.
+  // obs:true  = seen during the classroom observation. Domains 1 & 4 are NOT observed; the teacher
+  //             assembles that evidence for the goal-setting and end-of-year conferences.
+  // ci:[]     = no honest product claim exists for this dimension (verified by the 2026-07-29 platform
+  //             crawl — see crystal-ttess-alignment.md). Render the caveat, not filler.
   var DIMENSIONS=[
-    {id:'2.1',domain:'Instruction · Domain 2',title:'Achieving Expectations',desc:"The teacher supports all learners in their pursuit of high levels of academic and social-emotional success.",ci:["Real-time student data during instruction lets you persist until all students reach the objective","Built-in Skill Builder remediation pathways support understanding within the lesson","Exit tickets and checkpoints make mastery visible for every student"]},
-    {id:'2.2',domain:'Instruction · Domain 2',title:'Content Knowledge & Expertise',desc:"The teacher uses content and pedagogical expertise to design and execute lessons aligned with state standards, related content, and student needs.",ci:["ClearLessons and ClearSheets are built to TEKS with accurate, grade-level content","Snap Lessons let you reteach a specific concept with precision","Lesson sequences connect prior knowledge to new learning"]},
-    {id:'2.3',domain:'Instruction · Domain 2',title:'Communication',desc:"The teacher clearly and accurately communicates to support persistence, deeper learning, and effort.",ci:["ClearLessons model clear explanations and precise academic vocabulary","Checkpoints prompt student discussion and questioning","Worked examples and visuals make thinking visible"]},
-    {id:'2.4',domain:'Instruction · Domain 2',title:'Differentiation',desc:"The teacher differentiates instruction, aligning methods and techniques to diverse student needs.",ci:["Tiered learning paths and Snap Lessons target diverse needs","Group students by real-time data for small-group instruction","ClearSheets are available at multiple levels of support"]},
-    {id:'2.5',domain:'Instruction · Domain 2',title:'Monitor & Adjust',desc:"The teacher formally and informally collects, analyzes, and uses student progress data and makes needed lesson adjustments.",ci:["Real-time checkpoints and exit tickets surface understanding as you teach","Crystal Reports dashboards analyze progress at a glance","Flagged misconceptions help you adjust mid-lesson"]},
-    {id:'3.1',domain:'Learning Environment · Domain 3',title:'Classroom Environment, Routines & Procedures',desc:"The teacher organizes a safe, accessible, and efficient classroom.",ci:["Consistent lesson routines keep learning time efficient","Digital workflows reduce transition downtime","Students access tasks and materials independently"]},
-    {id:'3.2',domain:'Learning Environment · Domain 3',title:'Managing Student Behavior',desc:"The teacher establishes, communicates, and maintains clear expectations for student behavior.",ci:["ClassCade Showdown reinforces expectations with positive rewards","Engagement data highlights when to re-engage students","Clear task structures keep students on task"]},
-    {id:'3.3',domain:'Learning Environment · Domain 3',title:'Classroom Culture',desc:"The teacher leads a mutually respectful and collaborative class of actively engaged learners.",ci:["ClassCade rewards and collaborative games build a positive culture","Students take ownership of their progress and growth","Celebrate growth with badges and recognition"]}
+    {id:'1.1',domain:'Planning · Domain 1',title:'Standards & Alignment',obs:false,desc:"The teacher designs clear, well-organized, sequential lessons that reflect best practice, align with standards and are appropriate for diverse learners.",ci:["Every ClearLesson, Snap Lesson and ClearSheet carries its TEKS standard ID — ClearSheets carry the full standard text too","“Builds On” and “Next Level” name the prior- and next-grade TEKS, so vertical alignment is already documented","Curriculum Connect maps CI resources to your district's adopted program and module"],note:"Sequencing <em>across</em> lessons is still yours — CI has no unit or scope-and-sequence planner. Add your unit plan as an artifact here."},
+    {id:'1.2',domain:'Planning · Domain 1',title:'Data & Assessment',obs:false,desc:"The teacher uses formal and informal methods to measure student progress, then manages and analyzes student data to inform instruction.",ci:["Exit tickets and checkpoints give you a formal and an informal measure in every lesson","Crystal Reports breaks mastery out by TEKS code and reporting category, against bands you set","Lesson Performance puts checkpoint average next to exit ticket — that gap separates a retention problem from an initial struggle"],note:"CI has nowhere to record <b>feedback given to students</b>, and that phrase is explicit in this dimension. Log conferring notes and feedback artifacts here."},
+    {id:'1.3',domain:'Planning · Domain 1',title:'Knowledge of Students',obs:false,desc:"Through knowledge of students and proven practices, the teacher ensures high levels of learning, social-emotional development and achievement for all students.",ci:["The Activate Prior Knowledge slide captures what students already bring to a lesson","The SEL check records how each student is arriving, lesson by lesson","Per-standard history shows what each student has and hasn't mastered"],note:"CI's student record holds only name, ID, grade and class — <b>no emergent-bilingual/ELPS level, IEP, 504 or reading level.</b> Bring that from your own records; it's the difference between Developing and Proficient here."},
+    {id:'1.4',domain:'Planning · Domain 1',title:'Activities',obs:false,desc:"The teacher plans engaging, flexible lessons that encourage higher-order thinking, persistence and achievement.",ci:["Three resource tiers: a full ClearLesson, a single-block Snap Lesson, or ClearSheet practice","Varied item formats — multiple choice, drag-and-drop, and multi-select reasoning tasks","My Lessons lets you upload your own lesson and add checkpoints, APKs and polls to it"],note:"Items carry no DOK or rigor tag, so describe the thinking a task demands in your own words. Student <em>choice</em> of activity isn't a CI affordance — that evidence is yours."},
+
+    {id:'2.1',domain:'Instruction · Domain 2',title:'Achieving Expectations',tia:true,obs:true,desc:"The teacher supports all learners in their pursuit of high levels of academic and social-emotional success.",ci:["Exit-ticket mastery per student makes “did every student reach it?” visible","Crystal Analysis names the students who didn't and groups them for reteach","The SEL check is direct evidence on the social-emotional half of this dimension"],note:"CI shows current mastery, not a <b>retest trail</b> — so note the result after you reteach. “Persists until all students reach the objective” needs the before <em>and</em> the after."},
+    {id:'2.2',domain:'Instruction · Domain 2',title:'Content Knowledge & Expertise',tia:true,obs:true,desc:"The teacher uses content and pedagogical expertise to design and execute lessons aligned with state standards, related content and student needs.",ci:["“Builds On” and “Next Level” connect prior and future learning explicitly","Instructional Blocks break a standard into its conceptual pieces","Per-slide Teacher Tips deliver the pedagogical move at the moment you need it"],note:"Two cautions: this dimension rates <em>your</em> expertise, so frame CI as support rather than script. And “anticipates possible student misunderstandings” is on you — CI has no misconception library yet."},
+    {id:'2.3',domain:'Instruction · Domain 2',title:'Communication',tia:true,obs:true,desc:"The teacher clearly and accurately communicates to support persistence, deeper learning and effort.",ci:["Learning targets are written student-facing (“I can…”), projected, with a Spanish toggle","Probing questions are built into the instructional slides","Teacher Tips script wait time and share-out explicitly"],note:"No sentence stems, language scaffolds or vocabulary supports for emergent bilinguals exist in CI today — bring your own and record them here."},
+    {id:'2.4',domain:'Instruction · Domain 2',title:'Differentiation',tia:true,obs:true,desc:"The teacher differentiates instruction, aligning methods and techniques to diverse student needs.",ci:["Crystal Analysis builds three tiers — Intensive Support, Targeted Reteach, Proficient — with named students","Small Groups persists those groups, so grouping becomes a record rather than a one-off","Snap Lessons are indexed to the exact Instructional Block that Crystal Analysis flagged","ClearSheets carry Breakouts and Remediation Breakouts; Skill Builders are single-skill by design"],note:"“View Reteach Suggestions” returns <em>strategies</em>, not links to resources — so note which Snap Lesson or Skill Builder you actually used. That's the evidence, not the suggestion."},
+    {id:'2.5',domain:'Instruction · Domain 2',title:'Monitor & Adjust',tia:true,obs:true,desc:"The teacher formally and informally collects, analyzes and uses student progress data and makes needed lesson adjustments.",ci:["Checkpoints run mid-lesson, and Add CFU inserts an unplanned check when you need one","Live Monitor shows item-level correctness by name while students work — with Pause for Instruction","A paused lesson is a saved, resumable record of exactly where you stopped"],note:"CI proves you <b>had</b> the data; nothing records what you did next. Log the adjustment itself here — monitoring alone reads as Proficient, and Accomplished and Distinguished both require the adjustment."},
+
+    {id:'3.1',domain:'Learning Environment · Domain 3',title:'Classroom Environment, Routines & Procedures',tia:true,obs:true,desc:"The teacher organizes a safe, accessible and efficient classroom.",ci:[],note:"This dimension is about physical space, transitions and materials — almost none of it lives in software, and we'd rather say so than stretch. The one real hook: your Small Groups are named for actual routines (Centers Rotation, Enrichment Block), which documents the structure. Everything else here is walkthrough notes, seating charts and procedure charts you add yourself."},
+    {id:'3.2',domain:'Learning Environment · Domain 3',title:'Managing Student Behavior',tia:true,obs:true,desc:"The teacher establishes, communicates and maintains clear expectations for student behavior.",ci:[],note:"CI has no behavior-standards, incident or redirection tracking — ClassCade coins are a reward ledger, not a behavior system. Build this dimension from your classroom expectations, your campus behavior plan and appraiser walkthrough notes."},
+    {id:'3.3',domain:'Learning Environment · Domain 3',title:'Classroom Culture',tia:true,obs:true,desc:"The teacher leads a mutually respectful and collaborative class of actively engaged learners.",ci:["Every Lesson Summary keeps a dated, per-student SEL record — very few platforms capture this at all","The Participation tab logs who engaged, lesson by lesson","ClassCade Showdown runs collaborative team review, and students gift recognition coins to each other"],note:"The SEL check is a three-point mood reading, not a culture measure. Pair it with your own evidence of students encouraging one another."},
+
+    {id:'4.1',domain:'Professional Practices · Domain 4',title:'Professional Demeanor & Ethics',obs:false,desc:"The teacher meets district expectations for attendance, professional appearance, decorum, and procedural, ethical, legal and statutory responsibilities.",ci:[],note:"The Educators' Code of Ethics isn't a software surface, and we won't pretend otherwise. CI contributes only a consistency record — a dated trail of lessons taught, assignments given and summaries kept. Use this space for your own documentation."},
+    {id:'4.2',domain:'Professional Practices · Domain 4',title:'Goal Setting',obs:false,desc:"The teacher reflects on his/her practice.",ci:["This SLO <em>is</em> your goal artifact — BOY baseline, per-student growth targets, appraiser approval","Crystal Reports supplies the per-standard baseline and trend a defensible goal needs","Every rating and artifact you file in this rubric becomes part of your reflection record"],note:"This is the dimension this tool was built for. Your goal-setting conference (GSPD) happens at the start of the year — set the SLO first, and the rest of the year fills itself in."},
+    {id:'4.3',domain:'Professional Practices · Domain 4',title:'Professional Development',obs:false,desc:"The teacher enhances the professional community.",ci:[],note:"CI has no PD library or completion record today. Add your PD certificates, coaching-cycle notes and PLC contributions here — this dimension is entirely yours to document."},
+    {id:'4.4',domain:'Professional Practices · Domain 4',title:'School Community Involvement',obs:false,desc:"The teacher demonstrates leadership with students, colleagues and community members in the school, district and community through effective communication and outreach.",ci:["Assignments pushed at District and School level leave a record of campus-wide work you took part in","Curriculum Connect ties your practice to the district's adopted program"],note:"CI has no family-communication or parent-facing reporting. Add parent contact logs, committee work and outreach here."}
   ];
   var RATENAME={5:'Distinguished',4:'Accomplished',3:'Proficient',2:'Developing',1:'Improvement Needed'};
   var RATEBAND={5:'--band-wa',4:'--band-a',3:'--band-t',2:'--band-b',1:'--band-wb'};
-  var ratingByDim={}, currentDim='2.1';
+  var ratingByDim={}, currentDim='2.1', dimScope='tia';
   var evidenceByDim={ '2.1':[
     {type:'ClearLesson Exit Ticket',label:'Solve 1-Step Multiplication — class avg 95%'},
     {type:'ClearSheet',label:'Solve 1-Step Multiplication — class avg 98%'} ]};
   function findDim(id){ for(var i=0;i<DIMENSIONS.length;i++){ if(DIMENSIONS[i].id===id) return DIMENSIONS[i]; } return DIMENSIONS[0]; }
-  function ttessAvg(){ var k=Object.keys(ratingByDim); if(!k.length) return null; var t=0; k.forEach(function(x){t+=ratingByDim[x];}); return t/k.length; }
+  function tiaDims(){ return DIMENSIONS.filter(function(d){ return d.tia; }); }
+  function scopedDims(){ return dimScope==='tia' ? tiaDims() : DIMENSIONS; }
+  // TIA's 35% is Domains 2 & 3 ONLY. Ratings on 1.x and 4.x must never enter this average.
+  function ttessAvg(){
+    var t=0,n=0;
+    tiaDims().forEach(function(d){ var r=ratingByDim[d.id]; if(r){ t+=r; n++; } });
+    return n?t/n:null;
+  }
+  function ratedCount(list){ var n=0; list.forEach(function(d){ if(ratingByDim[d.id]) n++; }); return n; }
   function updateTtessSummary(){
     var el=document.getElementById('ttessSummary'); if(!el) return;
-    var a=ttessAvg(), rated=Object.keys(ratingByDim).length;
-    if(a==null){ el.textContent='Not yet rated'; el.className='ci-ttess-summary'; }
-    else { el.textContent='Avg '+a.toFixed(2)+' / 3.75 · '+rated+' of '+DIMENSIONS.length+' rated';
-      el.className='ci-ttess-summary'+(a>=3.75?' met':''); }
+    var a=ttessAvg(), tiaRated=ratedCount(tiaDims()), allRated=ratedCount(DIMENSIONS);
+    var tia=(a==null)
+      ? '<b>TIA · Domains 2–3</b> not yet rated'
+      : '<b>TIA · Domains 2–3</b> '+a.toFixed(2)+' / 3.75 · '+tiaRated+' of '+tiaDims().length;
+    el.innerHTML=tia+'<span class="sep"></span><span class="all">'+allRated+' of '+DIMENSIONS.length+' dimensions rated</span>';
+    el.className='ci-ttess-summary'+(a!=null&&a>=3.75?' met':'');
   }
   function renderDimNav(){
     var nav=document.getElementById('dimNav'); if(!nav) return; nav.innerHTML='';
-    var lastDomain='';
-    DIMENSIONS.forEach(function(d){
-      if(d.domain!==lastDomain){ lastDomain=d.domain; var h=document.createElement('div'); h.className='ci-dim-domain'; h.textContent=d.domain; nav.appendChild(h); }
+    var list=scopedDims(), lastDomain='';
+    // Keep the detail pane in sync if the current dimension fell out of scope.
+    if(!list.some(function(d){ return d.id===currentDim; })) currentDim=list[0].id;
+    list.forEach(function(d){
+      if(d.domain!==lastDomain){ lastDomain=d.domain; var h=document.createElement('div'); h.className='ci-dim-domain';
+        h.innerHTML=d.domain+(d.obs?'':'<span class="ci-dim-unobs" title="Not seen during the classroom observation — you assemble this evidence for your conferences">not observed</span>');
+        nav.appendChild(h); }
       var r=ratingByDim[d.id];
       var b=document.createElement('button'); b.type='button'; if(d.id===currentDim) b.className='active';
       b.innerHTML='<span class="code">'+d.id+'</span><span>'+d.title+'</span>'+
         (r?'<span class="rate-dot" style="background:var('+RATEBAND[r]+')">'+r+'</span>':'<span class="rate-dot empty">–</span>');
       b.addEventListener('click',function(){ currentDim=d.id; renderDimNav(); renderDimDetail(d.id); scheduleSave(); });
       nav.appendChild(b);
+    });
+  }
+  function bindDimScope(){
+    var wrap=document.getElementById('dimScope'); if(!wrap||wrap.dataset.bound) return; wrap.dataset.bound='1';
+    wrap.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        dimScope=b.getAttribute('data-scope');
+        wrap.querySelectorAll('button').forEach(function(x){ x.classList.toggle('active', x===b); });
+        renderDimNav(); renderDimDetail(currentDim); scheduleSave();
+      });
     });
   }
   function renderDimDetail(id){
@@ -1854,6 +1913,15 @@
       return '<button type="button" class="ci-rate'+(r===p?' sel':'')+'" data-pt="'+p+'"><span class="pt" style="background:var('+RATEBAND[p]+')">'+p+'</span>'+RATENAME[p]+'</button>';
     }).join('');
     var help=d.ci.map(function(c){ return '<li><span class="dot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span><span>'+c+'</span></li>'; }).join('');
+    // Help bullets are gated on verified platform coverage. Where CI has no honest claim
+    // (3.1, 3.2, 4.1, 4.3) we show the caveat instead of filler.
+    var helpHTML=d.ci.length
+      ? '<div class="ci-dim-section"><h4>How Crystal Instruction helps</h4><ul class="ci-help">'+help+'</ul>'+
+          (d.note?'<div class="ci-dim-note"><b>Watch for:</b> '+d.note+'</div>':'')+'</div>'
+      : '<div class="ci-dim-section"><h4>How Crystal Instruction helps</h4>'+
+          '<div class="ci-help-none"><span class="tag">Not a Crystal Instruction strength</span>'+(d.note||'')+'</div></div>';
+    var unobs=d.obs?'':'<div class="ci-dim-unobs-note">This dimension is <b>not rated during the classroom observation.</b> '+
+      'Your appraiser sees it through the goal-setting conference, the end-of-year conference and the artifacts you bring — which is exactly why collecting it here matters.</div>';
     var items=evidenceByDim[id]||(evidenceByDim[id]=[]);
     var itemsHTML=items.length ? items.map(function(it,idx){
       return '<div class="ci-evi-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span>'+
@@ -1864,9 +1932,11 @@
       '<div class="dim-eyebrow">'+d.domain+'</div>'+
       '<div class="dim-head">'+d.id+' · '+d.title+'</div>'+
       '<div class="desc-box">'+d.desc+'</div>'+
+      unobs+
       '<h4>Your rating</h4><div class="ci-rate-row">'+rates+'</div>'+
-      '<div class="ci-rate-note">Proficient (3) is the expected level. Accomplished and Distinguished require students to drive their own learning.</div>'+
-      '<div class="ci-dim-section"><h4>How Crystal Instruction helps</h4><ul class="ci-help">'+help+'</ul></div>'+
+      '<div class="ci-rate-note">Proficient (3) is the expected level. Accomplished and Distinguished require students to drive their own learning.'+
+        (d.tia?'':' <b>This dimension is not part of the TIA 35%</b> — it counts toward your T-TESS appraisal only.')+'</div>'+
+      helpHTML+
       '<div class="ci-dim-section"><h4>Evidence I\'ve collected</h4>'+
         '<div class="ci-evi-items">'+itemsHTML+'</div>'+
         '<div class="ci-evi-add" id="dimAdd">'+
@@ -1979,6 +2049,19 @@
     var g=currentGoal();
     return (g && g.key!=='own' ? g.title : 'Your SLO standards');
   }
+  // Progress has two views: benchmark growth vs. standards mastery from CI work
+  var progView='growth';
+  function applyProgView(){
+    var gv=document.getElementById('progGrowthView'), sv=document.getElementById('progStandardsView');
+    if(gv) gv.hidden=(progView!=='growth');
+    if(sv) sv.hidden=(progView!=='standards');
+    document.querySelectorAll('#progToggle button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-progview')===progView);
+    });
+  }
+  document.querySelectorAll('#progToggle button').forEach(function(b){
+    b.addEventListener('click',function(){ progView=b.getAttribute('data-progview'); applyProgView(); scheduleSave(); });
+  });
   function renderProgress(){
     var ready=progressReady();
     var nd=document.getElementById('progNoData'), mn=document.getElementById('progMain');
@@ -1986,6 +2069,7 @@
     if(!ready) return;
     var u=scoreUnit(), stds=sloStandards(), list=studentList();
     var onCount=0, dist={wb:0,b:0,t:0,a:0,wa:0};
+    var rows=document.getElementById('progRows'); if(rows) rows.innerHTML='';
 
     // strand banner + standard columns
     var html='<thead>'+
@@ -2007,6 +2091,21 @@
         return '<td class="cell" style="background:var('+BANDVAR[pctBand(v)]+')">'+v+'</td>';
       }).join('');
 
+      // VIEW A row: growth toward target
+      if(rows){
+        var lrow=document.createElement('div'); lrow.className='ci-prog-row';
+        lrow.innerHTML='<span class="name">'+esc(st.name)+'</span>'+
+          '<span class="ci-prog-flow">'+
+            '<span class="chip" style="background:var('+BANDVAR[classifyBand(pre)]+')">'+pre+u+'</span><span class="arrow">→</span>'+
+            '<span class="chip" style="background:var('+BANDVAR[classifyBand(cur)]+')">'+cur+u+'</span><span class="arrow">→</span>'+
+            '<span class="chip" style="background:'+(tgt!=null?'var('+BANDVAR[classifyBand(tgt)]+')':'var(--ink-faint)')+'">'+(tgt!=null?tgt+u:'—')+'</span>'+
+          '</span>'+
+          '<span class="ci-prog-bar"><span style="width:'+frac+'%"></span></span>'+
+          '<span class="ci-status '+s.cls+'">'+s.txt+'</span>';
+        rows.appendChild(lrow);
+      }
+
+      // VIEW B row: standards matrix
       html+='<tr class="srow" data-i="'+i+'">'+
         '<th class="stu"><button type="button" data-i="'+i+'">'+esc(st.name)+
           '<svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6"/></svg>'+
@@ -2030,6 +2129,7 @@
         if(det){ det.hidden=!det.hidden; row.classList.toggle('open',!det.hidden); }
       });
     });
+    applyProgView();
     var el=document.getElementById('progSummary'); if(el) el.textContent=onCount+' of '+list.length+' on track or better';
     // suggested plans by band (only groups with students)
     var pg=document.getElementById('planGroups'); pg.innerHTML='';
@@ -2374,7 +2474,7 @@
       locked:sloLocked,
       evidence:evidenceByStudent, notes:notesByStudent, eviStudent:currentEviStudent,
       ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim,
-      moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone,
+      moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone, progView:progView,
       step:currentStep
     };
   }
@@ -2433,6 +2533,7 @@
     if(d.moyScores) moyScores=d.moyScores;
     if(d.eoyScores) eoyScores=d.eoyScores;
     eoyDone=!!d.eoyDone;
+    if(d.progView) progView=d.progView;
     setStatus('saved','✓ All changes saved');
     return true;
   }
