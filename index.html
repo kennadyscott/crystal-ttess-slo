@@ -6,13 +6,15 @@
 <title>Crystal Instruction — T-TESS / SLO Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* ============================================================
      Crystal Instruction — T-TESS / SLO Generator
      Design tokens. Devs: everything is driven from these vars.
-     Colors + logo taken from brand assets; confirm the exact
-     display/body FONT against production (see --font-display).
+     Colors + logo taken from brand assets.
+     FONT: Outfit, chosen deliberately over production's Inter.
+     Production teacher.css still serves Inter — if this prototype's
+     type is adopted, that has to change too or the two will diverge.
      ============================================================ */
   :root{
     --ci-magenta:#E313C4;   /* brand fuchsia (from logo) */
@@ -45,8 +47,8 @@
     --shadow-lift:0 6px 18px rgba(162,63,208,.18);
 
     /* Crystal Instruction UI font is Inter (from production teacher.css). */
-    --font-display:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    --font-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-display:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-body:"Outfit",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
     --font-logo:"Baloo 2","SF Pro Rounded",ui-rounded,"Quicksand",system-ui,sans-serif; /* wordmark only, echoes the logo */
   }
 
@@ -269,20 +271,19 @@
   a:focus-visible,button:focus-visible,textarea:focus-visible{outline:2px solid var(--ci-magenta);outline-offset:2px;}
 
   /* ---------- BOY sub-tabs (Personal Plan / Targeted Skill Profile) ---------- */
-  /* File-folder tabs: the active step is a tab ON the card below it, not a bar
-     floating above it. Side padding keeps tabs clear of the card's 20px corners. */
-  .ci-subtabs{display:flex;gap:3px;align-items:flex-end;padding:0 20px;margin:-4px 0 0;border-bottom:0;}
-  .ci-subtabs button{position:relative;top:1px;display:inline-flex;align-items:center;gap:8px;
-    border:1px solid transparent;border-bottom:0;background:none;
-    font-family:var(--font-display);font-weight:800;font-size:14px;color:var(--ink-faint);
-    padding:10px 15px 11px;cursor:pointer;border-radius:12px 12px 0 0;white-space:nowrap;
+  /* File-folder tabs. Every step is an opaque tab; the active one is white and
+     taller. They sit ON the panel rather than merging into it — the panels don't
+     all start with a white card (Skill Profile opens with the magenta banner), so
+     bleeding the tab into the content only ever looked right on some steps. */
+  .ci-subtabs{display:flex;gap:4px;align-items:flex-end;padding:0 20px;margin:-4px 0 0;border-bottom:0;}
+  .ci-subtabs button{position:relative;display:inline-flex;align-items:center;gap:8px;
+    background:#D7E3F0;border:1px solid transparent;border-bottom:0;
+    font-family:var(--font-display);font-weight:700;font-size:14px;color:var(--ink-soft);
+    padding:9px 15px 10px;cursor:pointer;border-radius:12px 12px 0 0;white-space:nowrap;
     transition:background .15s,color .15s;}
-  .ci-subtabs button:hover:not(.active){color:var(--ink);background:rgba(255,255,255,.6);}
-  .ci-subtabs button.active{background-color:var(--card);border-color:var(--line);color:var(--ci-magenta-deep);
-    box-shadow:0 -4px 12px rgba(27,27,58,.05);}
-  /* hide the card's top border where the tab meets it, so they read as one shape */
-  .ci-subtabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:3px;background-color:var(--card);}
-  /* the folder body must touch the tabs */
+  .ci-subtabs button:hover:not(.active){background:#C9D9EA;color:var(--ink);}
+  .ci-subtabs button.active{background:#fff;border-color:var(--line);color:var(--ci-magenta-deep);
+    font-weight:800;padding-top:12px;padding-bottom:12px;box-shadow:0 -3px 10px rgba(27,27,58,.07);}
   #panel-boysetup > div[id^="view-"]{margin-top:0;}
   .ci-subtabs button i{font-style:normal;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;flex:none;
     background:#E1E7F0;color:var(--ink-faint);font-size:11px;font-weight:800;font-family:var(--font-display);}
