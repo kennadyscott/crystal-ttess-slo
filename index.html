@@ -427,6 +427,19 @@
   .ci-evi-btn.add{background:var(--ci-grad);color:#fff;box-shadow:var(--shadow-lift);}
   .ci-evi-btn.upload{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
   .ci-evi-btn.upload:hover{border-color:#C9D2DE;}
+  /* per-item evidence note */
+  .ci-evi-entry{margin-bottom:8px;}
+  .ci-evi-entry .ci-evi-item{margin-bottom:0;}
+  .ci-note-btn{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--line);background:#fff;
+    color:var(--ink-soft);font-weight:700;font-size:11px;padding:5px 10px;border-radius:999px;cursor:pointer;white-space:nowrap;flex:none;}
+  .ci-note-btn:hover{border-color:#C9D2DE;color:var(--ink);}
+  .ci-note-btn.on{background:var(--pink-soft);border-color:#F0D9EC;color:var(--ci-magenta-deep);}
+  .ci-evi-note{padding:8px 12px 0 49px;}
+  .ci-evi-note[hidden]{display:none;}
+  .ci-evi-note textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;
+    font-family:var(--font-body);font-size:12.5px;color:var(--ink);resize:vertical;min-height:52px;background:#FAFBFD;}
+  .ci-evi-note textarea:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);background:#fff;}
+
   .ci-ttess-toggle{border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);font-weight:700;font-size:11px;
     padding:5px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;flex:none;}
   .ci-ttess-toggle:hover{border-color:#C9D2DE;}
@@ -2145,14 +2158,34 @@
     // collected list
     var coll=document.getElementById('eviCollected');
     coll.innerHTML = items.length ? items.map(function(it,idx){
-      return '<div class="ci-evi-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span>'+
+      var hasNote=!!(it.note&&it.note.trim());
+      return '<div class="ci-evi-entry">'+
+        '<div class="ci-evi-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span>'+
         '<span class="lab">'+esc(it.title)+'<small>'+esc(it.type)+(it.standard?' · '+esc(it.standard):'')+'</small></span>'+
         (it.score?'<span class="sc">'+esc(it.score)+'</span>':'')+
+        '<button type="button" class="ci-note-btn'+(hasNote?' on':'')+'" data-idx="'+idx+'" title="Add a note">'+
+          '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 5h16M4 11h16M4 17h9"/></svg>'+(hasNote?'Note':'Note')+'</button>'+
         '<button type="button" class="ci-ttess-toggle'+(it.ttess?' on':'')+'" data-idx="'+idx+'">'+(it.ttess?'✓ T-TESS':'Tag T-TESS')+'</button>'+
-        '<button class="rm" data-idx="'+idx+'" aria-label="Remove">✕</button></div>';
+        '<button class="rm" data-idx="'+idx+'" aria-label="Remove">✕</button></div>'+
+        '<div class="ci-evi-note" data-idx="'+idx+'"'+(hasNote?'':' hidden')+'>'+
+          '<textarea data-idx="'+idx+'" placeholder="Note about this evidence — what it shows, how the student did, next step…">'+esc(it.note||'')+'</textarea>'+
+        '</div></div>';
     }).join('') : '<div class="ci-evi-empty">No evidence yet — connect what you\'ve taught below, or upload your own.</div>';
     coll.querySelectorAll('.ci-ttess-toggle').forEach(function(b){ b.addEventListener('click',function(){ items[+b.getAttribute('data-idx')].ttess=!items[+b.getAttribute('data-idx')].ttess; renderEvidence(name); scheduleSave(); }); });
     coll.querySelectorAll('.rm').forEach(function(b){ b.addEventListener('click',function(){ items.splice(+b.getAttribute('data-idx'),1); renderEvidence(name); scheduleSave(); }); });
+    // per-item notes: toggle without re-rendering so typing keeps focus
+    coll.querySelectorAll('.ci-note-btn').forEach(function(b){ b.addEventListener('click',function(){
+      var box=coll.querySelector('.ci-evi-note[data-idx="'+b.getAttribute('data-idx')+'"]');
+      if(!box) return; box.hidden=!box.hidden; if(!box.hidden) box.querySelector('textarea').focus();
+    }); });
+    coll.querySelectorAll('.ci-evi-note textarea').forEach(function(ta){
+      ta.addEventListener('input',function(){
+        var i=+ta.getAttribute('data-idx'); items[i].note=ta.value;
+        var btn=coll.querySelector('.ci-note-btn[data-idx="'+i+'"]');
+        if(btn) btn.classList.toggle('on',!!ta.value.trim());
+        scheduleSave();
+      });
+    });
 
     // taught-library (connect)
     var lib=document.getElementById('eviLibrary'); var libItems=taughtLibrary();
