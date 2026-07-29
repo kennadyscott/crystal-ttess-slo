@@ -3077,7 +3077,7 @@
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
       evidence:evidenceByStudent, notes:notesByStudent, eviStudent:currentEviStudent,
-      levelEvidence:levelEvidence, checkedDesc:checkedDesc, rubricSetupDone:rubricSetupDone, rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
+      levelEvidence:levelEvidence, checkedDesc:checkedDesc, focusLevel:focusLevel, rubricSetupDone:rubricSetupDone, rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
       moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone, progView:progView,
       step:currentStep
     };
@@ -3131,6 +3131,7 @@
     if(d.evidence) evidenceByStudent=d.evidence;
     if(d.notes) notesByStudent=d.notes;
     if(d.eviStudent) currentEviStudent=d.eviStudent;
+    if(d.focusLevel) focusLevel=d.focusLevel;   // resume on the level they left
     if(d.rubricSetupDone) rubricSetupDone=true;
     if(d.rubricVer) rubricVer=d.rubricVer;
     if(d.checkedDesc) checkedDesc=d.checkedDesc;
