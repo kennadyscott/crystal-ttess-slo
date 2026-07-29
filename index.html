@@ -791,6 +791,31 @@
     cursor:pointer;flex:none;display:grid;place-items:center;}
   .ci-modal-x:hover{background:#E4E8EF;color:var(--ink);}
   .ci-modal-sub{color:var(--ink-soft);font-size:13.5px;margin-bottom:18px;line-height:1.5;}
+  .ci-modal-card.wide{width:min(660px,100%);}
+  .ci-linkbtn{border:0;background:transparent;color:var(--ci-magenta-deep);font-family:var(--font-body);
+    font-weight:700;font-size:11.5px;cursor:pointer;text-decoration:underline;padding:0 0 0 8px;vertical-align:middle;}
+  .rs-quick{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0 20px;}
+  @media(max-width:560px){.rs-quick{grid-template-columns:1fr;}}
+  .rs-fact{background:#FAFBFD;border:1px solid var(--line);border-radius:10px;padding:10px 13px;
+    font-size:12.5px;color:var(--ink-soft);line-height:1.45;}
+  .rs-fact b{color:var(--ink);}
+  .rs-pick-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);margin-bottom:9px;}
+  .rs-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:560px){.rs-pick{grid-template-columns:1fr;}}
+  .rs-opt{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;cursor:pointer;
+    border:2px solid var(--line);background:#fff;border-radius:var(--r-md);padding:13px 15px;font-family:var(--font-body);}
+  .rs-opt:hover{border-color:#D9B9D0;}
+  .rs-opt.active{border-color:var(--ci-magenta);background:var(--pink-soft);box-shadow:0 0 0 3px rgba(227,19,196,.1);}
+  .rs-opt-name{font-family:var(--font-display);font-weight:800;font-size:16px;color:var(--ink);}
+  .rs-opt-sub{font-size:12px;color:var(--ink-soft);}
+  .rs-opt-tag{margin-top:5px;font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    background:#EEF1F6;color:var(--ink-soft);padding:2px 8px;border-radius:999px;}
+  .rs-opt-tag.alt{background:#FDF1E3;color:#9A6212;}
+  .rs-note{font-size:12px;color:var(--ink-faint);margin-top:10px;line-height:1.45;}
+  .rs-more{margin-top:16px;border-top:1px solid var(--line);padding-top:12px;}
+  .rs-more summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--ci-magenta-deep);}
+  .rs-more p{font-size:12.5px;color:var(--ink-soft);line-height:1.5;margin-top:9px;}
+  .rs-more .src{font-size:11px;color:var(--ink-faint);}
   .ci-modal-foot{display:flex;justify-content:flex-end;gap:12px;margin-top:22px;flex-wrap:wrap;}
   .ci-modal-foot .btn{padding:12px 20px;font-size:14px;}
   @media (prefers-reduced-motion:reduce){.ci-modal-card{animation:none;}}
@@ -1370,43 +1395,12 @@
           <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
             <div>
               <div class="ci-eyebrow">Teacher performance · your T-TESS year</div>
-              <h2>T-TESS Rubric <span class="ci-vtag" id="rubricTag">2026–27 rubric<span class="ci-vtag-sub">16 dimensions</span></span></h2>
+              <h2>T-TESS Rubric <span class="ci-vtag" id="rubricTag">2026–27 rubric<span class="ci-vtag-sub">16 dimensions</span></span>
+                <button type="button" class="ci-linkbtn" id="openRubricSetup">Change</button>
+              </h2>
             </div>
             <div class="ci-ttess-summary" id="ttessSummary">—</div>
           </header>
-
-          <!-- Which rubric does this district use? Chosen up front, persisted. -->
-          <div class="ci-rubricpick">
-            <span class="lb">Your district's rubric</span>
-            <div class="ci-benchtabs" id="rubricPick">
-              <button type="button" class="active" data-rubric="t1">T-TESS <small>16 dimensions</small></button>
-              <button type="button" data-rubric="t2">T-TESS 2 <small>pilot · 11 dimensions</small></button>
-            </div>
-            <span class="hint" id="rubricHint">The current statewide rubric. Switch to T-TESS 2 if your district is in the 2026–27 pilot.</span>
-          </div>
-          <p class="sub">Rate yourself and collect evidence across all <b>16 dimensions</b>. Only <b>Domains 2 &amp; 3</b> feed the TIA 35%, and the score above counts those eight alone — Domains 1 and 4 are tracked for your appraisal without touching that number. <b>Proficient</b> is the expected level; <b>Accomplished</b> and <b>Distinguished</b> require students to drive their own learning.</p>
-          <!-- T-TESS 2 readiness. Claims are deliberately limited to what's true today:
-               we know the timeline and your evidence carries forward. We do NOT claim the
-               T-TESS 2 rubric is implemented — that mapping is still to come. -->
-          <div class="ci-t2" id="t2Band">
-            <button type="button" class="ci-t2-head" id="t2Toggle" aria-expanded="false" aria-controls="t2Body">
-              <span class="ci-t2-badge">Heads up</span>
-              <span class="ci-t2-title"><b>T-TESS 2 is coming</b> — 11 dimensions, four domains, and a rubric that asks for percentages. We've read it. Here's what changes for you.</span>
-              <span class="ci-t2-chev" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
-              </span>
-            </button>
-            <div class="ci-t2-body" id="t2Body" hidden>
-              <div class="ci-t2-time">
-                <div class="ci-t2-step"><span class="yr">2026–27</span><span class="lb">Pilot year — 15 school systems. <b>Everyone else stays on the 16-dimension rubric you see here.</b> Appraiser recertification training runs spring/summer.</span></div>
-                <div class="ci-t2-step"><span class="yr">2027–28</span><span class="lb">TEA's recommended adoption year for T-TESS 2.</span></div>
-                <div class="ci-t2-step"><span class="yr">2028–29</span><span class="lb">Fallback adoption year for districts that can't move in 2027–28.</span></div>
-              </div>
-              <p class="ci-t2-note">T-TESS 2 keeps four domains — renamed <b>Instructional Preparation, Instructional Delivery, Learning Environment,</b> and <b>Professional Practices &amp; Responsibilities</b> — and reorganises 16 dimensions into 11, each framed as a guiding question. Two things are genuinely new: the higher levels attach <b>explicit percentages</b> to student evidence (Level 3 is 61–80% of students showing expected progress; Level 5 is 96–100%), and one dimension, <b>Lesson Design</b>, applies only to teachers <i>not</i> using SBOE-approved HQIM materials.</p>
-              <p class="ci-t2-note"><b>What that means for the evidence you're filing now.</b> Most of it re-tags cleanly and none of it is wasted. But it isn't automatic: <b>Communication (2.3)</b> and <b>Managing Student Behavior (3.2)</b> have no direct successor and get distributed into other dimensions, a few dimensions move between domains, and several indicators raise the bar — T-TESS 2 names <b>ELPS</b> alignment and differentiation for <b>emergent bilingual, special education and gifted</b> students explicitly. So a piece of evidence can carry forward and still land at a lower level. When your district adopts, we'll walk you through re-tagging rather than pretend it happens by itself.</p>
-              <p class="ci-t2-src">Sources: TEA, <i>T-TESS Refresh: Engagement Update and Pilot</i>; <i>T-TESS 2 Pilot Rubric</i> (teachfortexas.org). Note TEA's announcement letter says 12 dimensions while the published pilot rubric contains 11 — we're using the rubric. T-TESS 2 support is <b>not built into this tool yet</b>; this rubric is the current 16-dimension T-TESS. If your district is in the 2026–27 pilot, check with your appraiser before using this tab for your appraisal.</p>
-            </div>
-          </div>
           <div class="ci-dim-scope" id="dimScope">
             <button type="button" class="active" data-scope="tia">TIA focus · Domains 2–3</button>
             <button type="button" data-scope="all">Full rubric · all 16</button>
@@ -1567,6 +1561,54 @@
           <button class="btn btn-ghost" data-panel-go="boysetup">Back to BOY Setup</button>
         </section>
       </div><!-- /panel-soon -->
+
+      <!-- =================== ONE-TIME T-TESS SETUP (shown before the rubric) =================== -->
+      <div class="ci-modal" id="rubricSetup" hidden>
+        <div class="ci-modal-backdrop" data-rsclose></div>
+        <div class="ci-modal-card wide" role="dialog" aria-modal="true" aria-labelledby="rsTitle">
+          <div class="ci-modal-head">
+            <div>
+              <div class="ci-eyebrow">One-time setup</div>
+              <h2 id="rsTitle">Let's set up your T-TESS rubric</h2>
+            </div>
+          </div>
+
+          <div class="rs-quick">
+            <div class="rs-fact"><b>16 dimensions, 4 domains.</b> You'll rate yourself on each and attach evidence.</div>
+            <div class="rs-fact"><b>Proficient is the expected level</b> — not a C. It means you're doing the work well.</div>
+            <div class="rs-fact"><b>Domains 2 &amp; 3 are the TIA 35%.</b> Domains 1 and 4 count for your appraisal but not that number.</div>
+            <div class="rs-fact"><b>Accomplished &amp; Distinguished need student evidence</b> — students setting goals, self-monitoring, leading. That's the bar.</div>
+          </div>
+
+          <div class="rs-pick-label">Which rubric is your district using this year?</div>
+          <div class="rs-pick">
+            <button type="button" class="rs-opt active" data-rs-rubric="t1">
+              <span class="rs-opt-name">T-TESS</span>
+              <span class="rs-opt-sub">16 dimensions · the current statewide rubric</span>
+              <span class="rs-opt-tag">Most districts</span>
+            </button>
+            <button type="button" class="rs-opt" data-rs-rubric="t2">
+              <span class="rs-opt-name">T-TESS 2</span>
+              <span class="rs-opt-sub">11 dimensions · 2026–27 pilot rubric</span>
+              <span class="rs-opt-tag alt">15 pilot systems</span>
+            </button>
+          </div>
+          <p class="rs-note" id="rsNote">Not sure? Choose T-TESS — it's what almost every district uses in 2026–27. You can change this any time.</p>
+
+          <details class="rs-more">
+            <summary>What's coming with T-TESS 2?</summary>
+            <p>T-TESS 2 keeps four domains and reorganises 16 dimensions into 11, each framed as a guiding question. <b>2026–27</b> is a 15-system pilot; <b>2027–28</b> is TEA's recommended adoption year; <b>2028–29</b> is the fallback. The higher levels attach explicit percentages to student evidence, and Lesson Design applies only to teachers not using SBOE-approved HQIM.</p>
+            <p><b>Your evidence carries forward</b>, but not automatically — Communication (2.3) and Managing Student Behavior (3.2) have no direct successor and get distributed elsewhere. We'll walk you through re-tagging rather than pretend it's seamless.</p>
+            <p class="src">Sources: TEA <i>T-TESS Refresh</i>; <i>T-TESS 2 Pilot Rubric</i>. TEA's letter says 12 dimensions; the published rubric contains 11 — we follow the rubric.</p>
+          </details>
+
+          <div class="ci-modal-foot">
+            <button class="btn btn-primary" id="rsStart">Start my rubric
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
 
       <!-- =================== PERCENTAGE-BANDS MODAL (Skill Profile step) =================== -->
       <div class="ci-modal" id="bandsModal" hidden>
@@ -1948,7 +1990,8 @@
     if(p==='overview'){ var ol=document.getElementById('overviewLocked'), orr=document.getElementById('overviewReady');
       if(ol) ol.hidden=sloLocked; if(orr){ orr.hidden=!sloLocked; if(sloLocked) renderOverview(); } }
     if(p==='evidence'){ fillStudentPicker(); renderEvidence(currentEviStudent); }
-    if(p==='ttess'){ bindT2(); bindDimScope(); bindRubricPick(); applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); }
+    if(p==='ttess'){ bindDimScope(); bindRubricPick(); applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary();
+      if(!rubricSetupDone) openRubricSetup(); }
     if(p==='moy'){ renderMoy(); }
     if(p==='progress'){ renderProgress(); }
     if(p==='eoy'){ renderEoy(); }
@@ -2119,14 +2162,6 @@
       nav.appendChild(b);
     });
   }
-  function bindT2(){
-    var t=document.getElementById('t2Toggle'), b=document.getElementById('t2Body');
-    if(!t||!b||t.dataset.bound) return; t.dataset.bound='1';
-    t.addEventListener('click',function(){
-      var open=t.getAttribute('aria-expanded')==='true';
-      t.setAttribute('aria-expanded',String(!open)); b.hidden=open;
-    });
-  }
   function applyRubricVer(){
     var t2=(rubricVer==='t2');
     var tag=document.getElementById('rubricTag');
@@ -2144,14 +2179,37 @@
       var s=scopedDims(); currentDim=(s[0]||activeDims()[0]).id;
     }
   }
+  var rubricSetupDone=false;
+  function openRubricSetup(){
+    var m=document.getElementById('rubricSetup'); if(!m) return;
+    m.querySelectorAll('.rs-opt').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-rs-rubric')===rubricVer); });
+    m.hidden=false; document.body.style.overflow='hidden';
+  }
+  function closeRubricSetup(){
+    var m=document.getElementById('rubricSetup'); if(!m) return;
+    m.hidden=true; document.body.style.overflow='';
+  }
   function bindRubricPick(){
-    var w=document.getElementById('rubricPick'); if(!w||w.dataset.bound) return; w.dataset.bound='1';
-    w.querySelectorAll('button').forEach(function(b){
+    var m=document.getElementById('rubricSetup'); if(!m||m.dataset.bound) return; m.dataset.bound='1';
+    m.querySelectorAll('.rs-opt').forEach(function(b){
       b.addEventListener('click',function(){
-        rubricVer=b.getAttribute('data-rubric');
-        applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); scheduleSave();
+        m.querySelectorAll('.rs-opt').forEach(function(x){x.classList.remove('active');});
+        b.classList.add('active');
+        var n=document.getElementById('rsNote');
+        if(n) n.textContent = b.getAttribute('data-rs-rubric')==='t2'
+          ? "Pilot rubric. Crystal Instruction alignment for T-TESS 2 isn't mapped yet — you'll rate yourself and attach your own evidence."
+          : "Not sure? Choose T-TESS — it's what almost every district uses in 2026–27. You can change this any time.";
       });
     });
+    m.querySelectorAll('[data-rsclose]').forEach(function(b){ b.addEventListener('click',function(){ if(rubricSetupDone) closeRubricSetup(); }); });
+    document.getElementById('rsStart').addEventListener('click',function(){
+      var sel=m.querySelector('.rs-opt.active');
+      rubricVer = sel ? sel.getAttribute('data-rs-rubric') : 't1';
+      rubricSetupDone=true; closeRubricSetup();
+      applyRubricVer(); renderDimNav(); renderDimDetail(currentDim); updateTtessSummary(); scheduleSave();
+    });
+    var chg=document.getElementById('openRubricSetup');
+    if(chg) chg.addEventListener('click',openRubricSetup);
   }
   function bindDimScope(){
     var wrap=document.getElementById('dimScope'); if(!wrap||wrap.dataset.bound) return; wrap.dataset.bound='1';
@@ -2912,7 +2970,7 @@
       approved:(document.getElementById('adminApproved')||{}).checked||false,
       locked:sloLocked,
       evidence:evidenceByStudent, notes:notesByStudent, eviStudent:currentEviStudent,
-      levelEvidence:levelEvidence, checkedDesc:checkedDesc, rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
+      levelEvidence:levelEvidence, checkedDesc:checkedDesc, rubricSetupDone:rubricSetupDone, rubricVer:rubricVer, ttessRatings:ratingByDim, ttessEvidence:evidenceByDim, ttessDim:currentDim, ttessScope:dimScope,
       moyScores:moyScores, eoyScores:eoyScores, eoyDone:eoyDone, progView:progView,
       step:currentStep
     };
@@ -2966,6 +3024,7 @@
     if(d.evidence) evidenceByStudent=d.evidence;
     if(d.notes) notesByStudent=d.notes;
     if(d.eviStudent) currentEviStudent=d.eviStudent;
+    if(d.rubricSetupDone) rubricSetupDone=true;
     if(d.rubricVer) rubricVer=d.rubricVer;
     if(d.checkedDesc) checkedDesc=d.checkedDesc;
     if(d.levelEvidence) levelEvidence=d.levelEvidence;
