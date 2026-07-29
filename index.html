@@ -169,16 +169,8 @@
   /* ---------- Sub tab bar ---------- */
   /* padding gives the capsule shadows room: overflow-x:auto forces overflow-y:auto,
      which would otherwise clip the 24px soft shadow off the top and bottom */
-  .ci-tabs{display:flex;gap:14px;align-items:flex-end;width:max-content;max-width:100%;
-    overflow-x:auto;padding:4px 4px 14px;margin:-4px -4px -14px;}
-  /* One white capsule per phase. The caption sits in normal flow above it, so the
-     capsule sizes to whichever is wider — a caption can never overflow and clip. */
-  .ci-tabgroup{display:flex;flex-direction:column;gap:5px;}
-  .ci-tabgroup .cap{font-size:9.5px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;
-    color:var(--ink-faint);padding-left:15px;white-space:nowrap;}
-  .ci-tabgroup[data-phase="1"] .cap{color:var(--ci-magenta-deep);}
-  .ci-tabgroup .pill{display:flex;gap:6px;background:#fff;border:1px solid var(--line);
-    border-radius:999px;padding:6px;box-shadow:var(--shadow);align-self:flex-start;}
+  .ci-tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--line);
+    border-radius:999px;padding:6px;box-shadow:var(--shadow);width:max-content;max-width:100%;overflow-x:auto;}
   .ci-tabs button{border:0;background:transparent;font-family:var(--font-body);
     font-weight:700;font-size:13px;color:var(--ink-soft);padding:9px 18px;border-radius:999px;cursor:pointer;white-space:nowrap;}
   .ci-tabs button:hover{background:rgba(27,27,58,.05);}
@@ -1208,27 +1200,14 @@
       <!-- Sub tabs -->
       <div class="ci-tabs-wrap" id="tabsWrap">
       <div class="ci-tabs" role="tablist">
-        <div class="ci-tabgroup" data-phase="1">
-          <span class="cap" aria-hidden="true">Phase 1</span>
-          <div class="pill">
-            <button role="tab" class="active" data-panel="boysetup" aria-label="BOY Setup — Phase 1, set up">BOY Setup</button>
-          </div>
-        </div>
-        <div class="ci-tabgroup" data-phase="2">
-          <span class="cap" aria-hidden="true">Phase 2</span>
-          <div class="pill">
-            <button role="tab" data-panel="overview" aria-label="Overview — Phase 2, monitor progress">Overview</button>
-            <button role="tab" data-panel="evidence" aria-label="Evidence Lockers — Phase 2, monitor progress">Evidence Lockers</button>
-            <button role="tab" data-panel="ttess" aria-label="T-TESS Rubric — Phase 2, monitor progress">T-TESS Rubric</button>
-            <button role="tab" data-panel="progress" aria-label="Progress — Phase 2, monitor progress">Progress</button>
-            <button role="tab" data-panel="moy" aria-label="MOY — Phase 2, monitor progress">MOY</button>
-          </div>
-        </div>
-        <div class="ci-tabgroup" data-phase="3">
-          <span class="cap" aria-hidden="true">Phase 3</span>
-          <div class="pill">
-            <button role="tab" data-panel="eoy" aria-label="EOY — Phase 3, body of evidence">EOY</button>
-          </div>
+        <button role="tab" class="active" data-panel="boysetup" aria-label="BOY Setup — Phase 1, set up">BOY Setup</button>
+        <button role="tab" data-panel="overview" aria-label="Overview — Phase 2, monitor progress">Overview</button>
+        <button role="tab" data-panel="evidence" aria-label="Evidence Lockers — Phase 2, monitor progress">Evidence Lockers</button>
+        <button role="tab" data-panel="ttess" aria-label="T-TESS Rubric — Phase 2, monitor progress">T-TESS Rubric</button>
+        <button role="tab" data-panel="progress" aria-label="Progress — Phase 2, monitor progress">Progress</button>
+        <button role="tab" data-panel="moy" aria-label="MOY — Phase 2, monitor progress">MOY</button>
+        <button role="tab" data-panel="eoy" aria-label="EOY — Phase 3, body of evidence">EOY</button>
+      </div>
         </div>
       </div>
       </div>

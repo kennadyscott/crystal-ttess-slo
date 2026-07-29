@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crystal Instruction — font options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Inter:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Nunito+Sans:wght@400;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --ci-magenta:#E313C4; --ci-magenta-deep:#B80FA0; --ci-purple:#9A2FC9;
+    --ci-grad:linear-gradient(135deg,#E313C4 0%,#9A2FC9 100%);
+    --ink:#383838; --ink-soft:#5B5B60; --ink-faint:#6E6E78;
+    --page:#E7F1F8; --line:#E3E8F0; --pink-soft:#FCE4F2; --teal:#17A2C4;
+    --band-t:#E8C33C; --band-a:#57B87A; --band-wb:#E2664A;
+    --shadow:0 1px 2px rgba(27,27,58,.04),0 8px 24px rgba(27,27,58,.06);
+    --r-lg:20px; --r-md:12px;
+    --ui:"Inter";
+  }
+  body{background:var(--page);color:var(--ink-soft);-webkit-font-smoothing:antialiased;
+    font-family:"Inter",system-ui,sans-serif;line-height:1.5;padding:34px 22px 80px;}
+  .wrap{max-width:1180px;margin:0 auto;}
+  .lede{margin-bottom:26px;}
+  .lede h1{font-family:"Baloo 2",cursive;font-size:30px;color:var(--ink);letter-spacing:-.2px;}
+  .lede h1 span{color:var(--ci-magenta);}
+  .lede p{max-width:70ch;font-size:14.5px;margin-top:6px;color:var(--ink-soft);}
+  .lede code{background:#fff;border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:12.5px;}
+
+  /* ---- each specimen renders the real UI in one candidate face ---- */
+  .spec{background:#fff;border:1px solid var(--line);border-radius:var(--r-lg);
+    box-shadow:var(--shadow);padding:0;margin-bottom:26px;overflow:hidden;}
+  .spec-bar{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+    padding:14px 24px;background:#1A1A1A;color:#fff;}
+  .spec-bar b{font-family:"Inter";font-size:15px;font-weight:800;letter-spacing:-.1px;}
+  .spec-bar .why{font-family:"Inter";font-size:12.5px;color:#B9B9C4;}
+  .spec-bar .pick{font-family:"Inter";margin-left:auto;font-size:11px;font-weight:800;text-transform:uppercase;
+    letter-spacing:.6px;background:var(--ci-magenta);color:#fff;border:0;border-radius:999px;
+    padding:6px 15px;cursor:pointer;}
+  .spec-bar .pick:hover{background:var(--ci-magenta-deep);}
+  .demo{padding:24px 26px 28px;}
+
+  /* everything below inherits the candidate face */
+  .demo{font-family:var(--f);}
+  .eyebrow{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+    color:var(--ci-magenta-deep);}
+  .demo h2{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-.2px;margin:2px 0 5px;}
+  .demo h3{font-size:19px;font-weight:800;color:var(--ink);margin-bottom:5px;}
+  .demo .sub{font-size:14px;color:var(--ink-soft);max-width:74ch;}
+
+  .tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;
+    padding:6px;box-shadow:var(--shadow);width:max-content;max-width:100%;overflow-x:auto;margin:16px 0 18px;}
+  .tabs button{border:0;background:transparent;font-family:inherit;font-weight:700;font-size:13px;
+    color:var(--ink-soft);padding:9px 18px;border-radius:999px;cursor:pointer;white-space:nowrap;}
+  .tabs button.on{background:var(--ci-grad);color:#fff;}
+
+  .card{border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;margin-top:14px;}
+  .goal{display:flex;gap:12px;align-items:flex-start;background:#FDF4FA;border:1.5px solid var(--ci-magenta);}
+  .goal .dot{width:16px;height:16px;border-radius:50%;border:5px solid var(--ci-magenta);flex:none;margin-top:2px;}
+  .goal b{display:block;color:var(--ink);font-size:15px;font-weight:700;margin-bottom:3px;}
+  .goal p{font-size:13.5px;color:var(--ink-soft);}
+  .stds{display:inline-flex;gap:5px;margin-left:8px;}
+  .stds span{background:#EEF3F8;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--ink-faint);}
+
+  .rows{margin-top:16px;border-top:1px solid var(--line);}
+  .row{display:grid;grid-template-columns:130px 92px 1fr 84px;gap:14px;align-items:center;
+    padding:11px 2px;border-bottom:1px solid var(--line);}
+  .row .nm{font-weight:700;color:var(--ink);font-size:13.5px;}
+  .row .sc{justify-self:start;background:var(--band-t);color:#fff;border-radius:7px;padding:3px 11px;
+    font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .row .sc.up{background:var(--band-a);}
+  .row .bar{height:8px;border-radius:5px;background:var(--line);position:relative;overflow:hidden;}
+  .row .bar i{position:absolute;inset:0 auto 0 0;background:var(--ci-grad);border-radius:5px;}
+  .row .st{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;
+    background:#E6F4EC;color:#2E7D5B;border-radius:999px;padding:4px 10px;text-align:center;}
+  .metrics{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px;}
+  .met{background:#FAFBFD;border:1px solid var(--line);border-radius:var(--r-md);padding:12px 18px;}
+  .met .n{font-size:28px;font-weight:800;color:var(--ink);letter-spacing:-.5px;font-variant-numeric:tabular-nums;}
+  .met .l{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-faint);}
+  .btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .btn{font-family:inherit;font-weight:700;font-size:14px;border-radius:11px;padding:11px 20px;cursor:pointer;border:0;}
+  .b1{background:var(--ci-grad);color:#fff;}
+  .b2{background:var(--pink-soft);color:var(--ci-magenta-deep);border:1.5px solid #F0D9EC;}
+  .b3{background:#fff;color:var(--ink);border:1.5px solid var(--line);}
+
+  .note{background:#FFF9E9;border:1px solid #F0DCA8;border-radius:10px;padding:11px 15px;
+    font-size:13px;color:#7A5B12;margin-top:16px;}
+  .stack{margin-top:16px;font-size:12px;color:var(--ink-faint);font-family:"Inter";}
+  .stack b{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="lede">
+    <h1>Crystal <span>Instruction</span> — font options</h1>
+    <p>The same slice of the SLO builder rendered in each candidate. Everything else — colour, spacing, radius, weight — is
+      held identical, so the only variable is the typeface. <b>Inter is what's live now</b> and what production
+      <code>teacher.css</code> uses. Scroll, compare, and tell me a number.</p>
+  </div>
+
+  <div id="specs"></div>
+</div>
+
+<script>
+const FONTS = [
+  { id:1, name:"Inter", stack:"'Inter'", why:"What's live today, and what production teacher.css already serves. Neutral, everywhere, invisible.", },
+  { id:2, name:"Figtree", stack:"'Figtree'", why:"Slightly rounded geometric. Warmest of the group without being childish — closest in spirit to the Baloo 2 wordmark.", },
+  { id:3, name:"Plus Jakarta Sans", stack:"'Plus Jakarta Sans'", why:"More character than Inter: distinctive a, g and k. Reads modern and deliberate rather than default.", },
+  { id:4, name:"Manrope", stack:"'Manrope'", why:"Semi-rounded geometric with tight, even colour. Very clean at small sizes — good for dense tables.", },
+  { id:5, name:"DM Sans", stack:"'DM Sans'", why:"Low contrast, friendly, slightly condensed. Handles small uppercase labels better than most.", },
+  { id:6, name:"Outfit", stack:"'Outfit'", why:"Purely geometric, near-circular bowls. The most 'designed' option; can feel cool at long reading lengths.", },
+  { id:7, name:"Nunito Sans", stack:"'Nunito Sans'", why:"Rounded humanist. The most overtly education-sector choice — soft and approachable.", },
+  { id:8, name:"Source Sans 3", stack:"'Source Sans 3'", why:"Humanist, newsroom-plain. Most conservative; signals institutional rather than product.", },
+];
+
+document.getElementById('specs').innerHTML = FONTS.map(f => `
+  <section class="spec">
+    <div class="spec-bar">
+      <b>${f.id}. ${f.name}</b>
+      <span class="why">${f.why}</span>
+      <button class="pick" data-font="${f.stack}" data-name="${f.name}">Preview everywhere</button>
+    </div>
+    <div class="demo" style="--f:${f.stack},system-ui,sans-serif">
+      <div class="eyebrow">Phase 2 · Monitor Progress</div>
+      <h2>Expected growth for each student</h2>
+      <p class="sub">Each student's BOY score sets their starting point. Drag to set the end-of-year target —
+        aim for meaningful, attainable growth. Targets lock with your SLO.</p>
+
+      <div class="tabs">
+        <button class="on">BOY Setup</button><button>Overview</button><button>Evidence Lockers</button>
+        <button>T-TESS Rubric</button><button>Progress</button><button>MOY</button><button>EOY</button>
+      </div>
+
+      <div class="card goal">
+        <span class="dot"></span>
+        <div>
+          <b>Place Value &amp; Number Relationships
+            <span class="stds"><span>3.2A</span><span>3.2B</span><span>3.2C</span><span>3.2D</span></span></b>
+          <p>Students will compose, decompose, compare, and order whole numbers to 100,000 using place-value understanding.</p>
+        </div>
+      </div>
+
+      <div class="rows">
+        <div class="row"><span class="nm">Kennady</span><span class="sc">62</span>
+          <span class="bar"><i style="width:64%"></i></span><span class="st">On track</span></div>
+        <div class="row"><span class="nm">Rebecca</span><span class="sc up">97</span>
+          <span class="bar"><i style="width:92%"></i></span><span class="st">Target met</span></div>
+        <div class="row"><span class="nm">Jeremy</span><span class="sc">55</span>
+          <span class="bar"><i style="width:38%"></i></span><span class="st">On track</span></div>
+      </div>
+
+      <div class="metrics">
+        <div class="met"><div class="n">3.75</div><div class="l">TIA average target</div></div>
+        <div class="met"><div class="n">5 of 8</div><div class="l">On track or better</div></div>
+        <div class="met"><div class="n">+13 pts</div><div class="l">Avg. target growth</div></div>
+      </div>
+
+      <div class="note"><b>Near the top of the scale</b> — only 3 points of room. Growth is structurally
+        limited here; note this for your appraiser.</div>
+
+      <div class="btns">
+        <button class="btn b1">Accept &amp; Lock SLO</button>
+        <button class="btn b2">Continue to Skill Profile</button>
+        <button class="btn b3">Back</button>
+      </div>
+
+      <div class="stack"><b>Stack:</b> ${f.stack}, system-ui, sans-serif &nbsp;·&nbsp; Google Fonts, weights 400–800</div>
+    </div>
+  </section>`).join('');
+
+// "Preview everywhere" swaps the whole page so you can judge it at length
+document.getElementById('specs').addEventListener('click', e => {
+  const b = e.target.closest('.pick'); if(!b) return;
+  const stack = b.getAttribute('data-font');
+  document.querySelectorAll('.demo').forEach(d => d.style.setProperty('--f', stack + ',system-ui,sans-serif'));
+  document.querySelectorAll('.pick').forEach(p => p.textContent = 'Preview everywhere');
+  b.textContent = 'Applied to all ↑';
+});
+</script>
+</body>
+</html>
