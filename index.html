@@ -536,50 +536,62 @@
     display:grid;place-items:center;flex:none;}
   .ci-dim-section{margin-top:22px;}
 
-  /* ---------- Rubric level ladder (climb from the bottom) ---------- */
-  .ci-lv{border:2px solid var(--line);border-radius:var(--r-md);margin-bottom:12px;background:#fff;transition:border-color .15s;}
-  .ci-lv.cleared{border-color:#BEE3CC;background:#F8FCFA;}
-  .ci-lv.target{border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
-  .ci-lv-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-  @media(max-width:860px){.ci-lv-grid{grid-template-columns:1fr;}}
-  .lv-left{padding:16px 18px;border-right:1px solid var(--line);}
-  @media(max-width:860px){.lv-left{border-right:0;border-bottom:1px solid var(--line);}}
-  .lv-badge{display:inline-flex;align-items:center;gap:7px;color:#fff;font-family:var(--font-display);font-weight:800;
-    font-size:14px;padding:6px 16px;border-radius:999px;margin-bottom:10px;}
-  .lv-badge .tick{font-size:12px;}
-  .lv-sub{font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:8px;}
-  .lv-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
-  .lv-list label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;color:var(--ink-soft);line-height:1.45;}
+  /* ---------- Rubric level carousel (Proficient centred) ---------- */
+  /* The ladder lives inside the dimension grid, so size it to its CONTAINER, not the
+     viewport — otherwise the side panel squeezes the carousel to nothing. */
+  .ci-dim-detail{container-type:inline-size;}
+  .ci-ladder{display:grid;grid-template-columns:1fr;gap:18px;align-items:start;}
+  @container (min-width:760px){
+    .ci-ladder{grid-template-columns:minmax(0,1.5fr) minmax(240px,1fr);}
+    .ci-ladder-side{position:sticky;top:92px;}
+  }
+  .ci-ladder-main{display:flex;align-items:stretch;gap:8px;min-width:0;}
+  .lad-arrow{flex:none;width:34px;border:1.5px solid var(--line);background:#fff;border-radius:12px;
+    font-size:22px;line-height:1;color:var(--ci-magenta-deep);cursor:pointer;font-family:var(--font-display);}
+  .lad-arrow:hover:not(:disabled){background:var(--pink-soft);border-color:var(--ci-magenta);}
+  .lad-arrow:disabled{opacity:.3;cursor:default;color:var(--ink-faint);}
+  .ci-ladder-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px;flex:1;min-width:0;}
+  .lvcard{flex:0 0 288px;scroll-snap-align:center;border:2px solid var(--line);border-radius:var(--r-md);
+    background:#fff;padding:14px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,opacity .15s;opacity:.72;}
+  .lvcard.focus{opacity:1;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
+  .lvcard.cleared{background:#F8FCFA;border-color:#BEE3CC;}
+  .lvcard.cleared.focus{border-color:var(--ci-magenta);}
+  .lvcard-badge{display:inline-block;color:#fff;font-family:var(--font-display);font-weight:800;font-size:14px;
+    padding:6px 18px;border-radius:10px;margin-bottom:10px;}
+  .lv-sub{font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:9px;}
+  .lv-list{list-style:none;display:flex;flex-direction:column;gap:11px;}
+  .lv-list label{display:flex;gap:9px;align-items:flex-start;cursor:pointer;font-size:12.5px;color:var(--ink-soft);line-height:1.45;}
   .lv-list input{margin-top:2px;width:16px;height:16px;accent-color:var(--ci-magenta);flex:none;}
-  .lv-list input:checked+span{color:var(--ink);font-weight:600;}
+  .lv-list input:checked+.v-txt{color:var(--ink);font-weight:600;}
   .v-txt{display:block;}
-  .v-tag{display:inline-block;font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
-    padding:2px 7px;border-radius:999px;margin:5px 0 0;vertical-align:middle;}
+  .v-tag{display:inline-block;font-size:9px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    padding:2px 7px;border-radius:999px;margin-top:5px;}
   .v-proves{background:#E6F4EC;color:#1F6B47;}
   .v-sup{background:#EEF6FB;color:#2C6485;}
   .v-no{background:#F1F3F7;color:#7A7A85;}
   .v-risk{background:#FDF1E3;color:#9A6212;}
-  .v-why{display:block;font-size:11px;color:var(--ink-faint);line-height:1.4;margin-top:3px;font-weight:500;}
-  .lv-list input:checked+.v-txt .v-why{color:var(--ink-soft);}
-  .lv-tally{margin-top:11px;font-size:11.5px;font-weight:700;color:var(--ink-faint);font-variant-numeric:tabular-nums;}
+  .v-why{display:block;font-size:10.5px;color:var(--ink-faint);line-height:1.4;margin-top:3px;font-weight:500;}
+  .lv-tally{margin-top:12px;padding-top:9px;border-top:1px solid var(--line);font-size:11px;font-weight:700;
+    color:var(--ink-faint);font-variant-numeric:tabular-nums;}
   .lv-tally.ok{color:#2E7D5B;}
-  .lv-right{padding:16px 18px;background:#FAFBFD;border-radius:0 var(--r-md) var(--r-md) 0;}
-  @media(max-width:860px){.lv-right{border-radius:0 0 var(--r-md) var(--r-md);}}
-  .lv-help b,.lv-ev b{display:block;font-size:12px;font-weight:800;color:var(--ink);margin-bottom:7px;}
-  .lv-help ul{list-style:none;display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+
+  .ci-ladder-side{background:#FAFBFD;border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;}
+  .lv-help b,.lv-ev b{display:block;font-size:12.5px;font-weight:800;color:var(--ink);margin-bottom:8px;}
+  .lv-help ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
   .lv-help li{font-size:12.5px;color:var(--ink-soft);line-height:1.45;padding-left:13px;position:relative;}
   .lv-help li::before{content:"•";position:absolute;left:0;color:var(--ci-magenta);font-weight:800;}
-  .lv-help.muted{font-size:12.5px;color:var(--ink-faint);line-height:1.45;margin-bottom:14px;}
+  .lv-help .muted{font-size:12.5px;color:var(--ink-faint);line-height:1.45;margin-bottom:16px;}
+  .lv-ev .forlv{font-family:var(--font-display);}
   .lv-ev-item{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px 10px;margin-bottom:6px;}
   .lv-ev-item .dot{width:22px;height:22px;border-radius:6px;flex:none;display:grid;place-items:center;color:#fff;font-size:11px;}
   .lv-ev-item .lab{flex:1;font-size:12.5px;color:var(--ink);font-weight:600;min-width:0;}
   .lv-ev-item .lab small{display:block;font-size:10.5px;color:var(--ink-faint);font-weight:600;}
   .lv-ev-item .rm{border:0;background:transparent;color:var(--ink-faint);cursor:pointer;padding:3px;border-radius:5px;flex:none;}
   .lv-ev-item .rm:hover{background:rgba(0,0,0,.06);color:var(--band-wb);}
-  .lv-add{display:flex;gap:6px;align-items:center;margin-top:8px;}
-  .lv-add select,.lv-add input{border:1.5px solid var(--line);border-radius:8px;padding:6px 9px;font-family:var(--font-body);font-size:12px;color:var(--ink);}
-  .lv-add .lbl-in{flex:1;min-width:0;}
-  .lv-add select{max-width:120px;}
+  .lv-add{display:flex;gap:6px;align-items:center;margin-top:9px;}
+  .lv-add select,.lv-add input{border:1.5px solid var(--line);border-radius:8px;padding:6px 9px;font-family:var(--font-body);font-size:12px;color:var(--ink);min-width:0;}
+  .lv-add .lbl-in{flex:1;}
+  .lv-add select{max-width:110px;}
   .lv-add .add{padding:6px 13px;font-size:15px;line-height:1;}
 
   /* ---------- Rubric descriptor check-off ---------- */
@@ -1379,7 +1391,7 @@
           <div class="ci-t2" id="t2Band">
             <button type="button" class="ci-t2-head" id="t2Toggle" aria-expanded="false" aria-controls="t2Body">
               <span class="ci-t2-badge">Heads up</span>
-              <span class="ci-t2-title"><b>T-TESS 2 is coming</b> — 11 dimensions, four domains. We've got you covered: switch your rubric above, and your evidence comes with you.</span>
+              <span class="ci-t2-title"><b>T-TESS 2 is coming</b> — 11 dimensions, four domains, and a rubric that asks for percentages. We've read it. Here's what changes for you.</span>
               <span class="ci-t2-chev" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
               </span>
@@ -1390,8 +1402,9 @@
                 <div class="ci-t2-step"><span class="yr">2027–28</span><span class="lb">TEA's recommended adoption year for T-TESS 2.</span></div>
                 <div class="ci-t2-step"><span class="yr">2028–29</span><span class="lb">Fallback adoption year for districts that can't move in 2027–28.</span></div>
               </div>
-              <p class="ci-t2-note">T-TESS 2 keeps four domains — renamed <b>Instructional Preparation, Instructional Delivery, Learning Environment,</b> and <b>Professional Practices &amp; Responsibilities</b> — and consolidates 16 dimensions into 11, each framed as a guiding question with indicators that look for evidence of student learning at the higher levels. Domain 1 applies only to teachers not using SBOE-approved HQIM. Because the domain structure holds, <b>the evidence you file this year maps forward</b> — you won't restart your body of evidence. Switch your rubric above whenever your district adopts.</p>
-              <p class="ci-t2-src">Source: TEA, <i>T-TESS Refresh: Engagement Update and Pilot</i>. If your district is in the 2026–27 pilot, check with your appraiser before using this tab for your appraisal.</p>
+              <p class="ci-t2-note">T-TESS 2 keeps four domains — renamed <b>Instructional Preparation, Instructional Delivery, Learning Environment,</b> and <b>Professional Practices &amp; Responsibilities</b> — and reorganises 16 dimensions into 11, each framed as a guiding question. Two things are genuinely new: the higher levels attach <b>explicit percentages</b> to student evidence (Level 3 is 61–80% of students showing expected progress; Level 5 is 96–100%), and one dimension, <b>Lesson Design</b>, applies only to teachers <i>not</i> using SBOE-approved HQIM materials.</p>
+              <p class="ci-t2-note"><b>What that means for the evidence you're filing now.</b> Most of it re-tags cleanly and none of it is wasted. But it isn't automatic: <b>Communication (2.3)</b> and <b>Managing Student Behavior (3.2)</b> have no direct successor and get distributed into other dimensions, a few dimensions move between domains, and several indicators raise the bar — T-TESS 2 names <b>ELPS</b> alignment and differentiation for <b>emergent bilingual, special education and gifted</b> students explicitly. So a piece of evidence can carry forward and still land at a lower level. When your district adopts, we'll walk you through re-tagging rather than pretend it happens by itself.</p>
+              <p class="ci-t2-src">Sources: TEA, <i>T-TESS Refresh: Engagement Update and Pilot</i>; <i>T-TESS 2 Pilot Rubric</i> (teachfortexas.org). Note TEA's announcement letter says 12 dimensions while the published pilot rubric contains 11 — we're using the rubric. T-TESS 2 support is <b>not built into this tool yet</b>; this rubric is the current 16-dimension T-TESS. If your district is in the 2026–27 pilot, check with your appraiser before using this tab for your appraisal.</p>
             </div>
           </div>
           <div class="ci-dim-scope" id="dimScope">
@@ -2182,64 +2195,70 @@
   function levEv(id,L){ levelEvidence[id]=levelEvidence[id]||{}; levelEvidence[id][L]=levelEvidence[id][L]||[]; return levelEvidence[id][L]; }
   var openLevel={};   // which level is expanded per dimension
 
+  var focusLevel={};   // which level card is in focus per dimension (defaults to Proficient)
+  function curLevel(id){ return focusLevel[id]||3; }
+
   function descriptorHTML(id){
     var set=descFor(id);
     if(!set) return '<div class="ci-dim-section"><h4>Rubric indicators</h4>'+
       '<div class="ci-evi-empty">T-TESS 2 indicator text isn\'t loaded yet — rate yourself above and attach evidence below.</div></div>';
-    var sug=suggestedLevel(id);
-    var target=openLevel[id] || Math.min(5,(sug||0)+1) || 1;   // level you're working toward
-    var d=findDim(id);
-    var help=(d.ci&&d.ci.length)
-      ? '<div class="lv-help"><b>Crystal Instruction helps you meet this by:</b><ul>'+
-        d.ci.map(function(c){return '<li>'+c+'</li>';}).join('')+'</ul></div>'
-      : '<div class="lv-help muted">'+(d.note?d.note:'No verified Crystal Instruction support for this dimension — attach your own evidence.')+'</div>';
+    var sug=suggestedLevel(id), F=curLevel(id), d=findDim(id);
 
-    // Distinguished at the top, Improvement Needed at the bottom: you climb the ladder.
-    var blocks=[5,4,3,2,1].filter(function(L){return set[L];}).map(function(L){
+    // Distinguished → Improvement Needed, left to right. Proficient sits in the middle.
+    var cards=[5,4,3,2,1].filter(function(L){return set[L];}).map(function(L){
       var items=set[L], need=Math.ceil(items.length/2);
       var got=(checkedDesc[id]&&checkedDesc[id][L]||[]).length;
-      var cleared=levelCleared(id,L), isTarget=(L===target), ev=levEv(id,L);
-      var evHTML = ev.length
-        ? ev.map(function(it,i){return '<div class="lv-ev-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span><span class="lab">'+esc(it.label)+'<small>'+esc(it.type)+'</small></span><button class="rm" data-l="'+L+'" data-i="'+i+'" aria-label="Remove">✕</button></div>';}).join('')
-        : '<div class="ci-evi-empty">No evidence attached to this level yet.</div>';
-      return '<div class="ci-lv'+(cleared?' cleared':'')+(isTarget?' target':'')+'" data-l="'+L+'">'+
-        '<div class="ci-lv-grid">'+
-          '<div class="lv-left">'+
-            '<div class="lv-badge" style="background:var('+RATEBAND[L]+')">'+RATENAME[L]+
-              (cleared?'<span class="tick">✓</span>':'')+'</div>'+
-            '<div class="lv-sub">The teacher…</div>'+
-            '<ul class="lv-list">'+items.map(function(txt,i){
-              var v=(CI_VERDICT[id]&&CI_VERDICT[id][L]&&CI_VERDICT[id][L][i])||null;
-              var tag='';
-              if(v){
-                var cls={PROVES:'v-proves',SUP:'v-sup',NO:'v-no',RISK:'v-risk'}[v[0]];
-                var lab={PROVES:'CI proves this',SUP:'CI helps',NO:'Not from CI',RISK:'Careful'}[v[0]];
-                tag='<span class="v-tag '+cls+'" title="'+esc(v[1])+'">'+lab+'</span>'+
-                    '<span class="v-why">'+esc(v[1])+'</span>';
-              }
-              return '<li><label><input type="checkbox" data-l="'+L+'" data-i="'+i+'"'+(isChecked(id,L,i)?' checked':'')+'>'+
-                '<span class="v-txt">'+esc(txt)+tag+'</span></label></li>';
-            }).join('')+'</ul>'+
-            '<div class="lv-tally'+(cleared?' ok':'')+'">'+got+' of '+items.length+' checked · '+need+' needed to clear this level</div>'+
-          '</div>'+
-          '<div class="lv-right">'+help+
-            '<div class="lv-ev"><b>Evidence I\'ve collected:</b>'+evHTML+
-              '<div class="lv-add" data-l="'+L+'">'+
-                '<select class="ci-evi-type">'+EVI_TYPES.map(function(t){return '<option>'+t.v+'</option>';}).join('')+'</select>'+
-                '<input class="lbl-in" placeholder="What is the evidence?">'+
-                '<button type="button" class="ci-evi-btn add" title="Add evidence">+</button>'+
-              '</div>'+
-            '</div>'+
-          '</div>'+
-        '</div></div>';
+      var cleared=levelCleared(id,L);
+      return '<div class="lvcard'+(cleared?' cleared':'')+(L===F?' focus':'')+'" data-l="'+L+'">'+
+        '<div class="lvcard-badge" style="background:var('+RATEBAND[L]+')">'+RATENAME[L]+(cleared?' ✓':'')+'</div>'+
+        '<div class="lv-sub">The teacher…</div>'+
+        '<ul class="lv-list">'+items.map(function(txt,i){
+          var v=(CI_VERDICT[id]&&CI_VERDICT[id][L]&&CI_VERDICT[id][L][i])||null, tag='';
+          if(v){
+            var cls={PROVES:'v-proves',SUP:'v-sup',NO:'v-no',RISK:'v-risk'}[v[0]];
+            var lab={PROVES:'CI proves this',SUP:'CI helps',NO:'Not from CI',RISK:'Careful'}[v[0]];
+            tag='<span class="v-tag '+cls+'" title="'+esc(v[1])+'">'+lab+'</span><span class="v-why">'+esc(v[1])+'</span>';
+          }
+          return '<li><label><input type="checkbox" data-l="'+L+'" data-i="'+i+'"'+(isChecked(id,L,i)?' checked':'')+'>'+
+            '<span class="v-txt">'+esc(txt)+tag+'</span></label></li>';
+        }).join('')+'</ul>'+
+        '<div class="lv-tally'+(cleared?' ok':'')+'">'+got+' of '+items.length+' · '+need+' clears this level</div>'+
+      '</div>';
     }).join('');
 
+    var help=(d.ci&&d.ci.length)
+      ? '<b>Crystal Instruction helps teachers meet this expectation by:</b><ul>'+
+        d.ci.map(function(c){return '<li>'+c+'</li>';}).join('')+'</ul>'
+      : '<b>Crystal Instruction &amp; this dimension</b><p class="muted">'+(d.note||'No verified Crystal Instruction support here — attach your own evidence.')+'</p>';
+
+    var ev=levEv(id,F);
+    var evHTML = ev.length
+      ? ev.map(function(it,i){return '<div class="lv-ev-item"><span class="dot" style="background:var('+eviColor(it.type)+')">'+eviGlyph(it.type)+'</span><span class="lab">'+esc(it.label)+'<small>'+esc(it.type)+'</small></span><button class="rm" data-l="'+F+'" data-i="'+i+'" aria-label="Remove">✕</button></div>';}).join('')
+      : '<div class="ci-evi-empty">No evidence attached to '+RATENAME[F]+' yet.</div>';
+
     var status = sug==null
-      ? 'Start at <b>Improvement Needed</b> at the bottom. Check the indicators you can evidence — a preponderance clears the level and moves you up.'
+      ? 'Check the indicators you can evidence. A preponderance clears a level and moves you up.'
       : 'You are at <b class="lvl" style="color:var('+RATEBAND[sug]+')">'+sug+' · '+RATENAME[sug]+'</b>'+
         (sug<5?' — clear a preponderance of <b>'+RATENAME[sug+1]+'</b> to move up.':' — top of the rubric.');
+
     return '<div class="ci-dim-section"><h4>Rubric indicators — check what you can evidence</h4>'+
-      '<div class="ci-desc-banner">'+status+'</div>'+blocks+'</div>';
+      '<div class="ci-desc-banner">'+status+'</div>'+
+      '<div class="ci-ladder">'+
+        '<div class="ci-ladder-main">'+
+          '<button type="button" class="lad-arrow prev" id="ladPrev" aria-label="Higher level"'+(F>=5?' disabled':'')+'>‹</button>'+
+          '<div class="ci-ladder-track" id="ladTrack">'+cards+'</div>'+
+          '<button type="button" class="lad-arrow next" id="ladNext" aria-label="Lower level"'+(F<=1?' disabled':'')+'>›</button>'+
+        '</div>'+
+        '<aside class="ci-ladder-side">'+
+          '<div class="lv-help">'+help+'</div>'+
+          '<div class="lv-ev"><b>Evidence I have collected <span class="forlv" style="color:var('+RATEBAND[F]+')">('+RATENAME[F]+')</span>:</b>'+evHTML+
+            '<div class="lv-add" data-l="'+F+'">'+
+              '<select class="ci-evi-type">'+EVI_TYPES.map(function(t){return '<option>'+t.v+'</option>';}).join('')+'</select>'+
+              '<input class="lbl-in" placeholder="What is the evidence?">'+
+              '<button type="button" class="ci-evi-btn add" title="Add evidence">+</button>'+
+            '</div></div>'+
+        '</aside>'+
+      '</div></div>';
   }
   function renderDimDetail(id){
     var wrap=document.getElementById('dimDetail'); if(!wrap) return;
@@ -2291,6 +2310,20 @@
         var s=suggestedLevel(id);
         if(s) ratingByDim[id]=s; else delete ratingByDim[id];
         renderDimNav(); renderDimDetail(id); updateTtessSummary(); scheduleSave();
+      });
+    });
+    // carousel: arrows move focus, clicking a card focuses it
+    function setFocus(L){ focusLevel[id]=Math.max(1,Math.min(5,L)); renderDimDetail(id); scheduleSave();
+      var t=document.getElementById('ladTrack'), c=t&&t.querySelector('.lvcard.focus');
+      if(c&&c.scrollIntoView) c.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    }
+    var pv=wrap.querySelector('#ladPrev'), nx=wrap.querySelector('#ladNext');
+    if(pv) pv.addEventListener('click',function(){ setFocus(curLevel(id)+1); });   // ‹ = higher level
+    if(nx) nx.addEventListener('click',function(){ setFocus(curLevel(id)-1); });
+    wrap.querySelectorAll('.lvcard').forEach(function(c){
+      c.addEventListener('click',function(e){
+        if(e.target.closest('label')) return;      // don't steal checkbox clicks
+        setFocus(+c.getAttribute('data-l'));
       });
     });
     // per-level evidence: add / remove
