@@ -220,6 +220,9 @@
   .ci-goal .txt small{color:var(--ink-soft);font-size:12.5px;line-height:1.45;}
   .ci-goal .std{display:inline-flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
   .ci-goal .std span{font-size:10.5px;font-weight:700;background:#EEF1F6;color:var(--ink-soft);padding:2px 8px;border-radius:6px;letter-spacing:.3px;}
+  .ci-valign{display:inline-flex;align-items:center;gap:5px;background:#E6F4EC;color:#2E7D5B;font-weight:800;
+    font-size:10px;letter-spacing:.4px;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin:4px 0 2px;width:max-content;}
+  .ci-goal.sel .ci-valign{background:#fff;}
 
   .ci-own{margin-top:4px;}
   .ci-own textarea{width:100%;border:1.5px solid var(--line);border-radius:var(--r-md);padding:14px;
@@ -1427,7 +1430,8 @@
   }
   function goalCardHTML(g){
     var stds = g.stds.length ? '<span class="std">'+g.stds.map(function(s){return '<span>'+s+'</span>';}).join('')+'</span>' : '';
-    return '<label class="ci-goal" data-skills="'+g.key+'"><span class="radio"></span><span class="txt"><b>'+g.title+'</b><small>'+g.stmt+'</small>'+stds+'</span></label>';
+    var valign = g.key!=='own' ? '<span class="ci-valign"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l4-4 4 4M8 17l4 4 4-4M12 4v16"/></svg>Vertically aligned · Grades 2–5</span>' : '';
+    return '<label class="ci-goal" data-skills="'+g.key+'"><span class="radio"></span><span class="txt"><b>'+g.title+'</b>'+valign+'<small>'+g.stmt+'</small>'+stds+'</span></label>';
   }
   function renderGoals(subject,grade,selectKey){
     currentSubject=subject; currentGrade=grade;
