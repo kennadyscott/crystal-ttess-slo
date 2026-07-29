@@ -220,6 +220,12 @@
   .ci-goal .txt small{color:var(--ink-soft);font-size:12.5px;line-height:1.45;}
   .ci-goal .std{display:inline-flex;gap:5px;margin-top:9px;flex-wrap:wrap;}
   .ci-goal .std span{font-size:10.5px;font-weight:700;background:#EEF1F6;color:var(--ink-soft);padding:2px 8px;border-radius:6px;letter-spacing:.3px;}
+  .ci-notice{display:flex;align-items:flex-start;gap:13px;background:#E6F4EC;border:1px solid #BEE3CC;
+    border-radius:var(--r-md);padding:14px 17px;margin-bottom:22px;}
+  .ci-notice .ic{width:32px;height:32px;border-radius:50%;background:#fff;color:#2E7D5B;
+    display:grid;place-items:center;flex:none;box-shadow:var(--shadow);}
+  .ci-notice .txt{color:#245c3c;font-size:13.5px;line-height:1.5;}
+  .ci-notice .txt b{color:#1d4f33;}
   .ci-valign{display:inline-flex;align-items:center;gap:5px;background:#E6F4EC;color:#2E7D5B;font-weight:800;
     font-size:10px;letter-spacing:.4px;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin:4px 0 2px;width:max-content;}
   .ci-goal.sel .ci-valign{background:#fff;}
@@ -352,6 +358,48 @@
   /* ---------- Evidence Locker ---------- */
   .ci-evi-pick{display:flex;align-items:center;gap:10px;font-weight:700;font-size:13px;color:var(--ink);}
   .ci-evi-pick .ci-select{min-width:170px;}
+
+  /* goal bar (what you're collecting evidence for) */
+  .ci-goalbar{background:var(--ci-grad);color:#fff;border-radius:var(--r-lg);padding:18px 22px;box-shadow:var(--shadow-lift);margin-bottom:18px;}
+  .ci-goalbar .eyebrow{font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.85);}
+  .ci-goalbar p{font-family:var(--font-display);font-weight:800;font-size:17px;margin-top:5px;}
+  .ci-goalbar small{display:block;margin-top:5px;color:rgba(255,255,255,.92);font-size:12.5px;line-height:1.45;}
+
+  /* filter bar */
+  .ci-evi-filters{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:16px 20px;}
+  .ci-evi-filters .f{margin-right:auto;}
+  .ci-evi-search{min-width:180px;flex:0 1 220px;}
+
+  /* roster + locker layout */
+  .ci-evi-layout{display:grid;grid-template-columns:250px 1fr;gap:22px;align-items:start;margin-top:22px;}
+  @media(max-width:900px){.ci-evi-layout{grid-template-columns:1fr;}}
+  .ci-evi-roster{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--shadow);
+    overflow:hidden;position:sticky;top:92px;}
+  @media(max-width:900px){.ci-evi-roster{position:static;}}
+  .ci-evi-roster-head{padding:12px 16px;border-bottom:1px solid var(--line);font-size:11px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);}
+  .ci-evi-roster-list{max-height:62vh;overflow-y:auto;padding:6px;}
+  @media(max-width:900px){.ci-evi-roster-list{max-height:280px;}}
+  .ci-evi-stu{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;
+    border-radius:10px;padding:10px 11px;cursor:pointer;font-family:var(--font-body);}
+  .ci-evi-stu:hover{background:rgba(27,27,58,.05);}
+  .ci-evi-stu.active{background:var(--ci-dark);}
+  .ci-evi-stu .lvl{width:9px;height:9px;border-radius:50%;flex:none;}
+  .ci-evi-stu .nm{font-weight:700;font-size:13px;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .ci-evi-stu.active .nm{color:#fff;}
+  .ci-evi-stu .ct{font-size:11px;font-weight:800;color:var(--ink-faint);flex:none;font-variant-numeric:tabular-nums;}
+  .ci-evi-stu.active .ct{color:rgba(255,255,255,.75);}
+  .ci-evi-stu .ct.done{color:#2E7D5B;}
+  .ci-evi-stu.active .ct.done{color:#8FE3B4;}
+  .ci-evi-empty-roster{padding:18px 14px;color:var(--ink-faint);font-size:12.5px;font-style:italic;text-align:center;}
+
+  /* expected-growth line */
+  .ci-evi-growthline{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#FAFBFD;border:1px solid var(--line);
+    border-radius:var(--r-md);padding:11px 14px;margin:14px 0 18px;}
+  .ci-evi-growthline .chip{color:#fff;font-weight:800;font-size:11.5px;padding:3px 10px;border-radius:999px;font-variant-numeric:tabular-nums;}
+  .ci-evi-growthline .arrow{color:var(--ink-faint);}
+  .ci-evi-growthline .lab{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--ink-faint);margin-right:2px;}
+  .ci-evi-growthline .goal{margin-left:auto;font-size:12px;font-weight:800;color:var(--ci-magenta-deep);}
   .ci-evi-summary{display:flex;flex-wrap:wrap;align-items:center;gap:16px;background:#FAFBFD;border:1px solid var(--line);
     border-radius:var(--r-md);padding:14px 16px;margin-bottom:20px;}
   .ci-evi-growth{font-family:var(--font-display);font-weight:800;color:var(--ink);font-size:15px;}
@@ -646,8 +694,8 @@
       <!-- Resume banner (shown when a saved draft is restored on return) -->
       <div class="ci-resume" id="resumeBanner" hidden>
         <span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 4v4h4"/><path d="M12 7v5l3 2"/></svg></span>
-        <div class="txt"><b>Welcome back —</b> your SLO setup is saved. When your pre-assessment data is in, pick up at Growth Targets. Nothing to redo.</div>
-        <button class="btn btn-primary" data-goto="targets">Continue to Growth Targets
+        <div class="txt" id="resumeText"><b>Welcome back —</b> your SLO setup is saved. When your BOY data is in, pick up where you left off. Nothing to redo.</div>
+        <button class="btn btn-primary" id="resumeBtn" data-goto="targets">Continue setup
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </button>
         <button class="ci-resume-x" id="resumeDismiss" aria-label="Dismiss">
@@ -698,6 +746,12 @@
 
       <!-- =================== STEP 1: SKILL STATEMENT (slide 9) =================== -->
       <div id="view-plan">
+
+      <!-- vertical-alignment notice -->
+      <div class="ci-notice">
+        <span class="ic"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M8 7l4-4 4 4M8 17l4 4 4-4M12 4v16"/></svg></span>
+        <div class="txt"><b>Every Math and ELAR skill statement is vertically aligned across Grades 2–5.</b> Pick one strand and your whole campus can track the same skill — each grade level gets its own grade-appropriate statement and standards.</div>
+      </div>
 
       <!-- ===== Section A: choose skill statement ===== -->
       <section class="ci-card">
@@ -908,51 +962,14 @@
       <div id="view-boydata" hidden>
 
         <!-- State A: choose how to bring in data -->
-        <div id="boyChoose">
-          <div class="ci-pagehead" style="margin-bottom:18px;">
-            <div>
-              <div class="ci-eyebrow">Beginning-of-year data</div>
-              <h2 style="font-size:22px;">Bring in your BOY data</h2>
-              <p>You'll set each student's growth target from real starting data. Choose how to bring it in — you can do both.</p>
-            </div>
-          </div>
-
-          <div class="ci-dualopt">
-            <div class="ci-optcard">
-              <span class="ci-opticon" style="background:var(--ci-grad)">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-              </span>
-              <h3>Administer BOY Assessment</h3>
-              <p>Send Crystal Instruction's pre-assessment for this SLO to your students. Scores flow back here as they finish.</p>
-              <span class="ci-tag-note">Monitoring-only — supports your evidence, not your TIA score</span>
-              <button class="btn btn-primary" data-boy="administer">Send to students
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
-              </button>
-            </div>
-            <div class="ci-optcard">
-              <span class="ci-opticon" style="background:var(--teal)">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-              </span>
-              <h3>Input my BOY Scores</h3>
-              <p>Already have NWEA MAP, a district benchmark, or other approved BOY data? Enter or import it here.</p>
-              <span class="ci-tag-tia">✓ Recommended for TIA</span>
-              <button class="btn btn-primary" data-boy="input">Enter scores
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <div class="ci-actions" style="margin-top:22px;">
-            <button class="btn btn-ghost" data-goto="personal">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>Back
-            </button>
-          </div>
-        </div>
-
         <!-- State A2: enter scores manually -->
         <div id="boyEntry" hidden>
           <section class="ci-card">
-            <header><div><div class="ci-eyebrow">Input BOY scores</div><h2>Enter your data</h2></div></header>
+            <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+              <div><div class="ci-eyebrow">Beginning-of-year data</div><h2>Bring in your BOY data</h2></div>
+              <span class="ci-tag-tia">✓ District data recommended for TIA</span>
+            </header>
+            <p class="sub">Enter or import your approved beginning-of-year scores — NWEA MAP, a district benchmark, or another approved assessment. You'll set each student's growth target from this starting data.</p>
 
             <label class="ci-otherbox" style="margin:4px 0 22px;">
               <span class="ci-otherbox-label">Where are these scores from?</span>
@@ -1024,7 +1041,7 @@
 
             <div class="ci-disclaimer" style="margin-top:18px;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-              <div>Sending the assessment to students and collecting their responses happens in the <b>Student Dashboard</b> — a connected project we'll build separately. Here you'll see results and set growth targets.</div>
+              <div><b>Coming in a future release:</b> administer a Crystal Instruction pre-assessment directly to students and have scores flow in automatically. For now, bring in your district-approved BOY data — which is also what TIA is based on.</div>
             </div>
           </section>
 
@@ -1126,44 +1143,69 @@
 
       <!-- ============ PANEL: EVIDENCE LOCKERS (Phase 2 · slide 15) ============ -->
       <div id="panel-evidence" hidden>
-        <section class="ci-card">
-          <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
-            <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2>Evidence Locker</h2></div>
-            <label class="ci-evi-pick">Student
-              <span class="ci-select"><select id="eviStudent"></select>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-              </span>
-            </label>
-          </header>
-          <p class="sub">Build a Body of Evidence for each student — connect what you've taught, flag T-TESS-aligned items, upload artifacts, and keep notes. Aim for at least <b>5 data points</b> per student.</p>
+        <!-- the goal you're collecting evidence for -->
+        <div class="ci-goalbar">
+          <span class="eyebrow">Collecting evidence for</span>
+          <p id="eviGoalTitle">—</p>
+          <small id="eviGoalStmt">—</small>
+        </div>
 
-          <div class="ci-evi-summary">
-            <div class="ci-evi-growth" id="eviGrowth">—</div>
-            <div class="ci-evi-progress">
-              <div class="ci-evi-count"><b id="eviCount">0</b> of 5 minimum data points <span id="eviTtessCount"></span></div>
-              <div class="ci-evi-bar"><span id="eviBarFill"></span></div>
-            </div>
+        <!-- filter bar -->
+        <section class="ci-card ci-evi-filters">
+          <div class="f">
+            <div><div class="ci-eyebrow">Phase 2 · Monitor Progress</div><h2 style="font-size:19px;">Evidence Lockers</h2></div>
           </div>
-
-          <label class="ci-otherbox" style="margin-top:4px;">
-            <span class="ci-otherbox-label">Notes for this student</span>
-            <textarea id="eviNotes" placeholder="Observations, conference notes, next steps for this student…"></textarea>
+          <label class="ci-evi-pick">Class
+            <span class="ci-select"><select id="eviClass"></select>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
           </label>
+          <label class="ci-evi-pick">Group
+            <span class="ci-select"><select id="eviGroup"></select>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+          </label>
+          <input class="ci-input ci-evi-search" id="eviSearch" type="search" placeholder="Search students…">
         </section>
 
-        <section class="ci-card" style="margin-top:22px;">
-          <header><div><div class="ci-eyebrow">Evidence collected</div><h2>This student's Body of Evidence</h2></div></header>
-          <div class="ci-evi-items" id="eviCollected"></div>
-          <div class="ci-evi-add" style="margin-top:14px;">
-            <button type="button" class="ci-evi-btn upload" id="eviUpload">Upload artifact<input type="file" hidden></button>
+        <!-- roster + locker -->
+        <div class="ci-evi-layout">
+          <aside class="ci-evi-roster">
+            <div class="ci-evi-roster-head" id="eviRosterCount">—</div>
+            <div class="ci-evi-roster-list" id="eviRoster"></div>
+          </aside>
+
+          <div class="ci-evi-main">
+            <section class="ci-card">
+              <header style="justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;">
+                <div><div class="ci-eyebrow">Student locker</div><h2 id="eviGrowth">—</h2></div>
+                <div class="ci-evi-progress">
+                  <div class="ci-evi-count"><b id="eviCount">0</b> of 5 minimum data points <span id="eviTtessCount"></span></div>
+                  <div class="ci-evi-bar"><span id="eviBarFill"></span></div>
+                </div>
+              </header>
+
+              <!-- expected growth line: BOY → current → target -->
+              <div class="ci-evi-growthline" id="eviGrowthLine"></div>
+
+              <div class="ci-evi-items" id="eviCollected"></div>
+              <div class="ci-evi-add" style="margin-top:14px;">
+                <button type="button" class="ci-evi-btn upload" id="eviUpload">Upload artifact<input type="file" hidden></button>
+              </div>
+
+              <label class="ci-otherbox" style="margin-top:20px;">
+                <span class="ci-otherbox-label">Notes for this student</span>
+                <textarea id="eviNotes" placeholder="Observations, conference notes, next steps for this student…"></textarea>
+              </label>
+            </section>
+
+            <section class="ci-card" style="margin-top:22px;">
+              <header><div><div class="ci-eyebrow">Connect what you've taught</div><h2>Recent Crystal Instruction activity</h2></div></header>
+              <p class="sub">Pull lessons, sheets, and activities you've delivered into this student's evidence. Tick <b>T-TESS aligned</b> to also count an item toward your Domains 2 &amp; 3 evidence.</p>
+              <div id="eviLibrary"></div>
+            </section>
           </div>
-        </section>
-
-        <section class="ci-card" style="margin-top:22px;">
-          <header><div><div class="ci-eyebrow">Connect what you've taught</div><h2>Recent Crystal Instruction activity</h2></div></header>
-          <p class="sub">Pull lessons, sheets, and activities you've delivered into this student's evidence. Tick <b>T-TESS aligned</b> to also count an item toward your Domains 2 &amp; 3 evidence.</p>
-          <div id="eviLibrary"></div>
-        </section>
+        </div>
       </div><!-- /panel-evidence -->
 
       <!-- ============ PANEL: T-TESS RUBRIC (Domains 2 & 3 · slide 18) ============ -->
@@ -1480,7 +1522,7 @@
   }
 
   // --- BOY data state (gates Growth Targets) ---
-  var hasData=false, boySource='', boyMode='', enteredScores={};
+  var hasData=false, boySource='', boyMode='input', enteredScores={}; // v1: manual entry only
   var BANDVAR={wb:'--band-wb',b:'--band-b',t:'--band-t',a:'--band-a',wa:'--band-wa'};
   var BANDNAME={wb:'Well Below',b:'Below',t:'Typical',a:'Above',wa:'Well Above'};
   var boyStudents=[["Kennady",20,35,0,56],["Jeremy",0,25,0,34],["Stacey",14,83,25,31],
@@ -1543,10 +1585,9 @@
 
   function applyDataState(){
     if(hasData){ buildGrid(); buildTargets(); applyLockState(); }
-    var choose=document.getElementById('boyChoose'), entry=document.getElementById('boyEntry'), dash=document.getElementById('boyDashboard');
+    var entry=document.getElementById('boyEntry'), dash=document.getElementById('boyDashboard');
     if(dash) dash.hidden=!hasData;
-    if(hasData){ if(choose) choose.hidden=true; if(entry) entry.hidden=true; }
-    else if(choose && (!entry || entry.hidden)){ choose.hidden=false; }
+    if(entry){ entry.hidden=hasData; if(!hasData){ buildEntryTable(); recolorEntry(); } }
     var tl=document.getElementById('targetsLocked'), tr2=document.getElementById('targetsReady');
     if(tl&&tr2){ tl.hidden=hasData; tr2.hidden=!hasData; }
     var tab=document.querySelector('.ci-subtabs button[data-view="targets"]');
@@ -1556,23 +1597,10 @@
   function setData(mode,source){ boyMode=mode; hasData=true; boySource=source;
     var tw=document.getElementById('targetRows'); if(tw) tw.dataset.built=''; applyDataState(); scheduleSave(); }
 
-  // option cards: Administer (CI) vs Input (manual)
-  document.querySelectorAll('[data-boy]').forEach(function(b){
-    b.addEventListener('click',function(){
-      if(b.getAttribute('data-boy')==='input'){
-        document.getElementById('boyChoose').hidden=true;
-        document.getElementById('boyEntry').hidden=false;
-        buildEntryTable(); recolorEntry();
-        document.querySelector('.ci-page').scrollIntoView({behavior:'smooth',block:'start'});
-      } else {
-        setData('administer','Crystal Instruction Pre-Assessment · BOY');
-      }
-    });
-  });
+  // v1: BOY data is entered/imported manually. Administering a Crystal Instruction
+  // pre-assessment in-app is deferred to v2 (needs the Student Dashboard project).
   var entryBack=document.getElementById('entryBack');
-  if(entryBack) entryBack.addEventListener('click',function(){
-    document.getElementById('boyEntry').hidden=true; document.getElementById('boyChoose').hidden=false;
-  });
+  if(entryBack) entryBack.addEventListener('click',function(){ show('personal'); });
   var saveScoresBtn=document.getElementById('saveScores');
   if(saveScoresBtn) saveScoresBtn.addEventListener('click',function(){
     var src=(document.getElementById('entrySource').value||'').trim();
@@ -1586,8 +1614,7 @@
   var changeSrc=document.getElementById('changeSource');
   if(changeSrc) changeSrc.addEventListener('click',function(){
     document.getElementById('boyDashboard').hidden=true;
-    if(boyMode==='input'){ document.getElementById('boyEntry').hidden=false; }
-    else { document.getElementById('boyChoose').hidden=false; }
+    document.getElementById('boyEntry').hidden=false;
   });
 
   // --- Growth Targets: per-student pre-test → target sliders ---
@@ -2044,25 +2071,84 @@
   }
   function eviTotal(name){ return (evidenceByStudent[name]||[]).length; }
   function eviTtessTotal(name){ return (evidenceByStudent[name]||[]).filter(function(x){return x.ttess;}).length; }
-  function fillStudentPicker(){
-    var sel=document.getElementById('eviStudent'); if(!sel||sel.dataset.built) return;
-    sel.innerHTML=ROSTER.map(function(n){return '<option value="'+n+'">'+n+'</option>';}).join('');
-    sel.addEventListener('change',function(){ renderEvidence(sel.value); scheduleSave(); });
-    sel.dataset.built='1';
+  // class sections (sample roster metadata)
+  var CLASSES={'Kennady':'Homeroom · 3rd','Jeremy':'Homeroom · 3rd','Stacey':'Homeroom · 3rd','Sophie':'Homeroom · 3rd',
+               'Rebecca':'Block B · 3rd','Lauren':'Block B · 3rd','Emily':'Block B · 3rd','Erin':'Block B · 3rd'};
+  function classList(){ var seen=[]; ROSTER.forEach(function(n){ var c=CLASSES[n]||'Unassigned'; if(seen.indexOf(c)<0) seen.push(c); }); return seen; }
+  function studentBand(name){ // current band: MOY where recorded, else BOY
+    var st=null; studentList().forEach(function(x){if(x.name===name)st=x;});
+    if(!st) return null;
+    var moy=moyScores[name];
+    return classifyBand((moy!=null&&moy!=='')?+moy:st.pre);
   }
-  function eviGrowthLabel(name){
-    var list=studentList(), st=null; list.forEach(function(x){if(x.name===name)st=x;});
-    if(!st) return name;
-    var preBk=classifyBand(st.pre);
-    var slider=document.querySelector('#targetRows input[data-name="'+name+'"]');
-    if(slider) return name+' · '+BANDNAME[preBk]+' → '+BANDNAME[classifyBand(+slider.value)];
-    return name+' · starting '+BANDNAME[preBk];
+  function fillStudentPicker(){
+    var cs=document.getElementById('eviClass'), gs=document.getElementById('eviGroup'), sr=document.getElementById('eviSearch');
+    if(cs && !cs.dataset.built){
+      cs.innerHTML='<option value="">All classes</option>'+classList().map(function(c){return '<option>'+c+'</option>';}).join('');
+      cs.addEventListener('change',function(){ renderRoster(); }); cs.dataset.built='1';
+    }
+    if(gs && !gs.dataset.built){
+      gs.innerHTML='<option value="">All groups</option>'+['wa','a','t','b','wb'].map(function(k){return '<option value="'+k+'">'+BANDNAME[k]+'</option>';}).join('');
+      gs.addEventListener('change',function(){ renderRoster(); }); gs.dataset.built='1';
+    }
+    if(sr && !sr.dataset.built){ sr.addEventListener('input',function(){ renderRoster(); }); sr.dataset.built='1'; }
+  }
+  function filteredRoster(){
+    var c=(document.getElementById('eviClass')||{}).value||'';
+    var g=(document.getElementById('eviGroup')||{}).value||'';
+    var q=((document.getElementById('eviSearch')||{}).value||'').toLowerCase().trim();
+    return ROSTER.filter(function(n){
+      if(c && (CLASSES[n]||'Unassigned')!==c) return false;
+      if(g && studentBand(n)!==g) return false;
+      if(q && n.toLowerCase().indexOf(q)<0) return false;
+      return true;
+    });
+  }
+  function renderRoster(){
+    var wrap=document.getElementById('eviRoster'); if(!wrap) return;
+    var list=filteredRoster();
+    var head=document.getElementById('eviRosterCount');
+    if(head) head.textContent=list.length+' student'+(list.length===1?'':'s');
+    if(!list.length){ wrap.innerHTML='<div class="ci-evi-empty-roster">No students match these filters.</div>'; return; }
+    wrap.innerHTML=list.map(function(n){
+      var bk=studentBand(n), ct=eviTotal(n);
+      return '<button type="button" class="ci-evi-stu'+(n===currentEviStudent?' active':'')+'" data-name="'+n+'">'+
+        '<span class="lvl" style="background:'+(bk?'var('+BANDVAR[bk]+')':'var(--line)')+'"></span>'+
+        '<span class="nm">'+n+'</span>'+
+        '<span class="ct'+(ct>=5?' done':'')+'">'+ct+'/5</span></button>';
+    }).join('');
+    wrap.querySelectorAll('.ci-evi-stu').forEach(function(b){
+      b.addEventListener('click',function(){ renderEvidence(b.getAttribute('data-name')); scheduleSave(); });
+    });
+  }
+  function renderGoalBar(){
+    var g=currentGoal();
+    var t=document.getElementById('eviGoalTitle'), s=document.getElementById('eviGoalStmt');
+    if(t) t.textContent = g ? g.title : 'Your SLO';
+    if(s) s.textContent = (document.getElementById('sloStatement')||{}).textContent || '';
+  }
+  function renderGrowthLine(name){
+    var el=document.getElementById('eviGrowthLine'); if(!el) return;
+    var st=null; studentList().forEach(function(x){if(x.name===name)st=x;});
+    var tgt=targetOf(name);
+    if(!st || tgt==null){ el.hidden=true; return; }
+    el.hidden=false;
+    var u=scoreUnit(), moy=moyScores[name];
+    var cur=(moy!=null&&moy!=='')?+moy:st.pre;
+    var chip=function(v){ return '<span class="chip" style="background:var('+BANDVAR[classifyBand(v)]+')">'+v+u+'</span>'; };
+    el.innerHTML='<span class="lab">Expected growth</span>'+
+      chip(st.pre)+'<span class="arrow">→</span>'+
+      (cur!==st.pre? chip(cur)+'<span class="arrow">→</span>' : '')+
+      chip(tgt)+
+      '<span class="goal">+'+(tgt-st.pre)+' pts to target</span>';
   }
   function renderEvidence(name){
-    if(!name) name=ROSTER[0];
+    if(!name) name=filteredRoster()[0]||ROSTER[0];
     currentEviStudent=name;
-    var sel=document.getElementById('eviStudent'); if(sel) sel.value=name;
-    var g=document.getElementById('eviGrowth'); if(g) g.textContent = hasData ? eviGrowthLabel(name) : name;
+    renderGoalBar();
+    var g=document.getElementById('eviGrowth'); if(g) g.textContent=name;
+    renderGrowthLine(name);
+    renderRoster();
     var items=evidenceByStudent[name]||(evidenceByStudent[name]=[]);
     document.getElementById('eviCount').textContent=items.length;
     document.getElementById('eviBarFill').style.width=Math.min(100,Math.round(items.length/5*100))+'%';
@@ -2258,7 +2344,13 @@
   if(loadDraft()){
     var rb=document.getElementById('resumeBanner'); if(rb) rb.hidden=false;
     var rx=document.getElementById('resumeDismiss'); if(rx) rx.addEventListener('click',function(){rb.hidden=true;});
-    if(sloLocked) showPanel('overview'); // locked SLO → land on the overview
+    // Setup done → returning teachers land in the Evidence Locker (Phase 2 work)
+    if(sloLocked){
+      showPanel('evidence');
+      var rt=document.getElementById('resumeText'), rbtn=document.getElementById('resumeBtn');
+      if(rt) rt.innerHTML='<b>Welcome back —</b> your SLO is locked and setup is complete. Keep building each student\'s Body of Evidence.';
+      if(rbtn){ rbtn.firstChild.nodeValue='Go to Evidence Lockers'; rbtn.setAttribute('data-panel-go','evidence'); rbtn.removeAttribute('data-goto'); }
+    }
   } else {
     applyDataState(); // fresh start: reflect the locked Growth Targets tab
   }
