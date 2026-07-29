@@ -876,6 +876,26 @@
   .ci-crumb{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
 
   /* tab bar gets an explicit swipe affordance: edge fades + scroll cue */
+  /* BOY entry: validation, count, paste import */
+  .ci-otherbox-label .req{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+    color:var(--ci-magenta-deep);background:var(--pink-soft);padding:2px 7px;border-radius:999px;margin-left:6px;}
+  .ci-otherbox.invalid .ci-input{border-color:var(--band-wb);box-shadow:0 0 0 3px rgba(229,103,79,.14);}
+  .ci-fielderr{display:block;margin-top:5px;font-size:11.5px;font-weight:700;color:var(--band-wb);}
+  .ci-fielderr[hidden]{display:none;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .ci-entry-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:24px 0 8px;}
+  .ci-entry-tools{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .ci-entry-count{font-size:11.5px;font-weight:800;color:var(--ink-faint);font-variant-numeric:tabular-nums;}
+  .ci-entry-count.all{color:#2E7D5B;}
+  .ci-paste{background:#FAFBFD;border:1px solid var(--line);border-radius:var(--r-md);padding:14px 16px;margin-bottom:12px;}
+  .ci-paste[hidden]{display:none;}
+  .ci-paste p{font-size:12.5px;color:var(--ink-soft);margin-bottom:8px;}
+  .ci-paste textarea{width:100%;min-height:88px;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--ink);resize:vertical;}
+  .ci-paste textarea:focus{outline:none;border-color:var(--ci-magenta);box-shadow:0 0 0 3px rgba(227,19,196,.12);}
+  .ci-paste-foot{display:flex;align-items:center;gap:12px;margin-top:9px;}
+  .ci-paste-foot span{font-size:12px;font-weight:700;}
+  .ci-paste-foot .ok{color:#2E7D5B;} .ci-paste-foot .warn{color:var(--band-wb);}
   /* ---------- Locked states: preview skeleton + requirements checklist ---------- */
   .ci-locked{position:relative;overflow:hidden;padding:0;min-height:300px;}
   .lk-skel{position:absolute;inset:0;padding:22px;opacity:.5;filter:blur(1.5px) grayscale(1);pointer-events:none;}
@@ -1260,9 +1280,11 @@
             </header>
             <p class="sub">Enter or import your approved beginning-of-year scores — NWEA MAP, a district benchmark, or another approved assessment. You'll set each student's growth target from this starting data.</p>
 
-            <label class="ci-otherbox" style="margin:4px 0 22px;">
-              <span class="ci-otherbox-label">Where are these scores from?</span>
-              <input class="ci-input" id="entrySource" type="text" placeholder="e.g. NWEA MAP, district benchmark, unit pre-test">
+            <label class="ci-otherbox" id="entrySourceWrap" style="margin:4px 0 22px;">
+              <span class="ci-otherbox-label">Where are these scores from? <span class="req">required</span></span>
+              <input class="ci-input" id="entrySource" type="text" aria-describedby="entrySourceErr"
+                     placeholder="e.g. NWEA MAP, district benchmark, unit pre-test">
+              <span class="ci-fielderr" id="entrySourceErr" hidden>Name the assessment these scores came from.</span>
             </label>
 
             <div class="ci-eyebrow" style="margin-bottom:6px;">Set your color bands</div>
@@ -1280,7 +1302,22 @@
                 <div class="rng"><input type="number" value="95" data-eband="wa" data-edge="lo"><span>–</span><input type="number" value="100" data-eband="wa" data-edge="hi"></div></div>
             </div>
 
-            <div class="ci-eyebrow" style="margin:24px 0 8px;">Enter each student's score</div>
+            <div class="ci-entry-head">
+              <div class="ci-eyebrow">Enter each student's score</div>
+              <div class="ci-entry-tools">
+                <span class="ci-entry-count" id="entryCount">0 of 8 entered</span>
+                <button type="button" class="ci-evi-btn upload" id="pasteToggle">Paste from spreadsheet</button>
+              </div>
+            </div>
+            <div class="ci-paste" id="pasteBox" hidden>
+              <p>Paste two columns from your NWEA / district export — <b>student name and score</b>, one per line. Tab or comma separated.</p>
+              <textarea id="pasteArea" placeholder="Kennady&#9;172&#10;Jeremy&#9;150&#10;Stacey&#9;188"></textarea>
+              <div class="ci-paste-foot">
+                <button type="button" class="ci-evi-btn add" id="pasteApply">Import scores</button>
+                <span id="pasteMsg"></span>
+              </div>
+            </div>
+            <p class="sub" style="margin-bottom:10px;font-size:12px;">Press <b>Enter</b> to jump to the next student.</p>
             <div class="ci-tablewrap">
               <table class="ci-grid">
                 <thead><tr><th style="text-align:left;">Student</th><th>BOY score</th><th>Level</th></tr></thead>
@@ -1978,9 +2015,41 @@
       var tr=document.createElement('tr');
       tr.innerHTML='<th>'+name+'</th><td><input type="number" class="ci-scoreinput" data-name="'+name+'" placeholder="—"></td><td class="level">—</td>';
       tb.appendChild(tr);
-      tr.querySelector('input').addEventListener('input',function(){updateEntryRow(tr);scheduleSave();});
+      tr.querySelector('input').addEventListener('input',function(){updateEntryRow(tr);updateEntryCount();validateEntry();scheduleSave();});
     });
     tb.dataset.built='1';
+    // Enter moves to the next student's field
+    tb.querySelectorAll('input').forEach(function(inp,idx,all){
+      inp.addEventListener('keydown',function(e){
+        if(e.key==='Enter'){ e.preventDefault(); var n=all[idx+1]; if(n){n.focus();n.select();} else inp.blur(); }
+      });
+    });
+  }
+  // Show precisely which requirement is unmet, on the field and on the button.
+  function validateEntry(){
+    var src=(document.getElementById('entrySource')||{}).value||'';
+    var scored=ROSTER.filter(function(n){var i=document.querySelector('#entryRows input[data-name="'+n+'"]');return i&&i.value!=='';}).length;
+    var okSrc=!!src.trim(), okScore=scored>0;
+    var wrap=document.getElementById('entrySourceWrap'), err=document.getElementById('entrySourceErr');
+    if(wrap) wrap.classList.toggle('invalid', !okSrc && entryTouched);
+    if(err) err.hidden = okSrc || !entryTouched;
+    var btn=document.getElementById('saveScores'), hint=document.getElementById('entryHint');
+    var missing=[];
+    if(!okSrc) missing.push('name the data source');
+    if(!okScore) missing.push('enter at least one score');
+    if(btn){
+      btn.disabled = !(okSrc&&okScore);
+      btn.title = btn.disabled ? ('To save: '+missing.join(' and ')+'.') : 'Save these scores and continue';
+    }
+    if(hint) hint.textContent = (okSrc&&okScore) ? '' : ('To save: '+missing.join(' and ')+'.');
+    return okSrc&&okScore;
+  }
+  var entryTouched=false;
+  function updateEntryCount(){
+    var el=document.getElementById('entryCount'); if(!el) return;
+    var n=ROSTER.filter(function(x){var i=document.querySelector('#entryRows input[data-name="'+x+'"]');return i&&i.value!=='';}).length;
+    el.textContent=n+' of '+ROSTER.length+' entered';
+    el.classList.toggle('all', n===ROSTER.length);
   }
   document.querySelectorAll('#entryBands input').forEach(function(i){ i.addEventListener('input',recolorEntry); });
 
@@ -1988,7 +2057,7 @@
     if(hasData){ buildGrid(); buildTargets(); applyLockState(); }
     var entry=document.getElementById('boyEntry'), dash=document.getElementById('boyDashboard');
     if(dash) dash.hidden=!hasData;
-    if(entry){ entry.hidden=hasData; if(!hasData){ buildEntryTable(); recolorEntry(); } }
+    if(entry){ entry.hidden=hasData; if(!hasData){ buildEntryTable(); recolorEntry(); updateEntryCount(); validateEntry(); } }
     var tl=document.getElementById('targetsLocked'), tr2=document.getElementById('targetsReady');
     if(tl&&tr2){ tl.hidden=hasData; tr2.hidden=!hasData; }
     var tab=document.querySelector('.ci-subtabs button[data-view="targets"]');
@@ -2002,12 +2071,48 @@
   // pre-assessment in-app is deferred to v2 (needs the Student Dashboard project).
   var entryBack=document.getElementById('entryBack');
   if(entryBack) entryBack.addEventListener('click',function(){ show('personal'); });
+  (function(){
+    var src=document.getElementById('entrySource'); if(!src) return;
+    src.addEventListener('input',function(){ validateEntry(); });
+    src.addEventListener('blur',function(){ entryTouched=true; validateEntry(); });
+  })();
+  // Paste two columns (name, score) straight from a spreadsheet / NWEA export.
+  (function(){
+    var tgl=document.getElementById('pasteToggle'), box=document.getElementById('pasteBox');
+    if(!tgl||!box) return;
+    tgl.addEventListener('click',function(){ box.hidden=!box.hidden; if(!box.hidden) document.getElementById('pasteArea').focus(); });
+    document.getElementById('pasteApply').addEventListener('click',function(){
+      var raw=(document.getElementById('pasteArea').value||'').trim();
+      var msg=document.getElementById('pasteMsg');
+      if(!raw){ msg.textContent='Nothing pasted yet.'; msg.className='warn'; return; }
+      buildEntryTable();
+      var matched=0, unmatched=[];
+      raw.split(/\r?\n/).forEach(function(line){
+        if(!line.trim()) return;
+        var parts=line.split(/\t|,|\s{2,}/).map(function(x){return x.trim();}).filter(Boolean);
+        if(parts.length<2) return;
+        var score=parts[parts.length-1], name=parts.slice(0,-1).join(' ');
+        if(!/^-?\d+(\.\d+)?$/.test(score)) return;
+        var hit=ROSTER.find(function(n){ return n.toLowerCase()===name.toLowerCase()
+          || n.toLowerCase().split(' ')[0]===name.toLowerCase().split(' ')[0]; });
+        if(hit){ var inp=document.querySelector('#entryRows input[data-name="'+hit+'"]');
+          if(inp){ inp.value=score; inp.dispatchEvent(new Event('input',{bubbles:true})); matched++; } }
+        else unmatched.push(name);
+      });
+      msg.className = matched ? 'ok' : 'warn';
+      msg.textContent = matched
+        ? (matched+' student'+(matched===1?'':'s')+' imported'+(unmatched.length?' · no match for: '+unmatched.slice(0,3).join(', '):''))
+        : 'No rows matched your roster — check the names.';
+      if(matched){ recolorEntry(); updateEntryCount(); validateEntry(); scheduleSave(); }
+    });
+  })();
   var saveScoresBtn=document.getElementById('saveScores');
   if(saveScoresBtn) saveScoresBtn.addEventListener('click',function(){
     var src=(document.getElementById('entrySource').value||'').trim();
     var scores={}; document.querySelectorAll('#entryRows input').forEach(function(i){ if(i.value!=='') scores[i.getAttribute('data-name')]=i.value; });
     var hint=document.getElementById('entryHint');
-    if(!src || !Object.keys(scores).length){ if(hint){ hint.textContent='Add a source and at least one score to continue.'; hint.style.color='var(--band-wb)'; } return; }
+    if(!src || !Object.keys(scores).length){ entryTouched=true; validateEntry();
+      var f=document.getElementById('entrySource'); if(!src&&f) f.focus(); return; }
     if(hint){ hint.textContent=''; }
     enteredScores=scores;
     setData('input', src);
